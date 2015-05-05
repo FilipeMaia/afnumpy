@@ -10,6 +10,8 @@ from distutils.core import setup, Extension
 arrayfire_module = Extension('_arrayfire',
                              sources=['af_wrap.cxx'],
                              libraries = ['afcuda'],
+                             runtime_library_dirs = ['/usr/local/lib'],
+                             extra_link_args = ['-Wl,-rpath,/usr/local/lib'],
                          )
 
 setup (name = 'arrayfire',

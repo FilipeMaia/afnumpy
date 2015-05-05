@@ -11,9 +11,20 @@
  #include "af/arith.h"
  #include "af/blas.h"
  #include "af/device.h"
+ #include "af/exception.h"
+ #include "af/features.h"
+ #include "af/gfor.h"
+ #include "af/image.h"
+ #include "af/index.h"
+ #include "af/signal.h"
+ #include "af/statistics.h"
+ #include "af/timing.h"
+ #include "af/util.h"
   // #include "arrayfire.h"
-
  %}
+// This needs to be defined only for Mac OS X
+#define __APPLE__
+#define __MACH__
  
  /* Parse the header file to generate wrappers */
  %include "af/defines.h"
@@ -55,5 +66,14 @@
  %include "af/arith.h"
  %include "af/blas.h"
  %include "af/device.h"
+ %include "af/exception.h"
+ %include "af/features.h"
+ %include "af/gfor.h"
+ %include "af/image.h"
+ %include "af/index.h"
+ %include "af/signal.h"
+ %include "af/statistics.h"
+ %include "af/timing.h"
+ %include "af/util.h"
   // %include "arrayfire.h"
 
