@@ -1,4 +1,7 @@
 %module arrayfire
+%include "typemaps.i"
+%include "numpy.i"
+
  %{
  /* Includes the header in the wrapper code */
  #include "af/defines.h"
@@ -51,9 +54,14 @@
 		      const dim_type, dtype ty=b8);
  %ignore af::constant(bool val, const dim_type d0, const dim_type, 
 		      const dim_type, const dim_type, dtype ty=b8);
+ %rename(astype) af::array::as(dtype type) const;
  %typemap(in) void * {
    $1 = (void *)PyInt_AsLong($input);
   }
+%typemap(in) dim_type *  {
+  $1 = (dim_type *)PyInt_AsLong($input);
+ }
+ %apply af_array *OUTPUT { af_array *arr };
  %include "af/array.h"
  %include "af/data.h"
  %include "af/compatible.h"
