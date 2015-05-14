@@ -1,7 +1,8 @@
-from multiarray import ndarray, zeros, ones
+from multiarray import ndarray, zeros, ones, where, array
 from . import random
 
-a = ones(3)
+a = random.rand(3)
+#a = ones(3)
 print a
 
 print a+a
@@ -68,8 +69,23 @@ a /= 3
 print a
 
 print a.__nonzero__()
+print where(a)
+b = array(a)
+print b
 
+c = random.rand(3)
+print c
+d = array([1.,2.,0.])
+print c.dtype
+print d.dtype
 
+print a[a]
+print c[a]
+e = (c > 0.5)
+print e.dtype
+print c[(c > 0.5)]
+print c[d]
+#print d[a]
 
 #f = random.rand(3,3)
 #print 2*f
