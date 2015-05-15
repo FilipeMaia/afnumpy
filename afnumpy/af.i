@@ -3,6 +3,8 @@
 %module arrayfire
 %include "typemaps.i"
 %include "numpy.i"
+// For typemaps for std::exception
+%include "exception.i"
 
 #undef __cplusplus
 #define __cplusplus 201103L
@@ -35,7 +37,6 @@
  #include "af/timing.h"
  #include "af/util.h"
  %}
-
 
 %rename(astype) af::array::array_proxy::as(dtype type) const;
 // as is a python keyword
@@ -106,6 +107,17 @@ TYPE_IGNORE(constant, cfloat)
 %rename(as_const_array) af::array::array_proxy::operator array() const;
 %rename(g_afDevice) ::afDevice;
 %rename(g_afHost) ::afHost;
+
+%rename(logical_or) af::operator||;
+%rename(logical_and) af::operator&&;
+%rename(copy_on_write) af::array::operator=;
+%rename(copy_on_write) af::array::array_proxy::operator=;
+
+%rename(logical_not) af::array::operator!;
+%rename(__getitem__) af::dim4::operator[];
+%rename(copy) af::seq::operator=;
+%rename(pprint) af::print;
+%rename(copy) af::features::operator=;
 
  %include "af/defines.h"
  %include "af/dim4.hpp"
