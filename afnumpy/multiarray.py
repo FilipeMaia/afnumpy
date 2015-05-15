@@ -87,6 +87,24 @@ def where(condition, x=__dummy__, y=__dummy__):
     else:
         raise ValueError('either both or neither of x and y should be given')
 
+def all(a, axis=None, out=None, keepdims=False):
+    if(out is not None):
+        raise NotImplementedError
+    if(keepdims is not False):
+        raise NotImplementedError
+    if(axis is None):
+        axis = -1
+    s =  arrayfire.alltrue(a.d_array, axis)
+    a = ndarray(_af_shape(s), dtype=bool, af_array=s)
+    if(axis == -1):
+        if(keepdims):
+            return numpy.array(a)
+        else:
+            return numpy.array(a)[0]
+    else:
+        return a
+    
+
 class ndarray(object):
     def __init__(self, shape, dtype=float, buffer=None, offset=0, strides=None, order=None, af_array=None):
         if(offset != 0):
@@ -98,7 +116,9 @@ class ndarray(object):
         self.shape = shape
         self.dtype = dtype
         s_a = numpy.array(shape)
-        if(s_a.size < 4):
+        if(s_a.size < 1):
+            raise NotImplementedError('0 dimension arrays are not yet supported')
+        elif(s_a.size < 4):
             if(af_array is not None):
                 self.handle = af_array.get()
                 # We need to make sure to keep a copy of af_array
@@ -174,6 +194,10 @@ class ndarray(object):
         s = arrayfire.pow(self.d_array, _raw(other))
         return ndarray(self.shape, dtype=self.dtype, af_array=s)
 
+    def __rpow__(self, other):
+        s = arrayfire.pow(_raw(other), self.d_array)
+        return ndarray(self.shape, dtype=self.dtype, af_array=s)
+
     def __lt__(self, other):
         s = arrayfire.__lt__(self.d_array, _raw(other))
         return ndarray(self.shape, dtype=numpy.bool, af_array=s)
@@ -199,11 +223,14 @@ class ndarray(object):
         return ndarray(self.shape, dtype=numpy.bool, af_array=s)
 
     def __nonzero__(self):
-        s = arrayfire.__ne__(self.d_array, zeros(self.shape, self.dtype).d_array)
-        return ndarray(self.shape, dtype=numpy.bool, af_array=s)
+        return numpy.array(self).__nonzero__()
 
     def __len__(self):
-        return len(self.shape)
+        return len(h_array)
+
+    @property
+    def size(self):
+        return len(h_array)
 
     def __getitem__(self, args):
         if(isinstance(args, ndarray)):
@@ -215,5 +242,14 @@ class ndarray(object):
             return self._data[tuple(args)]
         else:
             return self._data[self._convert_dim(args)]
+
+    def __array__(self):
+        self.d_array.host(self.h_array.ctypes.data)
+        return numpy.copy(self.h_array)
+
+#    def __getattr__(self,name):
+#        print name
+#        raise AttributeError
+        
 
     

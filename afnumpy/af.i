@@ -54,7 +54,7 @@
 //%feature("valuewrapper") af::array::array_proxy;
 %feature("flatnested") af::array::array_proxy;
 
-%ignore af::seqElements(const af_seq & seq);
+//%ignore af::seqElements(const af_seq & seq);
 %ignore af::isSpan(const af_seq & seq);
 %ignore af::calcDim(const af_seq &seq, const dim_type &parentDim);
 %ignore af::toDims(const std::vector<af_seq>& seqs, af::dim4 parentDims);
