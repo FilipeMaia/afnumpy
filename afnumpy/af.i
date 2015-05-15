@@ -50,16 +50,8 @@
   $1 = (dim_type *)PyInt_AsLong($input);
 }
 %apply af_array *OUTPUT { af_array *arr };
-//%nodefaultctor af::array::array_proxy; 
-//%feature("valuewrapper") af::array::array_proxy;
 %feature("flatnested") af::array::array_proxy;
 
-//%ignore af::seqElements(const af_seq & seq);
-%ignore af::isSpan(const af_seq & seq);
-%ignore af::calcDim(const af_seq &seq, const dim_type &parentDim);
-%ignore af::toDims(const std::vector<af_seq>& seqs, af::dim4 parentDims);
-%ignore af::toOffset(const std::vector<af_seq>& seqs, af::dim4 parentDims);
-%ignore af::toStride(const std::vector<af_seq>& seqs, af::dim4 parentDims);
 %ignore af::operator+(const dim4& first, const dim4& second);
 %ignore af::operator-(const dim4& first, const dim4& second);
 %ignore af::operator*(const dim4& first, const dim4& second);
