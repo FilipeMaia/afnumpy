@@ -55,6 +55,8 @@ def array(object, dtype=None, copy=True, order=None, subok=False, ndmin=0):
     shape = object.shape
     while(ndmin > len(shape)):
         shape = (1,)+shape
+    if(dtype is None):
+        dtype = object.dtype
     if(isinstance(object, ndarray)):
         if(copy):
             s = object.d_array.copy().astype(__TypeMap__[dtype])
@@ -121,7 +123,7 @@ class ndarray(object):
         return self.h_array.__str__()        
 
     def __add__(self, other):
-        s = self.d_array + _raw(other)
+        s = arrayfire.__add__(self.d_array, _raw(other))
         return ndarray(self.shape, dtype=self.dtype, af_array=s)
 
     def __iadd__(self, other):
@@ -133,7 +135,7 @@ class ndarray(object):
         return ndarray(self.shape, dtype=self.dtype, af_array=s)
 
     def __sub__(self, other):
-        s = self.d_array - _raw(other)
+        s = arrayfire.__sub__(self.d_array, _raw(other))
         return ndarray(self.shape, dtype=self.dtype, af_array=s)
 
     def __isub__(self, other):
@@ -145,7 +147,7 @@ class ndarray(object):
         return ndarray(self.shape, dtype=self.dtype, af_array=s)
 
     def __mul__(self, other):
-        s = self.d_array * _raw(other)
+        s = arrayfire.__mul__(self.d_array, _raw(other))
         return ndarray(self.shape, dtype=self.dtype, af_array=s)
 
     def __imul__(self, other):
@@ -157,7 +159,7 @@ class ndarray(object):
         return ndarray(self.shape, dtype=self.dtype, af_array=s)
 
     def __div__(self, other):
-        s = self.d_array / _raw(other)
+        s = arrayfire.__div__(self.d_array, _raw(other))
         return ndarray(self.shape, dtype=self.dtype, af_array=s)
 
     def __idiv__(self, other):
@@ -173,31 +175,31 @@ class ndarray(object):
         return ndarray(self.shape, dtype=self.dtype, af_array=s)
 
     def __lt__(self, other):
-        s = self.d_array < _raw(other)
+        s = arrayfire.__lt__(self.d_array, _raw(other))
         return ndarray(self.shape, dtype=numpy.bool, af_array=s)
 
     def __le__(self, other):
-        s = self.d_array <= _raw(other)
+        s = arrayfire.__le__(self.d_array, _raw(other))
         return ndarray(self.shape, dtype=numpy.bool, af_array=s)
 
     def __gt__(self, other):
-        s = self.d_array > _raw(other)
+        s = arrayfire.__gt__(self.d_array, _raw(other))
         return ndarray(self.shape, dtype=numpy.bool, af_array=s)
 
     def __ge__(self, other):
-        s = self.d_array >= _raw(other)
+        s = arrayfire.__ge__(self.d_array, _raw(other))
         return ndarray(self.shape, dtype=numpy.bool, af_array=s)
 
     def __eq__(self, other):
-        s = self.d_array == _raw(other)
+        s = arrayfire.__eq__(self.d_array, _raw(other))
         return ndarray(self.shape, dtype=numpy.bool, af_array=s)
 
     def __ne__(self, other):
-        s = self.d_array != _raw(other)
+        s = arrayfire.__ne__(self.d_array, _raw(other))
         return ndarray(self.shape, dtype=numpy.bool, af_array=s)
 
     def __nonzero__(self):
-        s = self.d_array != zeros(self.shape, self.dtype).d_array
+        s = arrayfire.__ne__(self.d_array, zeros(self.shape, self.dtype).d_array)
         return ndarray(self.shape, dtype=numpy.bool, af_array=s)
 
     def __len__(self):
@@ -205,7 +207,7 @@ class ndarray(object):
 
     def __getitem__(self, args):
         if(isinstance(args, ndarray)):
-            s = self.d_array[args.d_array]
+            s = self.d_array[arrayfire.index(args.d_array)]
             return ndarray(_af_shape(s), dtype=self.dtype, af_array=s)
         elif(isinstance(args, tuple)):
             args = list(args)
