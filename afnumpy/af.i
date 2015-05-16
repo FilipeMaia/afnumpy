@@ -49,7 +49,14 @@
 %typemap(in) dim_type *  {
   $1 = (dim_type *)PyInt_AsLong($input);
 }
+%typemap(in) const dim_type *  {
+  $1 = (const dim_type *)PyInt_AsLong($input);
+}
+%typemap(in)  dim_type const * const  {
+  $1 = (dim_type *)PyInt_AsLong($input);
+}
 %apply af_array *OUTPUT { af_array *arr };
+%apply af_array *OUTPUT { af_array *out };
 %feature("flatnested") af::array::array_proxy;
 
 %ignore af::operator+(const dim4& first, const dim4& second);
@@ -109,6 +116,8 @@ TYPE_IGNORE(constant, cfloat)
 %rename(__getitem__) af::dim4::operator[];
 %rename(copy) af::seq::operator=;
 %rename(pprint) af::print;
+%rename(copy) af::features::operator=;
+
 %rename(copy) af::features::operator=;
 
 // Try to handle exceptions

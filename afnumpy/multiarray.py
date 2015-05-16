@@ -98,8 +98,11 @@ def all(a, axis=None, out=None, keepdims=False):
     if(keepdims is not False):
         raise NotImplementedError
     if(axis is None):
-        axis = -1
-    s = arrayfire.alltrue(a.d_array, axis)
+        for i in range(len(a.shape)-1,-1,-1):
+            s = arrayfire.alltrue(a.d_array, c2f(a.shape, i)) 
+            a = ndarray(_af_shape(s), dtype=bool, af_array=s)
+    else:
+        s = arrayfire.alltrue(a.d_array, axis)
     a = ndarray(_af_shape(s), dtype=bool, af_array=s)
     if(axis == -1):
         if(keepdims):
@@ -115,10 +118,13 @@ def sum(a, axis=None, dtype=None, out=None, keepdims=False):
     if(keepdims is not False):
         raise NotImplementedError
     if(axis is None):
-        axis = -1
-    s = arrayfire.sum(a.d_array, axis)
+        for i in range(len(a.shape)-1,-1,-1):
+            s = arrayfire.sum(a.d_array, c2f(a.shape, i)) 
+            a = ndarray(_af_shape(s), dtype=a.dtype, af_array=s)
+    else:
+        s = arrayfire.sum(a.d_array, c2f(a.shape, axis))
     a = ndarray(_af_shape(s), dtype=a.dtype, af_array=s)
-    if(axis == -1):
+    if(axis is None):
         if(keepdims):
             return numpy.array(a)
         else:
@@ -126,7 +132,21 @@ def sum(a, axis=None, dtype=None, out=None, keepdims=False):
     else:
         return a
 
-    
+
+def reshape(a, newshape, order='C'):
+    if(order is not 'C'):
+        raise NotImplementedError
+    newshape = numpy.array(c2f(newshape), dtype=dim_type)
+    ret, handle = arrayfire.af_moddims(a.d_array.get(), newshape.size, newshape.ctypes.data)
+    s = arrayfire.array(handle)
+    a = ndarray(_af_shape(s), dtype=a.dtype, af_array=s)
+    return a
+
+def c2f(shape, dim = None):
+    if(dim is None):
+        return shape[::-1]
+    else:
+        return len(shape)-dim-1
 
 class ndarray(object):
     def __init__(self, shape, dtype=float, buffer=None, offset=0, strides=None, order=None, af_array=None):
@@ -138,7 +158,7 @@ class ndarray(object):
             raise NotImplementedError('order must be None')
         self.shape = shape
         self.dtype = dtype
-        s_a = numpy.array(shape,dtype=dim_type)
+        s_a = numpy.array(c2f(shape),dtype=dim_type)
         if(s_a.size < 1):
             raise NotImplementedError('0 dimension arrays are not yet supported')
         elif(s_a.size < 4):
@@ -255,6 +275,11 @@ class ndarray(object):
     def size(self):
         return len(h_array)
 
+    def _convert_dim(self, args):
+        if args < 0:
+            args = len(self) + args
+        return args
+
     def __getitem__(self, args):
         if(isinstance(args, ndarray)):
             s = self.d_array[arrayfire.index(args.d_array)]
@@ -264,7 +289,9 @@ class ndarray(object):
             args[0] = self._convert_dim(args[0])
             return self._data[tuple(args)]
         else:
-            return self._data[self._convert_dim(args)]
+            s = self.d_array.__getitem__(arrayfire.index(self._convert_dim(args)))
+            return ndarray(_af_shape(s), dtype=self.dtype, af_array=s)
+
 
     def __setitem__(self, idx, value):
         if(isinstance(idx, ndarray)):
@@ -280,11 +307,11 @@ class ndarray(object):
             raise NotImplementedError('values must be a afnumpy.ndarray')
 
     def __array__(self):
-        print type(self)
-        print self.d_array.type()
         self.d_array.host(self.h_array.ctypes.data)
         return numpy.copy(self.h_array)
 
+    def reshape(self, shape, order = 'C'):
+        return reshape(self, shape, order)
 #    def __getattr__(self,name):
 #        print name
 #        raise AttributeError

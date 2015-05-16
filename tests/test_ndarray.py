@@ -152,6 +152,11 @@ def test_all():
     a = afnumpy.array(b)
     iassert(afnumpy.all(a), numpy.all(b))
     iassert(afnumpy.all(a,axis=0), numpy.all(b,axis=0))
+
+    b = numpy.random.randint(0,2,(3,2)).astype('bool')
+    a = afnumpy.array(b)
+    iassert(afnumpy.all(a), numpy.all(b))
+    iassert(afnumpy.all(a,axis=0), numpy.all(b,axis=0))
     # Not implemented
     # iassert(afnumpy.all(a,keepdims=True), numpy.all(b,keepdims=True))
 
@@ -162,5 +167,21 @@ def test_sum():
     fassert(afnumpy.sum(a,axis=0), numpy.sum(b,axis=0))
     # Not implemented
     # fassert(afnumpy.sum(a,keepdims=True), numpy.all(b,keepdims=True))
-    
+
+    b = numpy.random.random((2,3))
+    a = afnumpy.array(b)
+    fassert(afnumpy.sum(a), numpy.sum(b))
+    fassert(afnumpy.sum(a,axis=0), numpy.sum(b,axis=0))
+        
+def test_reshape():
+    b = numpy.random.random((2,3))
+    a = afnumpy.array(b)
+    iassert(a.reshape((3,2)), b.reshape((3,2)))
+
+def test_getitem():
+    b = numpy.random.random((3))
+    a = afnumpy.array(b)
+    iassert(a[0], b[0])
+    iassert(a[2], b[2])
+
     
