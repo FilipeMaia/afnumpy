@@ -19,6 +19,23 @@ def test_zeros():
     b = numpy.zeros(3)
     iassert(a, b)
 
+def test_where():
+    a1 = afnumpy.array([1,2,3])
+    b1 = numpy.array(a1)
+
+    a2 = afnumpy.array([0,2,1])
+    b2 = numpy.array(a2)
+
+    # Test where with input as indices
+    iassert(afnumpy.where(a2, a1, a2), numpy.where(b2, b1, b2))
+    # Test where with input as indices
+    iassert(afnumpy.where(a2), numpy.where(b2))
+    # Test where with input as booleans
+    iassert(afnumpy.where(a2 < 2, a1, a2), numpy.where(b2 < 2, b1, b2))
+    # Test where with input as booleans
+    iassert(afnumpy.where(a2 < 2), numpy.where(b2 < 2))
+
+
 def test_array():
     a = afnumpy.array([3])
     b = numpy.array([3])
@@ -31,6 +48,16 @@ def test_array():
     a = afnumpy.array(numpy.array([1,2,3]))
     b = numpy.array([1,2,3])
     iassert(a, b)
+
+    a = afnumpy.array(numpy.array([1.,2.,3.]))
+    b = numpy.array([1.,2.,3.])
+    iassert(a, b)
+
+    # Try multidimensional arrays
+    a = afnumpy.array(numpy.array([[1.,2.,3.],[4.,5.,6.]]))
+    b = numpy.array(a)
+    iassert(a, b)
+
 
 
 def test_binary_arithmetic():
@@ -120,4 +147,20 @@ def test_comparisons():
     iassert(a1 != 0.5, b1 != 0.5)
     iassert(0.5 != a1, 0.5 != b1)
 
+def test_all():    
+    b = numpy.random.randint(0,2,3).astype('bool')
+    a = afnumpy.array(b)
+    iassert(afnumpy.all(a), numpy.all(b))
+    iassert(afnumpy.all(a,axis=0), numpy.all(b,axis=0))
+    # Not implemented
+    # iassert(afnumpy.all(a,keepdims=True), numpy.all(b,keepdims=True))
+
+def test_sum():    
+    b = numpy.random.random(3)
+    a = afnumpy.array(b)
+    fassert(afnumpy.sum(a), numpy.sum(b))
+    fassert(afnumpy.sum(a,axis=0), numpy.sum(b,axis=0))
+    # Not implemented
+    # fassert(afnumpy.sum(a,keepdims=True), numpy.all(b,keepdims=True))
+    
     

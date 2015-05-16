@@ -2,6 +2,7 @@ import numpy
 import arrayfire
 from IPython.core.debugger import Tracer
 
+dim_type = numpy.uint32
 
 __TypeMap__ = { float: arrayfire.f64,
                 numpy.float32: arrayfire.f32,
@@ -16,7 +17,12 @@ __TypeMap__ = { float: arrayfire.f64,
                 numpy.dtype('bool'): arrayfire.b8,
                 numpy.int64: arrayfire.s64,
                 numpy.dtype('int64'): arrayfire.s64,
+                numpy.uint64: arrayfire.u64,
+                numpy.dtype('uint64'): arrayfire.u64,
                 numpy.uint32: arrayfire.u32,
+                numpy.dtype('uint32'): arrayfire.u32,
+                numpy.int32: arrayfire.s32,
+                numpy.dtype('int32'): arrayfire.s32,
             }
 
 __dummy__ = object()
@@ -73,17 +79,16 @@ def where(condition, x=__dummy__, y=__dummy__):
     a = condition
     s = arrayfire.where(a.d_array)
     if(x is __dummy__ and y is __dummy__):
-        return ndarray(a.shape, dtype=numpy.uint32, af_array=s)
+        return ndarray(_af_shape(s), dtype=numpy.uint32, af_array=s)
     elif(x is not __dummy__ and y is not __dummy__):
         if(x.dtype != y.dtype):
             raise TypeError('x and y must have same dtype')
         if(x.shape != y.shape):
             raise ValueError('x and y must have same shape')
-        # idx = ndarray(a.shape, dtype=numpy.uint32, af_array=s)
-        # ret = array(y)
-        # ret[idx] = x[idx]
-        # return ret;
-        raise NotImplementedError        
+        idx = ndarray(_af_shape(s), dtype=numpy.uint32, af_array=s)
+        ret = array(y)
+        ret[idx] = x[idx]
+        return ret;
     else:
         raise ValueError('either both or neither of x and y should be given')
 
@@ -94,7 +99,7 @@ def all(a, axis=None, out=None, keepdims=False):
         raise NotImplementedError
     if(axis is None):
         axis = -1
-    s =  arrayfire.alltrue(a.d_array, axis)
+    s = arrayfire.alltrue(a.d_array, axis)
     a = ndarray(_af_shape(s), dtype=bool, af_array=s)
     if(axis == -1):
         if(keepdims):
@@ -103,6 +108,24 @@ def all(a, axis=None, out=None, keepdims=False):
             return numpy.array(a)[0]
     else:
         return a
+
+def sum(a, axis=None, dtype=None, out=None, keepdims=False):
+    if(out is not None):
+        raise NotImplementedError
+    if(keepdims is not False):
+        raise NotImplementedError
+    if(axis is None):
+        axis = -1
+    s = arrayfire.sum(a.d_array, axis)
+    a = ndarray(_af_shape(s), dtype=a.dtype, af_array=s)
+    if(axis == -1):
+        if(keepdims):
+            return numpy.array(a)
+        else:
+            return numpy.array(a)[0]
+    else:
+        return a
+
     
 
 class ndarray(object):
@@ -115,7 +138,7 @@ class ndarray(object):
             raise NotImplementedError('order must be None')
         self.shape = shape
         self.dtype = dtype
-        s_a = numpy.array(shape)
+        s_a = numpy.array(shape,dtype=dim_type)
         if(s_a.size < 1):
             raise NotImplementedError('0 dimension arrays are not yet supported')
         elif(s_a.size < 4):
@@ -243,7 +266,22 @@ class ndarray(object):
         else:
             return self._data[self._convert_dim(args)]
 
+    def __setitem__(self, idx, value):
+        if(isinstance(idx, ndarray)):
+            idx = arrayfire.index(idx.d_array)
+        else:
+            raise NotImplementedError('indices must be a afnumpy.ndarray')
+        sel = self.d_array[idx]
+        if(isinstance(value, ndarray)):
+            if(value.dtype != self.dtype):
+                raise TypeError('left hand side must have same dtype as right hand side')
+            sel.copy_on_write(value.d_array)
+        else:
+            raise NotImplementedError('values must be a afnumpy.ndarray')
+
     def __array__(self):
+        print type(self)
+        print self.d_array.type()
         self.d_array.host(self.h_array.ctypes.data)
         return numpy.copy(self.h_array)
 

@@ -111,6 +111,16 @@ TYPE_IGNORE(constant, cfloat)
 %rename(pprint) af::print;
 %rename(copy) af::features::operator=;
 
+// Try to handle exceptions
+%exception {
+try {
+  $function
+    }
+catch (const std::exception & e) {
+  PyErr_SetString(PyExc_RuntimeError, e.what());
+  return NULL;
+}
+}
  %include "af/defines.h"
  %include "af/dim4.hpp"
  %include "af/seq.h"
