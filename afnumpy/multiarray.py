@@ -138,7 +138,7 @@ def reshape(a, newshape, order='C'):
         raise NotImplementedError
     newshape = numpy.array(c2f(newshape), dtype=dim_t)
     ret, handle = arrayfire.af_moddims(a.d_array.get(), newshape.size, newshape.ctypes.data)
-    s = arrayfire.array(handle)
+    s = arrayfire.array_from_handle(handle)
     a = ndarray(_af_shape(s), dtype=a.dtype, af_array=s)
     return a
 
