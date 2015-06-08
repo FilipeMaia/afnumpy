@@ -2,7 +2,7 @@ import numpy
 import arrayfire
 from IPython.core.debugger import Tracer
 
-dim_type = numpy.uint32
+dim_t = numpy.int64
 
 __TypeMap__ = { float: arrayfire.f64,
                 numpy.float32: arrayfire.f32,
@@ -136,7 +136,7 @@ def sum(a, axis=None, dtype=None, out=None, keepdims=False):
 def reshape(a, newshape, order='C'):
     if(order is not 'C'):
         raise NotImplementedError
-    newshape = numpy.array(c2f(newshape), dtype=dim_type)
+    newshape = numpy.array(c2f(newshape), dtype=dim_t)
     ret, handle = arrayfire.af_moddims(a.d_array.get(), newshape.size, newshape.ctypes.data)
     s = arrayfire.array(handle)
     a = ndarray(_af_shape(s), dtype=a.dtype, af_array=s)
@@ -158,7 +158,7 @@ class ndarray(object):
             raise NotImplementedError('order must be None')
         self.shape = shape
         self.dtype = dtype
-        s_a = numpy.array(c2f(shape),dtype=dim_type)
+        s_a = numpy.array(c2f(shape),dtype=dim_t)
         if(s_a.size < 1):
             raise NotImplementedError('0 dimension arrays are not yet supported')
         elif(s_a.size < 4):
@@ -172,7 +172,7 @@ class ndarray(object):
                     ret, self.handle = arrayfire.af_create_array(buffer.ctypes.data, s_a.size, s_a.ctypes.data, __TypeMap__[dtype])
                 else:
                     ret, self.handle = arrayfire.af_create_handle(s_a.size, s_a.ctypes.data, __TypeMap__[dtype])
-                self.d_array = arrayfire.array(self.handle)
+                self.d_array = arrayfire.array_from_handle(self.handle)
         else:
             raise NotImplementedError('Only up to 4 dimensions are supported')
         self.h_array = numpy.ndarray(shape,dtype,buffer,offset,strides,order)
