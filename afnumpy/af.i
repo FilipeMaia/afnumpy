@@ -17,7 +17,6 @@
 
  %{
  /* Includes the header in the wrapper code */
-#include "af/compatible.h"
 #include "af/algorithm.h"
 #include "af/arith.h"
 #include "af/array.h"
@@ -54,7 +53,9 @@
    
 %typemap(in) void * {
   $1 = (void *)PyInt_AsLong($input);
+  printf("Sent af_array %p\n",$1);
 }
+
 
 %typemap(in, numinputs=0) af_array *OUTPUT (af_array temp) { 
   $1 = &temp;
@@ -63,6 +64,7 @@
 
 %typemap(argout) af_array * OUTPUT {
     PyObject *o, *o2, *o3;
+    printf("Got af_array %p\n",*$1);
     o =  PyInt_FromLong((long)*$1);
     if ((!$result) || ($result == Py_None)) {
         $result = o;
@@ -84,15 +86,13 @@
 %typemap(in) dim_t *  {
   $1 = (dim_t *)PyInt_AsLong($input);
 }
+
 /* %typemap(in) const dim_t *  { */
 /*   $1 = (const dim_t *)PyInt_AsLong($input); */
 /* } */
-/* %typemap(in)  dim_t const * const  { */
-/*   $1 = (dim_t *)PyInt_AsLong($input); */
-/* } */
 
-/* %typemap(in)  dim_t const * const  { */
-/*   $1 = (dim_t *)PyInt_AsLong($input); */
+/* %typemap(in)  const dim_t * const  { */
+/*   $1(( dim_t *)PyInt_AsLong($input)); */
 /* } */
 
 %apply af_array * OUTPUT { af_array *arr };
@@ -160,8 +160,8 @@ TYPE_IGNORE(constant, cfloat)
 %ignore operator+(double, seq);
 %ignore operator-(double, seq);
 %ignore operator*(double, seq);
-%rename(asarray) af::array::array_proxy::operator array();
-%rename(asarray) af::seq::operator array() const;
+%rename(proxy_asarray) af::array::array_proxy::operator array();
+%rename(seq_asarray) af::seq::operator array() const;
 %rename(as_const_array) af::array::array_proxy::operator array() const;
 %rename(g_afDevice) ::afDevice;
 %rename(g_afHost) ::afHost;
@@ -193,7 +193,6 @@ catch (const std::exception & e) {
 %include "af/defines.h"
 %include "af/index.h"
 %include "af/complex.h"
-%include "af/compatible.h"
 %include "af/algorithm.h"
 %include "af/arith.h"
 %include "af/array.h"
