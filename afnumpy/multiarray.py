@@ -282,13 +282,14 @@ class ndarray(object):
 
     def __getitem__(self, args):
         if(isinstance(args, ndarray)):
-            s = self.d_array[arrayfire.index(args.d_array)]
+            s = (self.d_array[arrayfire.index(args.d_array)])
             return ndarray(_af_shape(s), dtype=self.dtype, af_array=s)
         elif(isinstance(args, tuple)):
             args = list(args)
             args[0] = self._convert_dim(args[0])
             return self._data[tuple(args)]
         else:
+            idx = arrayfire.index(self._convert_dim(args))
             s = self.d_array.__getitem__(arrayfire.index(self._convert_dim(args)))
             return ndarray(_af_shape(s), dtype=self.dtype, af_array=s)
 

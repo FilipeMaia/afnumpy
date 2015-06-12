@@ -53,7 +53,6 @@
    
 %typemap(in) void * {
   $1 = (void *)PyInt_AsLong($input);
-  printf("Sent af_array %p\n",$1);
 }
 
 
@@ -64,7 +63,6 @@
 
 %typemap(argout) af_array * OUTPUT {
     PyObject *o, *o2, *o3;
-    printf("Got af_array %p\n",*$1);
     o =  PyInt_FromLong((long)*$1);
     if ((!$result) || ($result == Py_None)) {
         $result = o;
@@ -81,6 +79,12 @@
         Py_DECREF(o2);
         Py_DECREF(o3);
     }
+}
+
+
+%typemap(out) af::array::array_proxy {
+  // This looks really strange but it's necessary due to the overloading of & and *
+  $result = SWIG_NewPointerObj(new af::array(*(&$1)), SWIGTYPE_p_af__array, SWIG_POINTER_OWN |  0 );
 }
 
 %typemap(in) dim_t *  {
