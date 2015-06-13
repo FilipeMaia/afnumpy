@@ -232,6 +232,9 @@ catch (const std::exception & e) {
   void setValue(const af::index &s0, const af::array &value){
     ((*self)(s0)) = value;
   }
+  void setValue(const af::index &s0, double value){
+    ((*self)(s0)) = value;
+  }
 };
 
 %template(max_f32) af::max<float>;

@@ -1,5 +1,6 @@
 import numpy
 import arrayfire
+import numbers
 from IPython.core.debugger import Tracer
 
 dim_t = numpy.int64
@@ -309,16 +310,47 @@ class ndarray(object):
             s = self.d_array.__getitem__(arrayfire.index(self._convert_dim(args)))
             return ndarray(_af_shape(s), dtype=self.dtype, af_array=s)
 
+    def __convert_dim__(self, idx, maxlen):
+        if(isinstance(idx, slice)):
+            if idx.step is None:
+                step = 1
+            else:
+                step = idx.step
+            if idx.start is None:
+                if step < 0:
+                    start = maxlen-1
+                else:
+                    start = 0
+            else:
+                start = idx.start
+            if idx.stop is None:
+                if step < 0:
+                    end = 0
+                else:
+                    end = maxlen-1
+            else:
+                end = idx.stop
+            return slice(start,end,step)
+        else:
+            if idx < 0:
+                return maxlen+idx
+            else:
+                return idx            
 
     def __setitem__(self, idx, value):
         if(isinstance(idx, ndarray)):
             idx = arrayfire.index(idx.d_array)
+        elif(isinstance(idx, slice)):
+            idx = self.__convert_dim__(idx,self.shape[0])
+            idx = arrayfire.index(arrayfire.seq(float(idx.start),float(idx.stop),float(idx.step)))
         else:
             raise NotImplementedError('indices must be a afnumpy.ndarray')
         if(isinstance(value, ndarray)):
             if(value.dtype != self.dtype):
                 raise TypeError('left hand side must have same dtype as right hand side')
             self.d_array.setValue(idx, value.d_array)
+        elif(isinstance(value, numbers.Number)):
+            self.d_array.setValue(idx, value)
         else:
             raise NotImplementedError('values must be a afnumpy.ndarray')
 
