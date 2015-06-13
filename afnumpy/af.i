@@ -219,3 +219,8 @@ catch (const std::exception & e) {
 %include "af/vision.h"
 
 
+%extend af::array {
+  void setValue(const af::index &s0, const af::array &value){
+    ((*self)(s0)) = value;
+  }
+};

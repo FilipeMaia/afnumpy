@@ -299,11 +299,10 @@ class ndarray(object):
             idx = arrayfire.index(idx.d_array)
         else:
             raise NotImplementedError('indices must be a afnumpy.ndarray')
-        sel = self.d_array[idx]
         if(isinstance(value, ndarray)):
             if(value.dtype != self.dtype):
                 raise TypeError('left hand side must have same dtype as right hand side')
-            sel.copy_on_write(value.d_array)
+            self.d_array.setValue(idx, value.d_array)
         else:
             raise NotImplementedError('values must be a afnumpy.ndarray')
 
