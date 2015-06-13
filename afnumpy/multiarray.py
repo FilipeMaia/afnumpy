@@ -26,6 +26,8 @@ __TypeMap__ = { float: arrayfire.f64,
                 numpy.dtype('int32'): arrayfire.s32,
                 numpy.complex128: arrayfire.c64,
                 numpy.dtype('complex128'): arrayfire.c64,
+                numpy.complex64: arrayfire.c32,
+                numpy.dtype('complex64'): arrayfire.c32,
             }
 
 __TypeToString__ = { arrayfire.f64: 'f64',
@@ -281,6 +283,11 @@ class ndarray(object):
     def __ne__(self, other):
         s = arrayfire.__ne__(self.d_array, _raw(other))
         return ndarray(self.shape, dtype=numpy.bool, af_array=s)
+
+    def __abs__(self):
+        s = arrayfire.abs(self.d_array)
+        # dtype is wrong for complex types
+        return ndarray(self.shape, dtype=self.dtype, af_array=s)
 
     def __nonzero__(self):
         return numpy.array(self).__nonzero__()
