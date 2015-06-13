@@ -8,6 +8,15 @@ from distutils.core import setup, Extension
 import os
 import numpy
 
+# os.environ["CC"]="/Users/filipe/src/build/bin/clang++" 
+# os.environ["LDSHARED"]="/Users/filipe/src/build/bin/clang++" 
+# os.environ["LDCXXSHARED"]="/Users/filipe/src/build/bin/clang++" 
+# os.environ["DYLD"]="/Users/filipe/src/build/bin/clang++" 
+# os.environ["DYLDSHARED"]="/Users/filipe/src/build/bin/clang++" 
+# os.environ["LDD"]="/Users/filipe/src/build/bin/clang++" 
+# os.environ["LD"]="/Users/filipe/src/build/bin/clang++" 
+# os.environ["LINKER"]="/Users/filipe/src/build/bin/clang++" 
+# os.environ["BLDSHARED"]="/Users/filipe/src/build/bin/clang++" 
 os.environ["ARCHFLAGS"]="-arch x86_64" 
 arrayfire_module = Extension('_arrayfire',
                              sources=['afnumpy/af_wrap.cxx'],

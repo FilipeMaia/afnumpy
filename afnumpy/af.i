@@ -84,7 +84,7 @@
 
 %typemap(out) af::array::array_proxy {
   // This looks really strange but it's necessary due to the overloading of & and *
-  $result = SWIG_NewPointerObj(new af::array(*(&$1)), SWIGTYPE_p_af__array, SWIG_POINTER_OWN |  0 );
+  $result = SWIG_NewPointerObj(new af::array((af::array)(*(&$1))), SWIGTYPE_p_af__array, SWIG_POINTER_OWN |  0 );
 }
 
 %typemap(in) dim_t *  {

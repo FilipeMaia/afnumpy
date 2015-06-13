@@ -99,10 +99,10 @@ def all(a, axis=None, out=None, keepdims=False):
         raise NotImplementedError
     if(axis is None):
         for i in range(len(a.shape)-1,-1,-1):
-            s = arrayfire.alltrue(a.d_array, c2f(a.shape, i)) 
+            s = arrayfire.allTrue(a.d_array, c2f(a.shape, i)) 
             a = ndarray(_af_shape(s), dtype=bool, af_array=s)
     else:
-        s = arrayfire.alltrue(a.d_array, axis)
+        s = arrayfire.allTrue(a.d_array, axis)
     a = ndarray(_af_shape(s), dtype=bool, af_array=s)
     if(axis == -1):
         if(keepdims):
