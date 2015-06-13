@@ -333,6 +333,10 @@ class ndarray(object):
         type_max = getattr(arrayfire, 'max_'+__TypeToString__[self.d_array.type()])
         return type_max(self.d_array)
 
+    def min(self):
+        type_max = getattr(arrayfire, 'min_'+__TypeToString__[self.d_array.type()])
+        return type_max(self.d_array)
+
 #    def __getattr__(self,name):
 #        print name
 #        raise AttributeError

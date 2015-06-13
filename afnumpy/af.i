@@ -243,7 +243,14 @@ catch (const std::exception & e) {
 %template(max_c32) af::max<af::cfloat>;
 %template(max_c64) af::max<af::cdouble>;
 
-//%numpy_typemaps(af::cfloat , NPY_CFLOAT , int)
-//%numpy_typemaps(af::cdouble , NPY_CDOUBLE , int)
+
+%template(min_f32) af::min<float>;
+%template(min_f64) af::min<double>;
+%template(min_s32) af::min<int32_t>;
+%template(min_u32) af::min<uint32_t>;
+//%template(min_s64) af::min<int64_t>(const array &in);
+//%template(min_u64) af::min<uint64_t>;
+%template(min_c32) af::min<af::cfloat>;
+%template(min_c64) af::min<af::cdouble>;
 
 

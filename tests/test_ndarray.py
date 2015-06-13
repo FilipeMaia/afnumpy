@@ -181,7 +181,23 @@ def test_vdot():
 def test_max():    
     b = numpy.random.random(3)+numpy.random.random(3)*1.0j
     a = afnumpy.array(b)
+    # Arrayfire uses the magnitude for max while numpy uses
+    # the real part as primary key followed by the imaginary part
+    # fassert(a.max(), b.max())
+    b = numpy.random.random(3)
+    a = afnumpy.array(b)
     fassert(a.max(), b.max())
+
+def test_min():    
+    b = numpy.random.random(3)+numpy.random.random(3)*1.0j
+    a = afnumpy.array(b)
+    # Arrayfire uses the magnitude for max while numpy uses
+    # the real part as primary key followed by the imaginary part
+    # fassert(a.min(), b.min())
+    b = numpy.random.random(3)
+    a = afnumpy.array(b)
+    fassert(a.max(), b.max())
+
         
 def test_reshape():
     b = numpy.random.random((2,3))
