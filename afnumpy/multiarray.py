@@ -102,7 +102,7 @@ def all(a, axis=None, out=None, keepdims=False):
             s = arrayfire.allTrue(a.d_array, c2f(a.shape, i)) 
             a = ndarray(_af_shape(s), dtype=bool, af_array=s)
     else:
-        s = arrayfire.allTrue(a.d_array, axis)
+        s = arrayfire.allTrue(a.d_array, c2f(a.shape, axis))
     a = ndarray(_af_shape(s), dtype=bool, af_array=s)
     if(axis == -1):
         if(keepdims):
