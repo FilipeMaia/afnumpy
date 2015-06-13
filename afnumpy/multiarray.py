@@ -23,7 +23,19 @@ __TypeMap__ = { float: arrayfire.f64,
                 numpy.dtype('uint32'): arrayfire.u32,
                 numpy.int32: arrayfire.s32,
                 numpy.dtype('int32'): arrayfire.s32,
+                numpy.complex128: arrayfire.c64,
+                numpy.dtype('complex128'): arrayfire.c64,
             }
+
+__TypeToString__ = { arrayfire.f64: 'f64',
+                     arrayfire.f32: 'f32',
+                     arrayfire.u32: 'u32',
+                     arrayfire.s32: 's32',
+                     arrayfire.u64: 'u64',
+                     arrayfire.s64: 's64',
+                     arrayfire.c32: 'c32',
+                     arrayfire.c64: 'c64',
+                     }
 
 __dummy__ = object()
 
@@ -38,6 +50,10 @@ def _af_shape(af_array):
     for i in range(0,af_array.numdims()):
         shape = (af_array.dims(i),)+shape
     return shape
+
+def vdot(a, b):
+    s = arrayfire.dot(arrayfire.conjg(a.d_array), b.d_array)
+    return ndarray(_af_shape(s), dtype=a.dtype, af_array=s)
 
 def zeros(shape, dtype=float, order='C'):
     b = numpy.zeros(shape, dtype, order)
@@ -312,6 +328,11 @@ class ndarray(object):
 
     def reshape(self, shape, order = 'C'):
         return reshape(self, shape, order)
+
+    def max(self):
+        type_max = getattr(arrayfire, 'max_'+__TypeToString__[self.d_array.type()])
+        return type_max(self.d_array)
+
 #    def __getattr__(self,name):
 #        print name
 #        raise AttributeError

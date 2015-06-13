@@ -194,6 +194,15 @@ catch (const std::exception & e) {
 }
 }
 
+%typemap(out) af::af_cfloat {
+  $result = PyComplex_FromDoubles(af::real($1),af::imag($1));
+ }
+
+%typemap(out) af::af_cdouble  {
+  $result = PyComplex_FromDoubles(af::real($1),af::imag($1));
+ }
+
+
 %include "af/defines.h"
 %include "af/index.h"
 %include "af/complex.h"
@@ -224,3 +233,17 @@ catch (const std::exception & e) {
     ((*self)(s0)) = value;
   }
 };
+
+%template(max_f32) af::max<float>;
+%template(max_f64) af::max<double>;
+%template(max_s32) af::max<int32_t>;
+%template(max_u32) af::max<uint32_t>;
+//%template(max_s64) af::max<int64_t>(const array &in);
+//%template(max_u64) af::max<uint64_t>;
+%template(max_c32) af::max<af::cfloat>;
+%template(max_c64) af::max<af::cdouble>;
+
+//%numpy_typemaps(af::cfloat , NPY_CFLOAT , int)
+//%numpy_typemaps(af::cdouble , NPY_CDOUBLE , int)
+
+

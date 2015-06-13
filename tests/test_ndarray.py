@@ -172,6 +172,16 @@ def test_sum():
     a = afnumpy.array(b)
     fassert(afnumpy.sum(a), numpy.sum(b))
     fassert(afnumpy.sum(a,axis=0), numpy.sum(b,axis=0))
+
+def test_vdot():    
+    b = numpy.random.random(3)+numpy.random.random(3)*1.0j
+    a = afnumpy.array(b)
+    fassert(afnumpy.vdot(a,a), numpy.vdot(b,b))
+
+def test_max():    
+    b = numpy.random.random(3)+numpy.random.random(3)*1.0j
+    a = afnumpy.array(b)
+    fassert(a.max(), b.max())
         
 def test_reshape():
     b = numpy.random.random((2,3))
