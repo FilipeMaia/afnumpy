@@ -172,6 +172,8 @@ def reshape(a, newshape, order='C'):
     return a
 
 def c2f(shape, dim = None):
+    if isinstance(shape,numbers.Number):
+        return shape
     if(dim is None):
         return shape[::-1]
     else:

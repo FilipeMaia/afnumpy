@@ -211,6 +211,7 @@ def test_reshape():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
     iassert(a.reshape((3,2)), b.reshape((3,2)))
+    iassert(a.reshape(6), b.reshape(6))
 
 def test_getitem():
     b = numpy.random.random((3))
