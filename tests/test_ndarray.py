@@ -198,6 +198,14 @@ def test_min():
     a = afnumpy.array(b)
     fassert(a.max(), b.max())
 
+def test_abs():    
+    b = numpy.random.random(3)+numpy.random.random(3)*1.0j
+    a = afnumpy.array(b)
+    fassert(abs(a), abs(b))
+    b = numpy.random.random(3)
+    a = afnumpy.array(b)
+    fassert(abs(a), abs(b))
+
         
 def test_reshape():
     b = numpy.random.random((2,3))
