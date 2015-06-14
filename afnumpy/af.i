@@ -5,6 +5,7 @@
 %include "numpy.i"
 // For typemaps for std::exception
 %include "exception.i"
+%include "std_complex.i"
 
 #undef __cplusplus
 #define __cplusplus 201103L
@@ -202,7 +203,6 @@ catch (const std::exception & e) {
   $result = PyComplex_FromDoubles(af::real($1),af::imag($1));
  }
 
-
 %include "af/defines.h"
 %include "af/index.h"
 %include "af/complex.h"
@@ -234,6 +234,9 @@ catch (const std::exception & e) {
   }
   void setValue(const af::index &s0, double value){
     ((*self)(s0)) = value;
+  }
+  void setValue(const af::index &s0, std::complex<double> value){
+    ((*self)(s0)) = af::af_cdouble(value.real(),value.imag());
   }
 };
 
