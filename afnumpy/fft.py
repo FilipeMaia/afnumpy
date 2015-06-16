@@ -3,16 +3,58 @@ from afnumpy.multiarray import ndarray
 import arrayfire
 import private_utils as pu
 
-def fft2(a, s=None, axes=(-2, -1)):
-    if s is not None:
+def fft(a, s=None, axes=None):
+    if(s is None):
+        s = a.shape[-1:]
+    return __fftn__(a, s=s, axes=axes, direction='forward')
+
+def ifft(a, s=None, axes=None):
+    if(s is None):
+        s = a.shape[-1:]
+    return __fftn__(a, s=s, axes=axes, direction='inverse')
+
+def fft2(a, s=None, axes=None):
+    if(s is None):
+        s = a.shape[-2:]
+    return __fftn__(a, s=s, axes=axes, direction='forward')
+
+def ifft2(a, s=None, axes=None):
+    if(s is None):
+        s = a.shape[-2:]
+    return __fftn__(a, s=s, axes=axes, direction='inverse')
+
+def fftn(a, s=None, axes=None):
+    if(s is None):
+        s = a.shape
+    return __fftn__(a, s=s, axes=axes, direction='forward')
+
+def ifftn(a, s=None, axes=None):
+    if(s is None):
+        s = a.shape
+    return __fftn__(a, s=s, axes=axes, direction='inverse')
+
+def __fftn__(a, s, axes, direction='forward'):
+    if len(s) != 3 and len(s) != 2 and len(s) != 1:
         raise NotImplementedError
-    ft_axes = list(axes)
-    for i in range(0,2):
-        if axes[i] < 0:
-            ft_axes[i] = len(a.shape)+axes[i]
-        ft_axes[i] = len(a.shape)-ft_axes[i]-1
-    s = arrayfire.fft2(a.d_array, ft_axes[0], ft_axes[1])
-    return ndarray(a.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+    if axes is not None:
+        raise NotImplementedError
+    if(direction == 'forward'):
+        if len(s) == 3:
+            fa = arrayfire.fft3(a.d_array, s[2], s[1], s[0])
+        elif len(s) == 2:
+            fa = arrayfire.fft2(a.d_array, s[1], s[0])
+        elif len(s) == 1:
+            fa = arrayfire.fft(a.d_array, s[0])
+    elif direction == 'inverse':
+        if len(s) == 3:
+            fa = arrayfire.ifft3(a.d_array, s[2], s[1], s[0])
+        elif len(s) == 2:
+            fa = arrayfire.ifft2(a.d_array, s[1], s[0])
+        elif len(s) == 1:
+            fa = arrayfire.ifft(a.d_array, s[0])
+    else:
+        raise ValueError('Wrong FFT direction')
+    return ndarray(a.shape, dtype=pu.InvTypeMap[fa.type()], af_array=fa)
 
 
     
