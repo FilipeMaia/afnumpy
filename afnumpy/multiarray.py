@@ -4,6 +4,21 @@ import numbers
 from IPython.core.debugger import Tracer
 import private_utils as pu
 
+def roll(a, shift, axis=None):
+    if(axis is None):
+        raise NotImplementedError
+    axis = pu.c2f(a.shape, axis)
+    if axis == 0:
+        s = arrayfire.shift(a.d_array, shift, 0, 0, 0)
+    elif axis == 1:
+        s = arrayfire.shift(a.d_array, 0, shift, 0, 0)
+    elif axis == 2:
+        s = arrayfire.shift(a.d_array, 0, 0, shift, 0)
+    elif axis == 3:
+        s = arrayfire.shift(a.d_array, 0, 0, 0, shift)
+    else:
+        raise NotImplementedError
+    return ndarray(a.shape, dtype=a.dtype, af_array=s)        
 
 def vdot(a, b):
     s = arrayfire.dot(arrayfire.conjg(a.d_array), b.d_array)

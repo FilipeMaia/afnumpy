@@ -57,4 +57,7 @@ def __fftn__(a, s, axes, direction='forward'):
     return ndarray(a.shape, dtype=pu.InvTypeMap[fa.type()], af_array=fa)
 
 
+def fftshift(a, axes=None):
+    raise NotImplemented
+
     

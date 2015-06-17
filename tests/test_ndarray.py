@@ -218,5 +218,24 @@ def test_getitem():
     a = afnumpy.array(b)
     iassert(a[0], b[0])
     iassert(a[2], b[2])
-
     
+def test_roll():    
+    b = numpy.random.random(3)
+    a = afnumpy.array(b)
+    fassert(afnumpy.roll(a, -1, 0), numpy.roll(b, -1, 0))
+
+    b = numpy.random.random(3)
+    a = afnumpy.array(b)
+    fassert(afnumpy.roll(a, 1, 0), numpy.roll(b, 1, 0))
+
+    b = numpy.random.random((2, 3))
+    a = afnumpy.array(b)
+    fassert(afnumpy.roll(a, 1, 0), numpy.roll(b, 1, 0))
+
+    b = numpy.random.random((2, 3))
+    a = afnumpy.array(b)
+    fassert(afnumpy.roll(a, 1, 1), numpy.roll(b, 1, 1))
+
+    b = numpy.random.random((2, 3))
+    a = afnumpy.array(b)
+    fassert(afnumpy.roll(a, 2), numpy.roll(b, 2))
