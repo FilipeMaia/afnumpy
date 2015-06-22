@@ -9,9 +9,12 @@ endif
 ifeq ($(UNAME_S),Darwin)
     SWIGFLAGS += -D__APPLE__ -D__MACH__
 endif
+ifdef CPLUS_INCLUDE_PATH
+    SWIGFLAGS += -I${CPLUS_INCLUDE_PATH}
+endif
 
 afnumpy/af_wrap.cxx: afnumpy/af.i
-	swig -I/usr/local/include ${SWIGFLAGS} afnumpy/af.i
+	swig -I/usr/local/include -I${CPLUS_INCLUDE_PATH} ${SWIGFLAGS} afnumpy/af.i
 
 afnumpy/arrayfire.py: afnumpy/af_wrap.cxx afnumpy/multiarray.py
 	python setup.py install
