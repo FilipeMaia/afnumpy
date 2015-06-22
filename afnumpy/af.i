@@ -12,9 +12,6 @@
 
  // Ignore attributes to prevent compilation errors
 #define __attribute__(x) 
-// This needs to be defined only for Mac OS X
-#define __APPLE__
-#define __MACH__
 
  %{
  /* Includes the header in the wrapper code */
