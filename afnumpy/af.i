@@ -8,7 +8,7 @@
 %include "std_complex.i"
 
 #undef __cplusplus
-#define __cplusplus 201103L
+#define __cplusplus 199711L
 
  // Ignore attributes to prevent compilation errors
 #define __attribute__(x) 

@@ -18,12 +18,19 @@ import numpy
 # os.environ["LINKER"]="/Users/filipe/src/build/bin/clang++" 
 # os.environ["BLDSHARED"]="/Users/filipe/src/build/bin/clang++" 
 os.environ["ARCHFLAGS"]="-arch x86_64" 
+cxx_flags = []
+ld_flags = []
+if 'CPLUS_INCLUDE_PATH' in os.environ:
+    cxx_flags += ["-I"+os.environ['CPLUS_INCLUDE_PATH']]
+if 'LIBRARY_PATH' in os.environ:
+    ld_flags += ["-L"+os.environ['LIBRARY_PATH']]
+
 arrayfire_module = Extension('_arrayfire',
                              sources=['afnumpy/af_wrap.cxx'],
                              libraries = ['afcuda'],
                              runtime_library_dirs = ['/usr/local/lib'],
-                             extra_link_args = ['-Wl,-rpath,/usr/local/lib'],
-                             extra_compile_args = ['-std=c++11','-g','-O0','-fno-omit-frame-pointer'],
+                             extra_link_args = ['-Wl,-rpath,/usr/local/lib']+ld_flags,
+                             extra_compile_args = cxx_flags,
                          )
 
 setup (name = 'afnumpy',
