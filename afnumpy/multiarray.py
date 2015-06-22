@@ -6,6 +6,9 @@ import private_utils as pu
 
 def roll(a, shift, axis=None):
     if(axis is None):
+        axis = 0
+        a = a.flatten()
+        # need to reshape in the end
         raise NotImplementedError
     axis = pu.c2f(a.shape, axis)
     if axis == 0:
@@ -257,7 +260,7 @@ class ndarray(object):
 
     @property
     def size(self):
-        return len(h_array)
+        return numpy.prod(self.shape)
 
     def _convert_dim(self, args):
         if args < 0:
@@ -327,6 +330,9 @@ class ndarray(object):
 
     def reshape(self, shape, order = 'C'):
         return reshape(self, shape, order)
+
+    def flatten(self):
+        return reshape(self, self.size)
 
     def max(self):
         type_max = getattr(arrayfire, 'max_'+pu.TypeToString[self.d_array.type()])
