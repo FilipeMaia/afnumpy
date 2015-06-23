@@ -227,13 +227,39 @@ catch (const std::exception & e) {
 
 %extend af::array {
   void setValue(const af::index &s0, const af::array &value){
-    ((*self)(s0)) = value;
+    af_array lhs = self->get();
+    af_array rhs = value.get();
+    af_index_t indices[] = {s0.get()};
+    af_err err = af_assign_gen(&lhs, lhs, 1, indices, rhs);
+    if (err != AF_SUCCESS){
+      throw af::exception("Failed to copy", __FILE__, __LINE__  - 1, err);
+    }    
+    //    ((*self)(s0)) = value;
   }
   void setValue(const af::index &s0, double value){
-    ((*self)(s0)) = value;
+    af::array value_a = (*self)(s0);
+    value_a = value;
+    af_array lhs = self->get();
+    af_array rhs = value_a.get();
+    af_index_t indices[] = {s0.get()};
+    af_err err = af_assign_gen(&lhs, lhs, 1, indices, rhs);
+    if (err != AF_SUCCESS){
+      throw af::exception("Failed to copy", __FILE__, __LINE__  - 1, err);
+    }    
+    //    ((*self)(s0)) = value;
   }
   void setValue(const af::index &s0, std::complex<double> value){
-    ((*self)(s0)) = af::af_cdouble(value.real(),value.imag());
+    af::array value_a = (*self)(s0);
+    value_a = af::af_cdouble(value.real(),value.imag());
+    af_array lhs = self->get();
+    af_array rhs = value_a.get();
+    af_index_t indices[] = {s0.get()};
+    af_err err = af_assign_gen(&lhs, lhs, 1, indices, rhs);
+    if (err != AF_SUCCESS){
+      throw af::exception("Failed to copy", __FILE__, __LINE__  - 1, err);
+    }
+    
+    //    ((*self)(s0)) = af::af_cdouble(value.real(),value.imag());
   }
 };
 
