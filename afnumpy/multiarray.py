@@ -271,11 +271,10 @@ class ndarray(object):
             return self._data[tuple(args)]
         elif(isinstance(args, slice)):
             idx = self.__convert_dim__(args)
-            idx = arrayfire.index(arrayfire.seq(float(idx.start),float(idx.stop),float(idx.step)))
             s = self.d_array.__getitem__(idx)
             return ndarray(pu.af_shape(s), dtype=self.dtype, af_array=s)
         else:
-            idx = arrayfire.index(self.__convert_dim__(args))
+            idx = self.__convert_dim__(args)
             s = self.d_array.__getitem__(idx)
             return ndarray(pu.af_shape(s), dtype=self.dtype, af_array=s)
 
@@ -310,19 +309,21 @@ class ndarray(object):
             # arrayfire doesn't like other steps in this case
             if(start == end):
                 step = 1
-            return slice(start,end,step)
+            sl = slice(start,end,step)
+            return  arrayfire.index(arrayfire.seq(float(sl.start),
+                                                  float(sl.stop),
+                                                  float(sl.step)))
         else:
             if idx < 0:
-                return maxlen+idx
+                return arrayfire.index(maxlen+idx)
             else:
-                return idx            
+                return arrayfire.index(idx)
 
     def __setitem__(self, idx, value):
         if(isinstance(idx, ndarray)):
             idx = arrayfire.index(idx.d_array)
         elif(isinstance(idx, slice)):
             idx = self.__convert_dim__(idx,self.shape[0])
-            idx = arrayfire.index(arrayfire.seq(float(idx.start),float(idx.stop),float(idx.step)))
         else:
             raise NotImplementedError('indices must be a afnumpy.ndarray')
         if(isinstance(value, ndarray)):
