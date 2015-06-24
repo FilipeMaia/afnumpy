@@ -171,7 +171,6 @@ class ndarray(object):
         return ndarray(self.shape, dtype=self.dtype, af_array=s)
 
     def __iadd__(self, other):
-#        self.d_array += pu.raw(other)
         self[:] = self[:] + pu.raw(other)
         return self
 
@@ -184,7 +183,7 @@ class ndarray(object):
         return ndarray(self.shape, dtype=self.dtype, af_array=s)
 
     def __isub__(self, other):
-        self.d_array -= pu.raw(other)
+        self[:] = self[:] - pu.raw(other)
         return self
 
     def __rsub__(self, other):
@@ -196,7 +195,7 @@ class ndarray(object):
         return ndarray(self.shape, dtype=self.dtype, af_array=s)
 
     def __imul__(self, other):
-        self.d_array *= pu.raw(other)
+        self[:] = self[:] * pu.raw(other)
         return self
 
     def __rmul__(self, other):
@@ -208,7 +207,7 @@ class ndarray(object):
         return ndarray(self.shape, dtype=self.dtype, af_array=s)
 
     def __idiv__(self, other):
-        self.d_array /= pu.raw(other)
+        self[:] = self[:] / pu.raw(other)
         return self
 
     def __rdiv__(self, other):

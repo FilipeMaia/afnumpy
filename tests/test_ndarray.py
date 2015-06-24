@@ -93,28 +93,42 @@ def test_augmented_assignment():
     assert mem_before == a.d_array.device_f32()
     b += b
     fassert(a, b)
+    mem_before = a.d_array.device_f32()
     a += 3
+    assert mem_before == a.d_array.device_f32()
     b += 3
     fassert(a, b)
 
+    mem_before = a.d_array.device_f32()
     a -= a
+    assert mem_before == a.d_array.device_f32()
     b -= b
     fassert(a, b)
+    mem_before = a.d_array.device_f32()
     a -= 3
+    assert mem_before == a.d_array.device_f32()
     b -= 3
     fassert(a, b)
 
+    mem_before = a.d_array.device_f32()
     a *= a
+    assert mem_before == a.d_array.device_f32()
     b *= b
     fassert(a, b)
+    mem_before = a.d_array.device_f32()
     a *= 3
+    assert mem_before == a.d_array.device_f32()
     b *= 3
     fassert(a, b)
 
+    mem_before = a.d_array.device_f32()
     a /= a
+    assert mem_before == a.d_array.device_f32()
     b /= b
     fassert(a, b)
+    mem_before = a.d_array.device_f32()
     a /= 3
+    assert mem_before == a.d_array.device_f32()
     b /= 3
     fassert(a, b)
 
