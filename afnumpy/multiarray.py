@@ -5,11 +5,10 @@ from IPython.core.debugger import Tracer
 import private_utils as pu
 
 def roll(a, shift, axis=None):
+    shape = a.shape
     if(axis is None):
         axis = 0
         a = a.flatten()
-        # need to reshape in the end
-        raise NotImplementedError
     axis = pu.c2f(a.shape, axis)
     if axis == 0:
         s = arrayfire.shift(a.d_array, shift, 0, 0, 0)
@@ -21,7 +20,7 @@ def roll(a, shift, axis=None):
         s = arrayfire.shift(a.d_array, 0, 0, 0, shift)
     else:
         raise NotImplementedError
-    return ndarray(a.shape, dtype=a.dtype, af_array=s)        
+    return ndarray(shape, dtype=a.dtype, af_array=s)        
 
 def vdot(a, b):
     s = arrayfire.dot(arrayfire.conjg(a.d_array), b.d_array)
@@ -172,7 +171,8 @@ class ndarray(object):
         return ndarray(self.shape, dtype=self.dtype, af_array=s)
 
     def __iadd__(self, other):
-        self.d_array += pu.raw(other)
+#        self.d_array += pu.raw(other)
+        self[:] = self[:] + pu.raw(other)
         return self
 
     def __radd__(self, other):
@@ -262,25 +262,27 @@ class ndarray(object):
     def size(self):
         return numpy.prod(self.shape)
 
-    def _convert_dim(self, args):
-        if args < 0:
-            args = len(self) + args
-        return args
-
     def __getitem__(self, args):
         if(isinstance(args, ndarray)):
             s = (self.d_array[arrayfire.index(args.d_array)])
             return ndarray(pu.af_shape(s), dtype=self.dtype, af_array=s)
         elif(isinstance(args, tuple)):
             args = list(args)
-            args[0] = self._convert_dim(args[0])
+            args[0] = self.__convert_dim__(args[0])
             return self._data[tuple(args)]
+        elif(isinstance(args, slice)):
+            idx = self.__convert_dim__(args)
+            idx = arrayfire.index(arrayfire.seq(float(idx.start),float(idx.stop),float(idx.step)))
+            s = self.d_array.__getitem__(idx)
+            return ndarray(pu.af_shape(s), dtype=self.dtype, af_array=s)
         else:
-            idx = arrayfire.index(self._convert_dim(args))
-            s = self.d_array.__getitem__(arrayfire.index(self._convert_dim(args)))
+            idx = arrayfire.index(self.__convert_dim__(args))
+            s = self.d_array.__getitem__(idx)
             return ndarray(pu.af_shape(s), dtype=self.dtype, af_array=s)
 
-    def __convert_dim__(self, idx, maxlen):
+    def __convert_dim__(self, idx, maxlen = None):
+        if maxlen is None:
+            maxlen = self.shape[0]
         if(isinstance(idx, slice)):
             if idx.step is None:
                 step = 1

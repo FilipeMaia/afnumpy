@@ -88,7 +88,9 @@ def test_augmented_assignment():
     a = afnumpy.random.rand(3)
     b = numpy.array(a)
 
+    mem_before = a.d_array.device_f32()
     a += a
+    assert mem_before == a.d_array.device_f32()
     b += b
     fassert(a, b)
     a += 3
