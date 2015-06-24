@@ -275,11 +275,33 @@ class ndarray(object):
                 s = self.d_array.__getitem__(idx[0],idx[1],idx[2],idx[3])
         else:
             s = self.d_array.__getitem__(idx)
-        return ndarray(pu.af_shape(s), dtype=self.dtype, af_array=s)
+
+        shape = pu.af_shape(s)
+        array = ndarray(shape, dtype=self.dtype, af_array=s)
+
+
+        # ISSUE: Looks like afnumpy contracts dimensions in certain
+        # cases and not in others. This should be checked out
+
+        # Remove dimensions corresponding to non slices
+        if(isinstance(args, tuple) and len(shape) == len(args)):
+            new_shape = []
+            for axis in range(0,len(args)):
+                if(isinstance(args[axis], slice)):
+                    new_shape.append(shape[axis])
+            if(new_shape != list(shape)):
+                array = array.reshape(new_shape)
+        return array
 
     def __slice_to_seq__(self, idx, axis):
-        axis = pu.c2f(self.shape, axis)
         maxlen = self.shape[axis]
+        if(isinstance(idx, numbers.Number)):
+            if idx < 0:
+                idx = maxlen + idx
+            if(idx >= maxlen):
+                raise IndexError('index %d is out of bounds for axis %d with size %d' % (idx, axis, maxlen))
+            return arrayfire.seq(float(idx), float(idx), float(1))
+
         if idx.step is None:
             step = 1
         else:
@@ -322,17 +344,14 @@ class ndarray(object):
             else:
                 idx = (idx,)
         if(isinstance(idx, numbers.Number)):
-            if idx < 0:
-                return arrayfire.index(maxlen+idx)
-            else:
-                return arrayfire.index(idx)
+            return arrayfire.index(self.__slice_to_seq__(idx,0))               
         if(isinstance(idx, tuple)):
             idx = list(idx)
             while len(idx) < len(self.shape):
                 idx.append(slice(None,None,None))
-            ret = []
-            for i in range(0,len(self.shape)):
-                ret.append(arrayfire.index(self.__slice_to_seq__(idx[i],i)))
+            ret = [0]*len(self.shape)
+            for axis in range(0,len(self.shape)):
+                ret[pu.c2f(self.shape,axis)] = arrayfire.index(self.__slice_to_seq__(idx[axis],axis))
             return ret
         raise NotImplementedError('indexing with %s not implemented' % (type(idx)))
 

@@ -258,7 +258,11 @@ def test_getitem():
     # Now multidimensional!
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
+            
     iassert(a[:], b[:])
+    iassert(a[:,2], b[:,2])
+    iassert(a[1,:], b[1,:])
+    iassert(a[:,::-1], b[:,::-1])
 
     b = numpy.random.random((2,3,1))
     a = afnumpy.array(b)
@@ -268,6 +272,11 @@ def test_getitem():
     b = numpy.random.random((2,3,1,2))
     a = afnumpy.array(b)
     iassert(a[:], b[:])
+    iassert(a[1,:,:,:], b[1,:,:,:])
+    # This shows the error
+    #iassert(a[1,:,0,:], b[1,:,0,:])
+    # This shows the error
+    iassert(a[1,1,:,:], b[1,1,:,:])
 
 
 def test_setitem():
