@@ -142,7 +142,7 @@ class ndarray(object):
         s_a = numpy.array(pu.c2f(shape),dtype=pu.dim_t)
         if(s_a.size < 1):
             raise NotImplementedError('0 dimension arrays are not yet supported')
-        elif(s_a.size < 4):
+        elif(s_a.size <= 4):
             if(af_array is not None):
                 self.handle = af_array.get()
                 # We need to make sure to keep a copy of af_array
@@ -263,53 +263,78 @@ class ndarray(object):
 
     def __getitem__(self, args):
         idx = self.__convert_dim__(args)
-        s = self.d_array.__getitem__(idx)
+        if(isinstance(idx,list)):
+            # There must be a better way to do this!
+            if(len(idx) == 1):
+                s = self.d_array.__getitem__(idx[0])
+            if(len(idx) == 2):
+                s = self.d_array.__getitem__(idx[0],idx[1])
+            if(len(idx) == 3):
+                s = self.d_array.__getitem__(idx[0],idx[1],idx[2])
+            if(len(idx) == 4):
+                s = self.d_array.__getitem__(idx[0],idx[1],idx[2],idx[3])
+        else:
+            s = self.d_array.__getitem__(idx)
         return ndarray(pu.af_shape(s), dtype=self.dtype, af_array=s)
 
-    def __convert_dim__(self, idx, maxlen = None):
-        if maxlen is None:
-            maxlen = self.shape[0]
+    def __slice_to_seq__(self, idx, axis):
+        axis = pu.c2f(self.shape, axis)
+        maxlen = self.shape[axis]
+        if idx.step is None:
+            step = 1
+        else:
+            step = idx.step
+        if idx.start is None:
+            if step < 0:
+                start = maxlen-1
+            else:
+                start = 0
+        else:
+            start = idx.start
+            if(start < 0):
+                start += maxlen
+        if idx.stop is None:
+            if step < 0:
+                end = 0
+            else:
+                end = maxlen-1
+        else:
+            end = idx.stop
+            if(end < 0):
+                end += maxlen-1
+            if step < 0:
+                end += 1
+        # arrayfire doesn't like other steps in this case
+        if(start == end):
+            step = 1
+        sl = slice(start,end,step)
+        return  arrayfire.seq(float(sl.start),
+                              float(sl.stop),
+                              float(sl.step))
+
+    def __convert_dim__(self, idx):
+        maxlen = self.shape[0]
         if(isinstance(idx, ndarray)):
             return arrayfire.index(idx.d_array)
         if(isinstance(idx, slice)):
-            if idx.step is None:
-                step = 1
+            if(len(self.shape) == 1):
+                return arrayfire.index(self.__slice_to_seq__(idx,0))               
             else:
-                step = idx.step
-            if idx.start is None:
-                if step < 0:
-                    start = maxlen-1
-                else:
-                    start = 0
-            else:
-                start = idx.start
-                if(start < 0):
-                    start += maxlen
-            if idx.stop is None:
-                if step < 0:
-                    end = 0
-                else:
-                    end = maxlen-1
-            else:
-                end = idx.stop
-                if(end < 0):
-                    end += maxlen-1
-                if step < 0:
-                    end += 1
-            # arrayfire doesn't like other steps in this case
-            if(start == end):
-                step = 1
-            sl = slice(start,end,step)
-            return  arrayfire.index(arrayfire.seq(float(sl.start),
-                                                  float(sl.stop),
-                                                  float(sl.step)))
-        elif(isinstance(idx, numbers.Number)):
+                idx = (idx,)
+        if(isinstance(idx, numbers.Number)):
             if idx < 0:
                 return arrayfire.index(maxlen+idx)
             else:
                 return arrayfire.index(idx)
-        else:
-            raise NotImplementedError('indexing with %s not implemented' % (type(idx)))
+        if(isinstance(idx, tuple)):
+            idx = list(idx)
+            while len(idx) < len(self.shape):
+                idx.append(slice(None,None,None))
+            ret = []
+            for i in range(0,len(self.shape)):
+                ret.append(arrayfire.index(self.__slice_to_seq__(idx[i],i)))
+            return ret
+        raise NotImplementedError('indexing with %s not implemented' % (type(idx)))
 
     def __setitem__(self, idx, value):
         idx = self.__convert_dim__(idx)

@@ -256,6 +256,19 @@ def test_getitem():
     iassert(a[-2::2], b[-2::2])
     
     # Now multidimensional!
+    b = numpy.random.random((2,3))
+    a = afnumpy.array(b)
+    iassert(a[:], b[:])
+
+    b = numpy.random.random((2,3,1))
+    a = afnumpy.array(b)
+    iassert(a[:], b[:])
+
+
+    b = numpy.random.random((2,3,1,2))
+    a = afnumpy.array(b)
+    iassert(a[:], b[:])
+
 
 def test_setitem():
     b = numpy.random.random((3))
