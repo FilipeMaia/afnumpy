@@ -234,6 +234,29 @@ def test_getitem():
     a = afnumpy.array(b)
     iassert(a[0], b[0])
     iassert(a[2], b[2])
+    iassert(a[:], b[:])
+    iassert(a[0:], b[0:])
+    iassert(a[:-1], b[:-1])
+    iassert(a[0:-1], b[0:-1])
+    iassert(a[1:-1], b[1:-1])
+    iassert(a[1:1], b[1:1])
+    iassert(a[-2:], b[-2:])
+    iassert(a[-3:-1], b[-3:-1])
+    iassert(a[1:-1:1], b[1:-1:1])
+    iassert(a[1:-1:2], b[1:-1:2])
+    iassert(a[::2], b[::2])
+    iassert(a[::3], b[::3])
+    iassert(a[::-1], b[::-1])
+    iassert(a[::-2], b[::-2])
+    iassert(a[-1::-1], b[-1::-1])
+    iassert(a[-1:1:-1], b[-1:1:-1])
+    iassert(a[-2::-1], b[-2::-1])
+    iassert(a[-2:0:-1], b[-2:0:-1])
+    iassert(a[-2::-2], b[-2::-2])
+    iassert(a[-2::2], b[-2::2])
+    
+    # Now multidimensional!
+
     
 def test_roll():    
     b = numpy.random.random(3)

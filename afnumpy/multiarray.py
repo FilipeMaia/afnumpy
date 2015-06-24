@@ -294,6 +294,8 @@ class ndarray(object):
                     start = 0
             else:
                 start = idx.start
+                if(start < 0):
+                    start += maxlen
             if idx.stop is None:
                 if step < 0:
                     end = 0
@@ -301,6 +303,13 @@ class ndarray(object):
                     end = maxlen-1
             else:
                 end = idx.stop
+                if(end < 0):
+                    end += maxlen-1
+                if step < 0:
+                    end += 1
+            # arrayfire doesn't like other steps in this case
+            if(start == end):
+                step = 1
             return slice(start,end,step)
         else:
             if idx < 0:
