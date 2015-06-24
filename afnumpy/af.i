@@ -200,6 +200,14 @@ catch (const std::exception & e) {
   $result = PyComplex_FromDoubles(af::real($1),af::imag($1));
  }
 
+
+// Convert certain pointer to a python long so we can observe its value
+// in particular in the case of the return value of array::device<T>.
+// The choice of float is arbitrary.
+%typemap(out) float * {
+  $result = PyInt_FromLong((uint64_t)$1);
+ }
+
 %include "af/defines.h"
 %include "af/index.h"
 %include "af/complex.h"
@@ -261,6 +269,16 @@ catch (const std::exception & e) {
     
     //    ((*self)(s0)) = af::af_cdouble(value.real(),value.imag());
   }
+
+  %template(device_f32) device<float>;
+  %template(device_f64) device<double>;
+  %template(device_s32) device<int32_t>;
+  %template(device_u32) device<uint32_t>;
+  %template(device_s64) device<int64_t>;
+  %template(device_u64) device<uint64_t>;
+  %template(device_c32) device<af::cfloat>;
+  %template(device_c64) device<af::cdouble>;
+
 };
 
 %template(max_f32) af::max<float>;
