@@ -257,6 +257,16 @@ def test_getitem():
     
     # Now multidimensional!
 
+def test_setitem():
+    b = numpy.random.random((3))
+    a = afnumpy.array(b)
+    a[0] = 1;
+    b[0] = 1;
+    iassert(a, b)
+    a[:] = 1;
+    b[:] = 1;
+    iassert(a, b)
+
     
 def test_roll():    
     b = numpy.random.random(3)

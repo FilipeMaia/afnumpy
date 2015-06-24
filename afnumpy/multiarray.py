@@ -262,25 +262,15 @@ class ndarray(object):
         return numpy.prod(self.shape)
 
     def __getitem__(self, args):
-        if(isinstance(args, ndarray)):
-            s = (self.d_array[arrayfire.index(args.d_array)])
-            return ndarray(pu.af_shape(s), dtype=self.dtype, af_array=s)
-        elif(isinstance(args, tuple)):
-            args = list(args)
-            args[0] = self.__convert_dim__(args[0])
-            return self._data[tuple(args)]
-        elif(isinstance(args, slice)):
-            idx = self.__convert_dim__(args)
-            s = self.d_array.__getitem__(idx)
-            return ndarray(pu.af_shape(s), dtype=self.dtype, af_array=s)
-        else:
-            idx = self.__convert_dim__(args)
-            s = self.d_array.__getitem__(idx)
-            return ndarray(pu.af_shape(s), dtype=self.dtype, af_array=s)
+        idx = self.__convert_dim__(args)
+        s = self.d_array.__getitem__(idx)
+        return ndarray(pu.af_shape(s), dtype=self.dtype, af_array=s)
 
     def __convert_dim__(self, idx, maxlen = None):
         if maxlen is None:
             maxlen = self.shape[0]
+        if(isinstance(idx, ndarray)):
+            return arrayfire.index(idx.d_array)
         if(isinstance(idx, slice)):
             if idx.step is None:
                 step = 1
@@ -313,19 +303,16 @@ class ndarray(object):
             return  arrayfire.index(arrayfire.seq(float(sl.start),
                                                   float(sl.stop),
                                                   float(sl.step)))
-        else:
+        elif(isinstance(idx, numbers.Number)):
             if idx < 0:
                 return arrayfire.index(maxlen+idx)
             else:
                 return arrayfire.index(idx)
+        else:
+            raise NotImplementedError('indexing with %s not implemented' % (type(idx)))
 
     def __setitem__(self, idx, value):
-        if(isinstance(idx, ndarray)):
-            idx = arrayfire.index(idx.d_array)
-        elif(isinstance(idx, slice)):
-            idx = self.__convert_dim__(idx,self.shape[0])
-        else:
-            raise NotImplementedError('indices must be a afnumpy.ndarray')
+        idx = self.__convert_dim__(idx)
         if(isinstance(value, ndarray)):
             if(value.dtype != self.dtype):
                 raise TypeError('left hand side must have same dtype as right hand side')
