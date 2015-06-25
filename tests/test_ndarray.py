@@ -21,6 +21,11 @@ def test_zeros():
 
 def test_fromstring():
     iassert(numpy.fromstring('\x01\x02', dtype=numpy.uint8),afnumpy.fromstring('\x01\x02', dtype=numpy.uint8))
+
+def test_ndarray_transpose():
+    b = numpy.random.random((2,3))
+    a = afnumpy.array(b)
+    iassert(a.transpose(), b.transpose())
     
 
 def test_where():

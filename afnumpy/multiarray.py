@@ -378,6 +378,10 @@ class ndarray(object):
         self.d_array.host(self.h_array.ctypes.data)
         return numpy.copy(self.h_array)
 
+    def transpose(self, *axes):
+        s = arrayfire.transpose(self.d_array)
+        return ndarray(pu.af_shape(s), dtype=self.dtype, af_array=s)
+
     def reshape(self, shape, order = 'C'):
         return reshape(self, shape, order)
 
