@@ -279,8 +279,9 @@ class ndarray(object):
         shape = pu.af_shape(s)
         array = ndarray(shape, dtype=self.dtype, af_array=s)
         shape = list(shape)
-        while(len(shape) < len(args)):
-            shape = [1]+shape
+        if isinstance(args, tuple):
+            while(len(shape) < len(args)):
+                shape = [1]+shape
 
 
         # ISSUE: Looks like afnumpy contracts dimensions in certain
