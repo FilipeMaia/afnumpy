@@ -278,13 +278,16 @@ class ndarray(object):
 
         shape = pu.af_shape(s)
         array = ndarray(shape, dtype=self.dtype, af_array=s)
+        shape = list(shape)
+        while(len(shape) < len(args)):
+            shape = [1]+shape
 
 
         # ISSUE: Looks like afnumpy contracts dimensions in certain
         # cases and not in others. This should be checked out
-
+        
         # Remove dimensions corresponding to non slices
-        if(isinstance(args, tuple) and len(shape) == len(args)):
+        if(isinstance(args, tuple)):
             new_shape = []
             for axis in range(0,len(args)):
                 if(isinstance(args[axis], slice)):

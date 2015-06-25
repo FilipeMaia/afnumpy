@@ -282,11 +282,14 @@ def test_getitem():
 def test_setitem():
     b = numpy.random.random((3))
     a = afnumpy.array(b)
+    mem_before = a.d_array.device_f32()
     a[0] = 1;
     b[0] = 1;
     iassert(a, b)
+    assert mem_before == a.d_array.device_f32()
     a[:] = 1;
     b[:] = 1;
+    assert mem_before == a.d_array.device_f32()
     iassert(a, b)
 
     
