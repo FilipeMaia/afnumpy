@@ -19,6 +19,10 @@ def test_zeros():
     b = numpy.zeros(3)
     iassert(a, b)
 
+def test_fromstring():
+    iassert(numpy.fromstring('\x01\x02', dtype=numpy.uint8),afnumpy.fromstring('\x01\x02', dtype=numpy.uint8))
+    
+
 def test_where():
     a1 = afnumpy.array([1,2,3])
     b1 = numpy.array(a1)

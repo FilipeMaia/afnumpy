@@ -4,6 +4,10 @@ import numbers
 from IPython.core.debugger import Tracer
 import private_utils as pu
 
+
+def fromstring(string, dtype=float, count=-1, sep=''):
+    return array(numpy.fromstring(string, dtype, count, sep))
+
 def roll(a, shift, axis=None):
     shape = a.shape
     if(axis is None):
