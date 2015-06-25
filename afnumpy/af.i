@@ -139,6 +139,8 @@ TYPE_IGNORE(constant, cfloat)
 
 %ignore af::array::array_proxy::unlock() const;
 %ignore af::array::unlock() const;
+%ignore af::array::array_proxy::lock() const;
+%ignore af::array::lock() const;
 
 // These ones are missing compatible.h in the header
 %ignore af::setintersect(const array &first, const array &second, const bool is_unique=false);
@@ -162,9 +164,14 @@ TYPE_IGNORE(constant, cfloat)
 %ignore operator+(double, seq);
 %ignore operator-(double, seq);
 %ignore operator*(double, seq);
-%rename(proxy_asarray) af::array::array_proxy::operator array();
+
+// For some reason gcc-4.8.5 doesn't like these operator
+//%rename(proxy_asarray) af::array::array_proxy::operator array();
+%ignore af::array::array_proxy::operator array();
+//%rename(as_const_array) af::array::array_proxy::operator array() const;
+%ignore af::array::array_proxy::operator array() const;
+
 %rename(seq_asarray) af::seq::operator array() const;
-%rename(as_const_array) af::array::array_proxy::operator array() const;
 %rename(g_afDevice) ::afDevice;
 %rename(g_afHost) ::afHost;
 
@@ -274,8 +281,9 @@ catch (const std::exception & e) {
   %template(device_f64) device<double>;
   %template(device_s32) device<int32_t>;
   %template(device_u32) device<uint32_t>;
-  %template(device_s64) device<int64_t>;
-  %template(device_u64) device<uint64_t>;
+  // These templates were missing on Linux
+  //  %template(device_s64) device<int64_t>;
+  //  %template(device_u64) device<uint64_t>;
   %template(device_c32) device<af::cfloat>;
   %template(device_c64) device<af::cdouble>;
 
