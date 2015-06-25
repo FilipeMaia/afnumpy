@@ -17,5 +17,5 @@ afnumpy/af_wrap.cxx: afnumpy/af.i
 	swig -I/usr/local/include -I${CPLUS_INCLUDE_PATH} ${SWIGFLAGS} afnumpy/af.i
 
 afnumpy/arrayfire.py: afnumpy/af_wrap.cxx afnumpy/multiarray.py
-	python setup.py install
+	python setup.py install --user
 
