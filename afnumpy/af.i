@@ -142,6 +142,14 @@ TYPE_IGNORE(constant, cfloat)
 %ignore af::array::array_proxy::lock() const;
 %ignore af::array::lock() const;
 
+// Seems to be missing
+%ignore af::dog(af::array const&, int, int);
+%ignore af::dog;
+%ignore af::unwrap;
+%ignore af_dog;
+%ignore af_unwrap;
+//%ignore af::unwrap(af::array const&, long long, long long, long long, long long, long long, long long)
+
 // These ones are missing compatible.h in the header
 %ignore af::setintersect(const array &first, const array &second, const bool is_unique=false);
 %ignore af::setunion(const array &first, const array &second, const bool is_unique=false);
