@@ -301,6 +301,26 @@ def test_setitem():
     assert mem_before == a.d_array.device_f32()
     iassert(a, b)
 
+    # Multidimensional
+    b1 = numpy.random.random((2,3))
+    b2 = numpy.random.random(3)
+    a1 = afnumpy.array(b1)
+    a2 = afnumpy.array(b2)
+    mem_before = a1.d_array.device_f32()
+    a1[0,:] = a2[:]
+    b1[0,:] = b2[:]
+    iassert(a1,b1)
+    assert mem_before == a1.d_array.device_f32()
+
+    b1 = numpy.random.random((2,3,1))
+    b2 = numpy.random.random((3,1))
+    a1 = afnumpy.array(b1)
+    a2 = afnumpy.array(b2)
+    mem_before = a1.d_array.device_f32()
+    a1[0,:,:] = a2[:]
+    b1[0,:,:] = b2[:]
+    iassert(a1,b1)
+    assert mem_before == a1.d_array.device_f32()
     
 def test_roll():    
     b = numpy.random.random(3)
