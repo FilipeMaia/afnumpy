@@ -365,10 +365,25 @@ class ndarray(object):
 
     def __setitem__(self, idx, value):
         idx = self.__convert_dim__(idx)
+        # Here is what I tried
+        # ====================
+        #if(isinstance(idx,list)):
+        #    # There must be a better way to do this!
+        #    if(len(idx) == 1):
+        #        s = self.d_array.__getitem__(idx[0])
+        #    if(len(idx) == 2):
+        #        s = self.d_array.__getitem__(idx[0],idx[1])
+        #    if(len(idx) == 3):
+        #        s = self.d_array.__getitem__(idx[0],idx[1],idx[2])
+        #    if(len(idx) == 4):
+        #        s = self.d_array.__getitem__(idx[0],idx[1],idx[2],idx[3])
+        #else:
+        #    s = self.d_array.__getitem__(idx)        
         if(isinstance(value, ndarray)):
             if(value.dtype != self.dtype):
                 raise TypeError('left hand side must have same dtype as right hand side')
             self.d_array.setValue(idx, value.d_array)
+            #s.setValue(idx, value.d_array)
         elif(isinstance(value, numbers.Number)):
             self.d_array.setValue(idx, value)
         else:
