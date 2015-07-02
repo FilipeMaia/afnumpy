@@ -247,8 +247,39 @@ catch (const std::exception & e) {
 %include "af/version.h"
 %include "af/vision.h"
 
-
 %extend af::array {
+
+  void setValue(const af::index &s0, const af::index &s1,
+		const af::array &value){
+    af_array lhs = self->get();
+    af_array rhs = value.get();
+    af_index_t indices[] = {s0.get(), s1.get()};
+    af_err err = af_assign_gen(&lhs, lhs, 2, indices, rhs);
+    if (err != AF_SUCCESS){
+      throw af::exception("Failed to copy", __FILE__, __LINE__  - 1, err);
+    }    
+  }
+  void setValue(const af::index &s0, const af::index &s1,
+		const af::index &s2, const af::array &value){
+    af_array lhs = self->get();
+    af_array rhs = value.get();
+    af_index_t indices[] = {s0.get(), s1.get(), s2.get()};
+    af_err err = af_assign_gen(&lhs, lhs, 3, indices, rhs);
+    if (err != AF_SUCCESS){
+      throw af::exception("Failed to copy", __FILE__, __LINE__  - 1, err);
+    }    
+  }
+  void setValue(const af::index &s0, const af::index &s1,
+		const af::index &s2, const af::index &s3,
+		const af::array &value){
+    af_array lhs = self->get();
+    af_array rhs = value.get();
+    af_index_t indices[] = {s0.get(), s1.get(), s2.get(), s3.get()};
+    af_err err = af_assign_gen(&lhs, lhs, 4, indices, rhs);
+    if (err != AF_SUCCESS){
+      throw af::exception("Failed to copy", __FILE__, __LINE__  - 1, err);
+    }    
+  }
   void setValue(const af::index &s0, const af::array &value){
     af_array lhs = self->get();
     af_array rhs = value.get();
@@ -257,7 +288,6 @@ catch (const std::exception & e) {
     if (err != AF_SUCCESS){
       throw af::exception("Failed to copy", __FILE__, __LINE__  - 1, err);
     }    
-    //    ((*self)(s0)) = value;
   }
   void setValue(const af::index &s0, double value){
     af::array value_a = (*self)(s0);
