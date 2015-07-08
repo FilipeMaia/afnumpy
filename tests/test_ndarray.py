@@ -282,10 +282,12 @@ def test_getitem():
     a = afnumpy.array(b)
     iassert(a[:], b[:])
     iassert(a[1,:,:,:], b[1,:,:,:])
-    # This shows the error
-    #iassert(a[1,:,0,:], b[1,:,0,:])
-    # This shows the error
+    iassert(a[1,:,0,:], b[1,:,0,:])
     iassert(a[1,1,:,:], b[1,1,:,:])
+    d = numpy.array([0,2],dtype=numpy.int32)
+    c = afnumpy.array(d)
+    iassert(a[1,c,0,:], b[1,d,0,:])
+
 
 
 def test_setitem():
@@ -296,19 +298,28 @@ def test_setitem():
     b[0] = 1;
     iassert(a, b)
     assert mem_before == a.d_array.device_f32()
-    a[:] = 1;
-    b[:] = 1;
+    a[:] = 2;
+    b[:] = 2;
     assert mem_before == a.d_array.device_f32()
     iassert(a, b)
+    d = numpy.array([0,1],dtype=numpy.int32)
+    c = afnumpy.array(d)
+    a[c] = 3;
+    b[d] = 3;
+    assert mem_before == a.d_array.device_f32()
 
     # Multidimensional
     b1 = numpy.random.random((2,3))
-    b2 = numpy.random.random(3)
+    b2 = numpy.random.random(2)
     a1 = afnumpy.array(b1)
     a2 = afnumpy.array(b2)
     mem_before = a1.d_array.device_f32()
-    a1[0,:] = a2[:]
-    b1[0,:] = b2[:]
+    a1[:,0] = a2[:]
+    b1[:,0] = b2[:]
+    iassert(a1,b1)
+    assert mem_before == a1.d_array.device_f32()
+    a1[c,0] = -a2[:]
+    b1[d,0] = -b2[:]
     iassert(a1,b1)
     assert mem_before == a1.d_array.device_f32()
 
@@ -319,6 +330,18 @@ def test_setitem():
     mem_before = a1.d_array.device_f32()
     a1[0,:,:] = a2[:]
     b1[0,:,:] = b2[:]
+    iassert(a1,b1)
+    assert mem_before == a1.d_array.device_f32()
+
+    b1 = numpy.random.random((2,3,2,2))
+    b2 = numpy.random.random((2))
+    a1 = afnumpy.array(b1)
+    a2 = afnumpy.array(b2)
+    d = numpy.array([0,1],dtype=numpy.int32)
+    c = afnumpy.array(d)
+    mem_before = a1.d_array.device_f32()
+#    a1[1,0,0,c] = a2
+#    b1[1,0,0,d] = b2
     iassert(a1,b1)
     assert mem_before == a1.d_array.device_f32()
     

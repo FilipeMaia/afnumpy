@@ -279,7 +279,6 @@ class ndarray(object):
                 s = self.d_array.__getitem__(idx[0],idx[1],idx[2],idx[3])
         else:
             s = self.d_array.__getitem__(idx)
-
         shape = pu.af_shape(s)
         array = ndarray(shape, dtype=self.dtype, af_array=s)
         shape = list(shape)
@@ -295,7 +294,8 @@ class ndarray(object):
         if(isinstance(args, tuple)):
             new_shape = []
             for axis in range(0,len(args)):
-                if(isinstance(args[axis], slice)):
+#                if(isinstance(args[axis], slice)):
+                if not isinstance(args[axis], numbers.Number):
                     new_shape.append(shape[axis])
             if(new_shape != list(shape)):
                 array = array.reshape(new_shape)
@@ -309,6 +309,9 @@ class ndarray(object):
             if(idx >= maxlen):
                 raise IndexError('index %d is out of bounds for axis %d with size %d' % (idx, axis, maxlen))
             return arrayfire.seq(float(idx), float(idx), float(1))
+
+        if(isinstance(idx, ndarray)):
+            return idx.d_array
 
         if idx.step is None:
             step = 1
@@ -343,6 +346,7 @@ class ndarray(object):
                               float(sl.step))
 
     def __convert_dim__(self, idx):
+        # Convert numpy style indexing arguments to arrayfire style
         maxlen = self.shape[0]
         if(isinstance(idx, ndarray)):
             return arrayfire.index(idx.d_array)
@@ -359,31 +363,65 @@ class ndarray(object):
                 idx.append(slice(None,None,None))
             ret = [0]*len(self.shape)
             for axis in range(0,len(self.shape)):
-                ret[pu.c2f(self.shape,axis)] = arrayfire.index(self.__slice_to_seq__(idx[axis],axis))
+                seq = self.__slice_to_seq__(idx[axis],axis)
+                ret[pu.c2f(self.shape,axis)] = arrayfire.index(seq)
             return ret
         raise NotImplementedError('indexing with %s not implemented' % (type(idx)))
 
+    def __index_shape__(self, idx):
+        shape = []
+        for i in range(0,len(idx)):
+            if(idx[i].isspan()):
+                shape.append(self.shape[i])
+            else:
+                af_idx = idx[i].get()
+                if(af_idx.isBatch):
+                    raise ValueError
+                if(af_idx.isSeq):
+                    shape.append(arrayfire.seq(af_idx.seq()).size)
+                else:
+                    shape.append(arrayfire.array_from_handle(af_idx.arr()).elements())
+        return pu.c2f(shape)
+        
+    def __expand_dim__(self, value, idx):
+        # reshape value, adding size 1 dimensions, such that the dimensions of value match idx
+        idx_shape = self.__index_shape__(idx)
+        value_shape = list(value.shape)
+        
+        print "idx_shape = %s" % (idx_shape)
+        past_one_dims = False
+        needs_reshape = False
+        for i in range(0, len(idx_shape)):
+            if(len(value_shape) <= i or value_shape[i] != idx_shape[i]):
+                if(idx_shape[i] != 1):
+                    raise ValueError
+                else:
+                    value_shape.insert(i, 1)
+                    # We only need to reshape if we are insert
+                    # a dimension after any dimension of length > 1
+                    if(past_one_dims):
+                        needs_reshape = True
+            elif(value_shape[i] != 1):
+                past_one_dims = True
+        
+        if(len(idx_shape) != len(value_shape)):
+            raise ValueError        
+
+        if(needs_reshape):
+            return value.reshape(value_shape)
+        else:
+            return value
+        
     def __setitem__(self, idx, value):
         idx = self.__convert_dim__(idx)
-        # Here is what I tried
-        # ====================
-        #if(isinstance(idx,list)):
-        #    # There must be a better way to do this!
-        #    if(len(idx) == 1):
-        #        s = self.d_array.__getitem__(idx[0])
-        #    if(len(idx) == 2):
-        #        s = self.d_array.__getitem__(idx[0],idx[1])
-        #    if(len(idx) == 3):
-        #        s = self.d_array.__getitem__(idx[0],idx[1],idx[2])
-        #    if(len(idx) == 4):
-        #        s = self.d_array.__getitem__(idx[0],idx[1],idx[2],idx[3])
-        #else:
-        #    s = self.d_array.__getitem__(idx)        
         if(isinstance(value, ndarray)):
             if(value.dtype != self.dtype):
                 raise TypeError('left hand side must have same dtype as right hand side')
             if(isinstance(idx,list)):
                 # There must be a better way to do this!
+                print value.shape
+                value = self.__expand_dim__(value, idx)
+                print value.shape
                 if(len(idx) == 1):
                     self.d_array.setValue(idx[0], value.d_array)
                 if(len(idx) == 2):
