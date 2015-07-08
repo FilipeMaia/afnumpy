@@ -255,6 +255,15 @@ class ndarray(object):
         # dtype is wrong for complex types
         return ndarray(self.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
 
+    def __neg__(self):
+        return 0 - self;
+
+    def __pos__(self):
+        return self;
+
+    def __invert__(self):
+        raise NotImplementedError
+
     def __nonzero__(self):
         return numpy.array(self).__nonzero__()
 

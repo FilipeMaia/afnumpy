@@ -141,6 +141,13 @@ def test_augmented_assignment():
     b /= 3
     fassert(a, b)
 
+def test_unary_operators():
+    a = afnumpy.random.rand(3)
+    b = numpy.array(a)
+    fassert(-a, -b)
+    fassert(+a, +b)
+    # fassert(~a, ~b)
+
 def test_comparisons():
     a1 = afnumpy.random.rand(3)
     b1 = numpy.array(a1)
