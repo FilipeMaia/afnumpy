@@ -327,6 +327,17 @@ catch (const std::exception & e) {
 
 };
 
+%extend af_index_t{
+  af_array arr(){
+    return self->idx.arr;
+  }
+  
+  af_seq seq(){
+    return self->idx.seq;
+  }
+};
+
+
 %template(max_f32) af::max<float>;
 %template(max_f64) af::max<double>;
 %template(max_s32) af::max<int32_t>;
