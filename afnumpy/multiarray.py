@@ -365,7 +365,8 @@ class ndarray(object):
             else:
                 idx = (idx,)
         if(isinstance(idx, numbers.Number)):
-            return arrayfire.index(self.__slice_to_seq__(idx,0))               
+            idx = (idx,)
+#            return arrayfire.index(self.__slice_to_seq__(idx,0))               
         if(isinstance(idx, tuple)):
             idx = list(idx)
             while len(idx) < len(self.shape):

@@ -276,6 +276,7 @@ def test_getitem():
     a = afnumpy.array(b)
             
     iassert(a[:], b[:])
+    iassert(a[0], b[0])
     iassert(a[:,2], b[:,2])
     iassert(a[1,:], b[1,:])
     iassert(a[:,::-1], b[:,::-1])
@@ -316,7 +317,8 @@ def test_setitem():
     assert mem_before == a.d_array.device_f32()
 
     # Multidimensional
-    b1 = numpy.random.random((2,3))
+    # 2D
+    b1 = numpy.random.random((2,2))
     b2 = numpy.random.random(2)
     a1 = afnumpy.array(b1)
     a2 = afnumpy.array(b2)
@@ -325,11 +327,18 @@ def test_setitem():
     b1[:,0] = b2[:]
     iassert(a1,b1)
     assert mem_before == a1.d_array.device_f32()
+#    Tracer()()
     a1[c,0] = -a2[:]
     b1[d,0] = -b2[:]
     iassert(a1,b1)
     assert mem_before == a1.d_array.device_f32()
+#    Tracer()()
+    a1[0,c] = a2[:]
+    b1[0,d] = b2[:]
+    iassert(a1,b1)
+    assert mem_before == a1.d_array.device_f32()
 
+    # 2D
     b1 = numpy.random.random((2,3,1))
     b2 = numpy.random.random((3,1))
     a1 = afnumpy.array(b1)
