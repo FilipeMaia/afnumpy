@@ -356,17 +356,14 @@ class ndarray(object):
 
     def __convert_dim__(self, idx):
         # Convert numpy style indexing arguments to arrayfire style
+        # Always returns a list
         maxlen = self.shape[0]
         if(isinstance(idx, ndarray)):
-            return arrayfire.index(idx.d_array)
+            return [arrayfire.index(idx.d_array)]
         if(isinstance(idx, slice)):
-            if(len(self.shape) == 1):
-                return arrayfire.index(self.__slice_to_seq__(idx,0))               
-            else:
-                idx = (idx,)
+            idx = (idx,)
         if(isinstance(idx, numbers.Number)):
             idx = (idx,)
-#            return arrayfire.index(self.__slice_to_seq__(idx,0))               
         if(isinstance(idx, tuple)):
             idx = list(idx)
             while len(idx) < len(self.shape):
@@ -443,7 +440,7 @@ class ndarray(object):
             else:
                 self.d_array.setValue(idx, value.d_array)
         elif(isinstance(value, numbers.Number)):
-            self.d_array.setValue(idx, value)
+            self.d_array.setValue(idx[0], value)
         else:
             raise NotImplementedError('values must be a afnumpy.ndarray')
 
