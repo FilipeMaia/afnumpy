@@ -1,7 +1,6 @@
 import numpy
-from afnumpy import ndarray
-import afnumpy.private_utils as pu
-import afnumpy.arrayfire as arrayfire
+from .. import private_utils as pu
+import afnumpy
 
 def concatenate(arrays, axis=0):
     if(len(arrays) < 1):
@@ -11,8 +10,8 @@ def concatenate(arrays, axis=0):
     arr = arrays[0].d_array.copy()
     axis = pu.c2f(arrays[0].shape, axis)
     for a in arrays[1:]:
-        arr = arrayfire.join(axis, arr, a.d_array)
-    return ndarray(pu.af_shape(arr), dtype=arrays[0].dtype, af_array=arr)
+        arr = afnumpy.arrayfire.join(axis, arr, a.d_array)
+    return afnumpy.ndarray(pu.af_shape(arr), dtype=arrays[0].dtype, af_array=arr)
 
 def roll(a, shift, axis=None):
     shape = a.shape
@@ -21,18 +20,28 @@ def roll(a, shift, axis=None):
         a = a.flatten()
     axis = pu.c2f(a.shape, axis)
     if axis == 0:
-        s = arrayfire.shift(a.d_array, shift, 0, 0, 0)
+        s = afnumpy.arrayfire.shift(a.d_array, shift, 0, 0, 0)
     elif axis == 1:
-        s = arrayfire.shift(a.d_array, 0, shift, 0, 0)
+        s = afnumpy.arrayfire.shift(a.d_array, 0, shift, 0, 0)
     elif axis == 2:
-        s = arrayfire.shift(a.d_array, 0, 0, shift, 0)
+        s = afnumpy.arrayfire.shift(a.d_array, 0, 0, shift, 0)
     elif axis == 3:
-        s = arrayfire.shift(a.d_array, 0, 0, 0, shift)
+        s = afnumpy.arrayfire.shift(a.d_array, 0, 0, 0, shift)
     else:
         raise NotImplementedError
-    return ndarray(shape, dtype=a.dtype, af_array=s)        
+    return afnumpy.ndarray(shape, dtype=a.dtype, af_array=s)        
 
 def ones(shape, dtype=float, order='C'):
     b = numpy.ones(shape, dtype, order)
-    return ndarray(b.shape, b.dtype, buffer=b,order=order)
+    return afnumpy.ndarray(b.shape, b.dtype, buffer=b,order=order)
+
+def reshape(a, newshape, order='C'):
+    if(order is not 'C'):
+        raise NotImplementedError
+    newshape = numpy.array(pu.c2f(newshape), dtype=pu.dim_t)
+    ret, handle = afnumpy.arrayfire.af_moddims(a.d_array.get(), newshape.size, newshape.ctypes.data)
+    s = afnumpy.arrayfire.array_from_handle(handle)
+    a = afnumpy.ndarray(pu.af_shape(s), dtype=a.dtype, af_array=s)
+    return a
+
 

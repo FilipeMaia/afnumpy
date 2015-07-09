@@ -228,7 +228,7 @@ def test_min():
     # fassert(a.min(), b.min())
     b = numpy.random.random(3)
     a = afnumpy.array(b)
-    fassert(a.max(), b.max())
+    fassert(a.min(), b.min())
 
 def test_abs():    
     b = numpy.random.random(3)+numpy.random.random(3)*1.0j

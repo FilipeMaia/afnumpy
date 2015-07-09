@@ -1,5 +1,6 @@
 import numpy
-from multiarray import ndarray, zeros, where, array, reshape, vdot, fromstring
+import arrayfire
+from multiarray import ndarray, zeros, where, array, vdot, fromstring
 import random
 from core import *
 
