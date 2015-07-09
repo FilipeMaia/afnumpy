@@ -1,6 +1,7 @@
 import numpy
 from .. import private_utils as pu
 import afnumpy
+from numpy import newaxis
 
 def concatenate(arrays, axis=0):
     if(len(arrays) < 1):
@@ -45,3 +46,5 @@ def reshape(a, newshape, order='C'):
     return a
 
 
+def asanyarray(a, dtype=None, order=None):
+    return afnumpy.array(a, dtype, copy=False, order=order, subok=True)

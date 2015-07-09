@@ -374,6 +374,16 @@ def test_setitem():
     iassert(a1,b1)
     assert mem_before == a1.d_array.device_f32()
     
+def test_views():
+    b = numpy.random.random((3,3))
+    a = afnumpy.array(b)
+    c = a[0]
+    d = b[0]
+    c[:] = 0
+    d[:] = 0
+    iassert(a,b)
+
+
 def test_roll():    
     b = numpy.random.random(3)
     a = afnumpy.array(b)
@@ -415,4 +425,21 @@ def test_concatenate():
     iassert(afnumpy.concatenate(a), numpy.concatenate(b))
     iassert(afnumpy.concatenate((a,a)), numpy.concatenate((b,b)))
     iassert(afnumpy.concatenate((a,a),axis=1), numpy.concatenate((b,b),axis=1))
+
+def test_asanyarray():
+    b = numpy.random.random((2,3))
+    a = afnumpy.array(b)
+    iassert(afnumpy.asanyarray(a), numpy.asanyarray(b))
+    # zero dim arrays not supported
+    # iassert(afnumpy.asanyarray(1), numpy.asanyarray(1))
+    iassert(afnumpy.asanyarray([1,2]), numpy.asanyarray([1,2]))
+    iassert(afnumpy.asanyarray(b), numpy.asanyarray(b))
+
+# def test_vstack():
+#     b = numpy.random.random((2,3))
+#     a = afnumpy.array(b)
+#     iassert(afnumpy.vstack(a), numpy.vstack(b))
+#     iassert(afnumpy.vstack((a,a)), numpy.vstack((b,b)))
+#     iassert(afnumpy.vstack((a,a),axis=1), numpy.vstack((b,b),axis=1))
+
 

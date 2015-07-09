@@ -19,12 +19,14 @@ def zeros(shape, dtype=float, order='C'):
 def array(object, dtype=None, copy=True, order=None, subok=False, ndmin=0):
     if(order is not None):
         raise NotImplementedError
-    if(subok is not False):
-        raise NotImplementedError
+    # We're going to ignore this for now
+    # if(subok is not False):
+    #     raise NotImplementedError
+
     # If it's not a numpy or afnumpy array first create a numpy array from it
     if(not isinstance(object, ndarray) and
        not isinstance(object, numpy.ndarray)):
-        object = numpy.array(object, dtype=dtype, copy=copy, subok=subok, ndmin=ndmin)
+        object = numpy.array(object, dtype=dtype, copy=copy, order=order, subok=subok, ndmin=ndmin)
 #        return ndarray(a.shape, dtype=a.dtype, buffer=a)       
 
     shape = object.shape

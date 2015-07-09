@@ -1,4 +1,5 @@
 from . import numeric as _nx
+from .numeric import asanyarray, newaxis
 
 def atleast_2d(*arys):
     res = []
