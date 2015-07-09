@@ -317,7 +317,8 @@ class ndarray(object):
                 idx = maxlen + idx
             if(idx >= maxlen):
                 raise IndexError('index %d is out of bounds for axis %d with size %d' % (idx, axis, maxlen))
-            return arrayfire.seq(float(idx), float(idx), float(1))
+            #return arrayfire.seq(float(idx), float(idx), float(1))
+            return idx        
 
         if(isinstance(idx, ndarray)):
             return idx.d_array
@@ -349,10 +350,9 @@ class ndarray(object):
         # arrayfire doesn't like other steps in this case
         if(start == end):
             step = 1
-        sl = slice(start,end,step)
-        return  arrayfire.seq(float(sl.start),
-                              float(sl.stop),
-                              float(sl.step))
+        return  arrayfire.seq(float(start),
+                              float(end),
+                              float(step))
 
     def __convert_dim__(self, idx):
         # Convert numpy style indexing arguments to arrayfire style
@@ -387,15 +387,13 @@ class ndarray(object):
                 if(af_idx.isSeq):
                     shape.append(arrayfire.seq(af_idx.seq()).size)
                 else:
-                    shape.append(arrayfire.array_from_handle(af_idx.arr()).elements())
+                    shape.append(af_idx.arr_elements())
         return pu.c2f(shape)
         
     def __expand_dim__(self, value, idx):
         # reshape value, adding size 1 dimensions, such that the dimensions of value match idx
         idx_shape = self.__index_shape__(idx)
-        value_shape = list(value.shape)
-        
-        print "idx_shape = %s" % (idx_shape)
+        value_shape = list(value.shape)        
         past_one_dims = False
         needs_reshape = False
         for i in range(0, len(idx_shape)):
@@ -426,9 +424,7 @@ class ndarray(object):
                 raise TypeError('left hand side must have same dtype as right hand side')
             if(isinstance(idx,list)):
                 # There must be a better way to do this!
-                print value.shape
                 value = self.__expand_dim__(value, idx)
-                print value.shape
                 if(len(idx) == 1):
                     self.d_array.setValue(idx[0], value.d_array)
                 if(len(idx) == 2):

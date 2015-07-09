@@ -335,6 +335,21 @@ catch (const std::exception & e) {
   af_seq seq(){
     return self->idx.seq;
   }
+
+  int arr_elements(){
+    if(self->isSeq){
+      return 0;
+    }
+    dim_t dims[4];
+    af_get_dims(&dims[0], &dims[1], &dims[2], &dims[3], self->idx.arr);
+    int ret = 1;
+    unsigned numdims;
+    af_get_numdims(&numdims, self->idx.arr);
+    for(int i = 0;i<numdims;i++){
+      ret *= dims[i];
+    }
+    return ret;
+  }
 };
 
 
