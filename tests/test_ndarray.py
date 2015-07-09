@@ -327,14 +327,16 @@ def test_setitem():
     b1[:,0] = b2[:]
     iassert(a1,b1)
     assert mem_before == a1.d_array.device_f32()
-#    Tracer()()
     a1[c,0] = -a2[:]
     b1[d,0] = -b2[:]
     iassert(a1,b1)
     assert mem_before == a1.d_array.device_f32()
-#    Tracer()()
     a1[0,c] = a2[:]
     b1[0,d] = b2[:]
+    iassert(a1,b1)
+    assert mem_before == a1.d_array.device_f32()
+    a1[0] = a2[:]
+    b1[0] = b2[:]
     iassert(a1,b1)
     assert mem_before == a1.d_array.device_f32()
 
@@ -349,6 +351,11 @@ def test_setitem():
     iassert(a1,b1)
     assert mem_before == a1.d_array.device_f32()
 
+    a1[0] = a2[:]
+    b1[0] = b2[:]
+    iassert(a1,b1)
+    assert mem_before == a1.d_array.device_f32()
+
     # 4D
     b1 = numpy.random.random((2,3,2,2))
     b2 = numpy.random.random((2,2))
@@ -359,6 +366,11 @@ def test_setitem():
     mem_before = a1.d_array.device_f32()
     a1[:,0,0,c] = a2
     b1[:,0,0,d] = b2
+    iassert(a1,b1)
+    assert mem_before == a1.d_array.device_f32()
+
+    a1[1,2] = a2
+    b1[1,2] = b2
     iassert(a1,b1)
     assert mem_before == a1.d_array.device_f32()
     
