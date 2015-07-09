@@ -2,12 +2,27 @@ import afnumpy
 import numpy
 from numpy.testing import assert_allclose as fassert
 from IPython.core.debugger import Tracer
+import numbers
+
+def massert(af_a, np_a):
+    # Assert the metadata of the arrays
+
+    # We cannot yet handle "scalar" arrays so we need 
+    # this weasel out
+    if not isinstance(af_a, numbers.Number):
+        assert (af_a.shape == np_a.shape)
+        assert af_a.dtype == np_a.dtype
+    else:
+        assert isinstance(af_a, numbers.Number)
+        assert isinstance(np_a, numbers.Number)
 
 def iassert(af_a, np_a):
     assert numpy.all(numpy.array(af_a) == np_a)
+    massert(af_a, np_a)
 
 def fassert(af_a, np_a):
     numpy.testing.assert_allclose(numpy.array(af_a), np_a)
+    massert(af_a, np_a)
 
 def test_ones():
     a = afnumpy.ones(3)
@@ -43,6 +58,18 @@ def test_where():
     iassert(afnumpy.where(a2 < 2, a1, a2), numpy.where(b2 < 2, b1, b2))
     # Test where with input as booleans
     iassert(afnumpy.where(a2 < 2), numpy.where(b2 < 2))
+
+    # And now multidimensional
+    a1 = afnumpy.array([[1,2,3],[4,5,6]])
+    b1 = numpy.array(a1)
+
+    a2 = afnumpy.array([[0,2,1],[1,0,1]])
+    b2 = numpy.array(a2)
+
+    # Test where with input as indices
+    iassert(afnumpy.where(a2, a1, a2), numpy.where(b2, b1, b2))
+    # Test where with input as indices
+    iassert(afnumpy.where(a2), numpy.where(b2))
 
 
 def test_array():
@@ -92,6 +119,10 @@ def test_binary_arithmetic():
     fassert(a**a, b**b)
     fassert(a**3, b**3)
     fassert(3**a, 3**b)
+
+    fassert(a%a, b%b)
+    fassert(a%3, b%3)
+    fassert(3%a, 3%b)
 
 def test_augmented_assignment():
     a = afnumpy.random.rand(3)
@@ -255,7 +286,9 @@ def test_getitem():
     iassert(a[:-1], b[:-1])
     iassert(a[0:-1], b[0:-1])
     iassert(a[1:-1], b[1:-1])
-    iassert(a[1:1], b[1:1])
+    iassert(a[1:2], b[1:2])
+    # This will return an empty array, which is not yet supported
+    # iassert(a[1:1], b[1:1])
     iassert(a[-2:], b[-2:])
     iassert(a[-3:-1], b[-3:-1])
     iassert(a[1:-1:1], b[1:-1:1])
@@ -297,6 +330,10 @@ def test_getitem():
     iassert(a[1,c,0,:], b[1,d,0,:])
 
 
+def test_newaxis():
+    b = numpy.random.random((3))
+    a = afnumpy.array(b)
+    # iassert(a[afnumpy.newaxis,:], b[numpy.newaxis,:])
 
 def test_setitem():
     b = numpy.random.random((3))
@@ -431,7 +468,7 @@ def test_asanyarray():
     a = afnumpy.array(b)
     iassert(afnumpy.asanyarray(a), numpy.asanyarray(b))
     # zero dim arrays not supported
-    # iassert(afnumpy.asanyarray(1), numpy.asanyarray(1))
+    iassert(afnumpy.asanyarray(1), numpy.asanyarray(1))
     iassert(afnumpy.asanyarray([1,2]), numpy.asanyarray([1,2]))
     iassert(afnumpy.asanyarray(b), numpy.asanyarray(b))
 
@@ -443,3 +480,27 @@ def test_asanyarray():
 #     iassert(afnumpy.vstack((a,a),axis=1), numpy.vstack((b,b),axis=1))
 
 
+def test_empty_ndarray():
+    a = afnumpy.zeros(())
+    b = numpy.zeros(())
+    iassert(a,b)
+    a = afnumpy.ndarray(0)
+    b = numpy.ndarray(0)
+    iassert(a,b)
+    a = afnumpy.ndarray((0,))
+    b = numpy.ndarray((0,))
+    iassert(a,b)
+    a = afnumpy.zeros(3)
+    b = numpy.zeros(3)
+    iassert(a[0:0],b[0:0])
+    
+def test_floor():
+    b = numpy.random.random((2,3))
+    a = afnumpy.array(b)
+    iassert(afnumpy.floor(a), numpy.floor(b))
+
+def test_ceil():
+    b = numpy.random.random((2,3))
+    a = afnumpy.array(b)
+    iassert(afnumpy.ceil(a), numpy.ceil(b))
+    
