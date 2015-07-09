@@ -394,3 +394,9 @@ def test_roll():
     b = numpy.random.random((2, 3))
     a = afnumpy.array(b)
     fassert(afnumpy.roll(a, 2), numpy.roll(b, 2))
+
+def test_ndarray_astype():
+    b = numpy.random.random(3)
+    a = afnumpy.array(b)
+    iassert(b.astype(numpy.uint8),a.astype(numpy.uint8))
+    iassert(b.astype(numpy.complex128),a.astype(numpy.complex128))

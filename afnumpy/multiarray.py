@@ -462,6 +462,16 @@ class ndarray(object):
         type_max = getattr(arrayfire, 'min_'+pu.TypeToString[self.d_array.type()])
         return type_max(self.d_array)
 
+    def astype(self, dtype, order='K', casting='unsafe', subok=True, copy=True):
+        if(order != 'K'):
+            raise NotImplementedError('only order=K implemented')
+        if(casting != 'unsafe'):
+            raise NotImplementedError('only casting=unsafe implemented')
+        if(copy == False and order == 'K' and dtype == self.dtype):
+            return self
+        s = self.d_array.astype(pu.TypeMap[dtype])
+        return ndarray(self.shape, dtype=dtype, af_array=s)
+
 #    def __getattr__(self,name):
 #        print name
 #        raise AttributeError
