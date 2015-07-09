@@ -79,7 +79,6 @@ class ndarray(object):
             raise NotImplementedError('0 dimension arrays are not yet supported')
         elif(s_a.size <= 4):
             if(af_array is not None):
-                self.handle = af_array.get()
                 # We need to make sure to keep a copy of af_array
                 # Otherwise python will free it and havoc ensues
                 self.d_array = af_array
