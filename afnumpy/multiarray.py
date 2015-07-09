@@ -8,34 +8,12 @@ import private_utils as pu
 def fromstring(string, dtype=float, count=-1, sep=''):
     return array(numpy.fromstring(string, dtype, count, sep))
 
-def roll(a, shift, axis=None):
-    shape = a.shape
-    if(axis is None):
-        axis = 0
-        a = a.flatten()
-    axis = pu.c2f(a.shape, axis)
-    if axis == 0:
-        s = arrayfire.shift(a.d_array, shift, 0, 0, 0)
-    elif axis == 1:
-        s = arrayfire.shift(a.d_array, 0, shift, 0, 0)
-    elif axis == 2:
-        s = arrayfire.shift(a.d_array, 0, 0, shift, 0)
-    elif axis == 3:
-        s = arrayfire.shift(a.d_array, 0, 0, 0, shift)
-    else:
-        raise NotImplementedError
-    return ndarray(shape, dtype=a.dtype, af_array=s)        
-
 def vdot(a, b):
     s = arrayfire.dot(arrayfire.conjg(a.d_array), b.d_array)
     return ndarray(pu.af_shape(s), dtype=a.dtype, af_array=s)
 
 def zeros(shape, dtype=float, order='C'):
     b = numpy.zeros(shape, dtype, order)
-    return ndarray(b.shape, b.dtype, buffer=b,order=order)
-
-def ones(shape, dtype=float, order='C'):
-    b = numpy.ones(shape, dtype, order)
     return ndarray(b.shape, b.dtype, buffer=b,order=order)
 
 def array(object, dtype=None, copy=True, order=None, subok=False, ndmin=0):
@@ -82,46 +60,6 @@ def where(condition, x=pu.dummy, y=pu.dummy):
         return ret;
     else:
         raise ValueError('either both or neither of x and y should be given')
-
-def all(a, axis=None, out=None, keepdims=False):
-    if(out is not None):
-        raise NotImplementedError
-    if(keepdims is not False):
-        raise NotImplementedError
-    if(axis is None):
-        for i in range(len(a.shape)-1,-1,-1):
-            s = arrayfire.allTrue(a.d_array, pu.c2f(a.shape, i)) 
-            a = ndarray(pu.af_shape(s), dtype=bool, af_array=s)
-    else:
-        s = arrayfire.allTrue(a.d_array, pu.c2f(a.shape, axis))
-    a = ndarray(pu.af_shape(s), dtype=bool, af_array=s)
-    if(axis == -1):
-        if(keepdims):
-            return numpy.array(a)
-        else:
-            return numpy.array(a)[0]
-    else:
-        return a
-
-def sum(a, axis=None, dtype=None, out=None, keepdims=False):
-    if(out is not None):
-        raise NotImplementedError
-    if(keepdims is not False):
-        raise NotImplementedError
-    if(axis is None):
-        for i in range(len(a.shape)-1,-1,-1):
-            s = arrayfire.sum(a.d_array, pu.c2f(a.shape, i)) 
-            a = ndarray(pu.af_shape(s), dtype=a.dtype, af_array=s)
-    else:
-        s = arrayfire.sum(a.d_array, pu.c2f(a.shape, axis))
-    a = ndarray(pu.af_shape(s), dtype=a.dtype, af_array=s)
-    if(axis is None):
-        if(keepdims):
-            return numpy.array(a)
-        else:
-            return numpy.array(a)[0]
-    else:
-        return a
 
 
 def reshape(a, newshape, order='C'):
