@@ -268,7 +268,7 @@ class ndarray(object):
         return numpy.array(self).__nonzero__()
 
     def __len__(self):
-        return len(h_array)
+        return self.shape[0]
 
     @property
     def size(self):

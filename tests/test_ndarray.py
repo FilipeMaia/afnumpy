@@ -400,3 +400,19 @@ def test_ndarray_astype():
     a = afnumpy.array(b)
     iassert(b.astype(numpy.uint8),a.astype(numpy.uint8))
     iassert(b.astype(numpy.complex128),a.astype(numpy.complex128))
+
+def test_ndarray_len():
+    b = numpy.random.random(3)
+    a = afnumpy.array(b)
+    assert(len(a) == len(b))
+    b = numpy.random.random((3,3))
+    a = afnumpy.array(b)
+    assert(len(a) == len(b))
+
+def test_concatenate():
+    b = numpy.random.random((2,3))
+    a = afnumpy.array(b)
+    iassert(afnumpy.concatenate(a), numpy.concatenate(b))
+    iassert(afnumpy.concatenate((a,a)), numpy.concatenate((b,b)))
+    iassert(afnumpy.concatenate((a,a),axis=1), numpy.concatenate((b,b),axis=1))
+
