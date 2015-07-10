@@ -196,6 +196,15 @@ TYPE_IGNORE(constant, cfloat)
 
 %rename(copy) af::features::operator=;
 
+%rename(__add_float__) af::operator+(const array&, const float &);
+%rename(__radd_float__) af::operator+(const float &, const array&);
+%rename(__sub_float__) af::operator-(const array&, const float &);
+%rename(__rsub_float__) af::operator-(const float &, const array&);
+%rename(__mul_float__) af::operator*(const array&, const float &);
+%rename(__rmul_float__) af::operator*(const float &, const array&);
+%rename(__div_float__) af::operator/(const array&, const float &);
+%rename(__rdiv_float__) af::operator/(const float &, const array&);
+
 // Try to handle exceptions
 %exception {
 try {

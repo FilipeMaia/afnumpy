@@ -7,11 +7,10 @@ import numbers
 def massert(af_a, np_a):
     # Assert the metadata of the arrays
 
-    # We cannot yet handle "scalar" arrays so we need 
-    # this weasel out
     if not isinstance(af_a, numbers.Number):
         assert (af_a.shape == np_a.shape)
-        assert af_a.dtype == np_a.dtype
+        # I will not strictly enforce float32 vs float64
+        assert af_a.dtype == np_a.dtype or (af_a.dtype == numpy.float32 and np_a.dtype == numpy.float64)
     else:
         assert isinstance(af_a, numbers.Number)
         assert isinstance(np_a, numbers.Number)
@@ -123,6 +122,30 @@ def test_binary_arithmetic():
     fassert(a%a, b%b)
     fassert(a%3, b%3)
     fassert(3%a, 3%b)
+
+    # Check for arguments of diffeernt types
+    a = afnumpy.ones(3,dtype=numpy.uint32)
+    b = numpy.array(a)
+    fassert(a+3.0, b+3.0)
+    # This is a tricky case we won't support for now
+    # fassert(a+numpy.float32(3.0), b+numpy.float32(3.0))
+    fassert(3.0+a, 3.0+b)
+
+    fassert(a-3.0, b-3.0)
+    fassert(3.0-a, 3.0-b)
+
+    fassert(a*3.0, b*3.0)
+    fassert(3.0*a, 3.0*b)
+
+    fassert(a/3.0, b/3.0)
+    fassert(3.0/a, 3.0/b)
+
+    fassert(a**3.0, b**3.0)
+    fassert(3.0**a, 3.0**b)
+
+    fassert(a%3.0, b%3.0)
+    fassert(3.0%a, 3.0%b)
+
 
 def test_augmented_assignment():
     a = afnumpy.random.rand(3)
