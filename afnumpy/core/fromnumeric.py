@@ -13,14 +13,10 @@ def all(a, axis=None, out=None, keepdims=False):
             a = afnumpy.ndarray(pu.af_shape(s), dtype=bool, af_array=s)
     else:
         s = afnumpy.arrayfire.allTrue(a.d_array, pu.c2f(a.shape, axis))
-    a = afnumpy.ndarray(pu.af_shape(s), dtype=bool, af_array=s)
-    if(axis == -1):
-        if(keepdims):
-            return numpy.array(a)
-        else:
-            return numpy.array(a)[0]
-    else:
-        return a
+    shape = pu.af_shape(s)
+    if(shape == (1,) and keepdims is False):
+        shape = tuple()
+    return afnumpy.ndarray(shape, dtype=bool, af_array=s)
 
 def sum(a, axis=None, dtype=None, out=None, keepdims=False):
     if(out is not None):
