@@ -33,12 +33,8 @@ def sum(a, axis=None, dtype=None, out=None, keepdims=False):
             a = afnumpy.ndarray(pu.af_shape(s), dtype=a.dtype, af_array=s)
     else:
         s = afnumpy.arrayfire.sum(a.d_array, pu.c2f(a.shape, axis))
-    a = afnumpy.ndarray(pu.af_shape(s), dtype=a.dtype, af_array=s)
-    if(axis is None):
-        if(keepdims):
-            return numpy.array(a)
-        else:
-            return numpy.array(a)[0]
-    else:
-        return a
+    shape = pu.af_shape(s)
+    if(shape == (1,) and keepdims is False):
+        shape = tuple()
+    return afnumpy.ndarray(shape, dtype=a.dtype, af_array=s)
 
