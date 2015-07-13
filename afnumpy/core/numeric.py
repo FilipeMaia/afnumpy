@@ -74,3 +74,11 @@ def ceil(x, out=None):
     return a
     
         
+def abs(x, out=None):
+
+    if not isinstance(x, afnumpy.ndarray):
+        return numpy.abs(x, out)
+    a = x.__abs__()
+    if out is not None:
+        out[:] = a
+    return a

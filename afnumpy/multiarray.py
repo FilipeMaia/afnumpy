@@ -330,7 +330,7 @@ class ndarray(object):
         idx, new_shape = indexing.__convert_dim__(self.shape, args)
         if None in idx:
             # one of the indices is empty
-            return ndarray(self.__index_shape__(idx), dtype=self.dtype)
+            return ndarray(indexing.__index_shape__(self.shape, idx), dtype=self.dtype)
 
         if(isinstance(idx,list)):
             # There must be a better way to do this!
@@ -365,7 +365,7 @@ class ndarray(object):
                 # There must be a better way to do this!
 #                if(idx_shape != value.shape):
 #                    value = value.reshape(idx_shape)
-                value = self.__expand_dim__(value, idx)
+                value = indexing.__expand_dim__(self.shape, value, idx)
                 if(len(idx) == 1):
                     self.d_array.setValue(idx[0], value.d_array)
                 if(len(idx) == 2):

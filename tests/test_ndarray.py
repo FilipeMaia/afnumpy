@@ -4,34 +4,7 @@ from numpy.testing import assert_allclose as fassert
 from IPython.core.debugger import Tracer
 import numbers
 import collections
-
-def massert(af_a, np_a):
-    # Assert the metadata of the arrays
-
-    if not isinstance(af_a, numbers.Number):
-        assert (af_a.shape == np_a.shape)
-        # I will not strictly enforce float32 vs float64
-        assert af_a.dtype == np_a.dtype or (af_a.dtype == numpy.float32 and np_a.dtype == numpy.float64)
-    else:
-        assert isinstance(af_a, numbers.Number)
-        assert isinstance(np_a, numbers.Number)
-
-def iassert(af_a, np_a):
-    if not isinstance(af_a, tuple):
-        af_a = (af_a,)
-        np_a = (np_a,)
-    for af,np in zip(af_a,np_a):
-        assert numpy.all(numpy.array(af) == np)
-        massert(af, np)
-
-def fassert(af_a, np_a):
-    numpy.testing.assert_allclose(numpy.array(af_a), np_a)
-    massert(af_a, np_a)
-
-def test_ones():
-    a = afnumpy.ones(3)
-    b = numpy.ones(3)
-    iassert(a, b)
+from asserts import *
 
 def test_zeros():
     a = afnumpy.zeros(3)
@@ -289,7 +262,7 @@ def test_min():
     a = afnumpy.array(b)
     fassert(a.min(), b.min())
 
-def test_abs():    
+def test_ndarray_abs():    
     b = numpy.random.random(3)+numpy.random.random(3)*1.0j
     a = afnumpy.array(b)
     fassert(abs(a), abs(b))
@@ -298,18 +271,6 @@ def test_abs():
     fassert(abs(a), abs(b))
 
         
-def test_reshape():
-    b = numpy.random.random((2,3))
-    a = afnumpy.array(b)
-    iassert(a.reshape((3,2)), b.reshape((3,2)))
-    iassert(a.reshape(6), b.reshape(6))
-
-    b = numpy.random.random((1))
-    a = afnumpy.array(b)
-    # Some empty shape reshape
-    iassert(a.reshape(()), b.reshape(()))
-    iassert(a.reshape([]), b.reshape([]))
-
 def test_getitem():
     b = numpy.random.random((3))
     a = afnumpy.array(b)
@@ -454,28 +415,6 @@ def test_views():
     d[:] = 0
     iassert(a,b)
 
-
-def test_roll():    
-    b = numpy.random.random(3)
-    a = afnumpy.array(b)
-    fassert(afnumpy.roll(a, -1, 0), numpy.roll(b, -1, 0))
-
-    b = numpy.random.random(3)
-    a = afnumpy.array(b)
-    fassert(afnumpy.roll(a, 1, 0), numpy.roll(b, 1, 0))
-
-    b = numpy.random.random((2, 3))
-    a = afnumpy.array(b)
-    fassert(afnumpy.roll(a, 1, 0), numpy.roll(b, 1, 0))
-
-    b = numpy.random.random((2, 3))
-    a = afnumpy.array(b)
-    fassert(afnumpy.roll(a, 1, 1), numpy.roll(b, 1, 1))
-
-    b = numpy.random.random((2, 3))
-    a = afnumpy.array(b)
-    fassert(afnumpy.roll(a, 2), numpy.roll(b, 2))
-
 def test_ndarray_astype():
     b = numpy.random.random(3)
     a = afnumpy.array(b)
@@ -490,21 +429,6 @@ def test_ndarray_len():
     a = afnumpy.array(b)
     assert(len(a) == len(b))
 
-def test_concatenate():
-    b = numpy.random.random((2,3))
-    a = afnumpy.array(b)
-    iassert(afnumpy.concatenate(a), numpy.concatenate(b))
-    iassert(afnumpy.concatenate((a,a)), numpy.concatenate((b,b)))
-    iassert(afnumpy.concatenate((a,a),axis=1), numpy.concatenate((b,b),axis=1))
-
-def test_asanyarray():
-    b = numpy.random.random((2,3))
-    a = afnumpy.array(b)
-    iassert(afnumpy.asanyarray(a), numpy.asanyarray(b))
-    # zero dim arrays not supported
-    iassert(afnumpy.asanyarray(1), numpy.asanyarray(1))
-    iassert(afnumpy.asanyarray([1,2]), numpy.asanyarray([1,2]))
-    iassert(afnumpy.asanyarray(b), numpy.asanyarray(b))
 
 def test_vstack():
     b = numpy.random.random((2,3))
@@ -532,24 +456,6 @@ def test_empty_ndarray():
     a = afnumpy.zeros(3)
     b = numpy.zeros(3)
     iassert(a[0:0],b[0:0])
-    
-def test_floor():
-    b = numpy.random.random((2,3))
-    a = afnumpy.array(b)
-    iassert(afnumpy.floor(a), numpy.floor(b))
-
-    b = numpy.array([1,2,3])
-    a = afnumpy.array(b)
-    iassert(afnumpy.floor(a), numpy.floor(b))
-
-def test_ceil():
-    b = numpy.random.random((2,3))
-    a = afnumpy.array(b)
-    iassert(afnumpy.ceil(a), numpy.ceil(b))
-
-    b = numpy.array([1,2,3])
-    a = afnumpy.array(b)
-    iassert(afnumpy.ceil(a), numpy.ceil(b))
     
 
 def test_copy():
