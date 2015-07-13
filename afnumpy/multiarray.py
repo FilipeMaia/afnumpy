@@ -4,6 +4,7 @@ import numbers
 from IPython.core.debugger import Tracer
 import private_utils as pu
 import afnumpy
+import indexing
 
 def fromstring(string, dtype=float, count=-1, sep=''):
     return array(numpy.fromstring(string, dtype, count, sep))
@@ -53,7 +54,6 @@ def where(condition, x=pu.dummy, y=pu.dummy):
     mult = 1
     # numpy uses int64 while arrayfire uses uint32
     s = ndarray(pu.af_shape(s), dtype=numpy.uint32, af_array=s).astype(numpy.int64)
-    Tracer()()
     for i in a.shape[::-1]:
         mult *= i
         idx = [s % mult] + idx 
@@ -251,6 +251,8 @@ class ndarray(object):
             return array(self.h_array >= other, dtype=self.dtype)
 
     def __eq__(self, other):
+        if(other is None):
+            return False
         if(self.d_array):
             s = afnumpy.arrayfire.__eq__(self.d_array, pu.raw(other))
             return ndarray(self.shape, dtype=numpy.bool, af_array=s)
@@ -258,6 +260,8 @@ class ndarray(object):
             return array(self.h_array == other, dtype=self.dtype)
 
     def __ne__(self, other):
+        if(other is None):
+            return True
         if(self.d_array):
             s = afnumpy.arrayfire.__ne__(self.d_array, pu.raw(other))
             return ndarray(self.shape, dtype=numpy.bool, af_array=s)
@@ -308,7 +312,7 @@ class ndarray(object):
             args = (args,)
         if(self.d_array is None):
             raise IndexError('too many indices for array')
-        idx = self.__convert_dim__(args)
+        idx, new_shape = indexing.__convert_dim__(self.shape, args)
         if None in idx:
             # one of the indices is empty
             return ndarray(self.__index_shape__(idx), dtype=self.dtype)
@@ -327,6 +331,12 @@ class ndarray(object):
             s = self.d_array.__getitem__(idx)
         shape = pu.af_shape(s)
         array = ndarray(shape, dtype=self.dtype, af_array=s)
+        #Tracer()()
+        if(shape != new_shape):
+            array = array.reshape(new_shape)
+        return array
+        
+
         shape = list(shape)
         if isinstance(args, tuple):
             while(len(shape) < len(args)):
@@ -337,9 +347,8 @@ class ndarray(object):
 
         # ISSUE: Looks like afnumpy contracts dimensions in certain
         # cases and not in others. This should be checked out
-        
-        # Remove dimensions corresponding to non slices
         Tracer()()
+        # Remove dimensions corresponding to non slices
         if(isinstance(args, tuple)):
             new_shape = []
             for axis in range(0,len(args)):
@@ -471,7 +480,7 @@ class ndarray(object):
     def __setitem__(self, idx, value):
         if(self.d_array is None):
             raise IndexError('too many indices for array')
-        idx = self.__convert_dim__(idx)
+        idx, idx_shape = indexing.__convert_dim__(self.shape, idx)
         if None in idx:
             # one of the indices is empty
             return
@@ -481,6 +490,8 @@ class ndarray(object):
                 raise TypeError('left hand side must have same dtype as right hand side')
             if(isinstance(idx,list)):
                 # There must be a better way to do this!
+#                if(idx_shape != value.shape):
+#                    value = value.reshape(idx_shape)
                 value = self.__expand_dim__(value, idx)
                 if(len(idx) == 1):
                     self.d_array.setValue(idx[0], value.d_array)

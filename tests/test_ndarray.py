@@ -341,7 +341,7 @@ def test_getitem():
     # Now multidimensional!
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
-            
+           
     iassert(a[:], b[:])
     iassert(a[0], b[0])
     iassert(a[:,2], b[:,2])
@@ -361,6 +361,7 @@ def test_getitem():
     iassert(a[1,1,:,:], b[1,1,:,:])
     d = numpy.array([0,2],dtype=numpy.int32)
     c = afnumpy.array(d)
+    Tracer()() 
     iassert(a[1,c,0,:], b[1,d,0,:])
 
 

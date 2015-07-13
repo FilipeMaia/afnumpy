@@ -42,16 +42,16 @@ def reshape(a, newshape, order='C'):
         raise NotImplementedError
     if isinstance(newshape,numbers.Number):
         newshape = (newshape,)
-    newshape = numpy.array(pu.c2f(newshape), dtype=pu.dim_t)
     if a.size != numpy.prod(newshape):
         raise ValueError('total size of new array must be unchanged')
     if len(newshape) == 0:
         # Deal with empty shapes
         return afnumpy.array(numpy.array(a)[0], dtype=a.dtype)
         
-    ret, handle = afnumpy.arrayfire.af_moddims(a.d_array.get(), newshape.size, newshape.ctypes.data)
+    af_shape = numpy.array(pu.c2f(newshape), dtype=pu.dim_t)
+    ret, handle = afnumpy.arrayfire.af_moddims(a.d_array.get(), af_shape.size, af_shape.ctypes.data)
     s = afnumpy.arrayfire.array_from_handle(handle)
-    a = afnumpy.ndarray(pu.af_shape(s), dtype=a.dtype, af_array=s)
+    a = afnumpy.ndarray(newshape, dtype=a.dtype, af_array=s)
     return a
 
 
