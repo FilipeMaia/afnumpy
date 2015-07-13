@@ -50,16 +50,16 @@ def array(object, dtype=None, copy=True, order=None, subok=False, ndmin=0):
 def where(condition, x=pu.dummy, y=pu.dummy):
     a = condition
     s = afnumpy.arrayfire.where(a.d_array)
-    idx = []
-    mult = 1
     # numpy uses int64 while arrayfire uses uint32
     s = ndarray(pu.af_shape(s), dtype=numpy.uint32, af_array=s).astype(numpy.int64)
-    for i in a.shape[::-1]:
-        mult *= i
-        idx = [s % mult] + idx 
-        s /= mult
-    idx = tuple(idx)
     if(x is pu.dummy and y is pu.dummy):
+        idx = []
+        mult = 1
+        for i in a.shape[::-1]:
+            mult *= i
+            idx = [s % mult] + idx 
+            s /= mult
+        idx = tuple(idx)
         return idx
     elif(x is not pu.dummy and y is not pu.dummy):
         if(x.dtype != y.dtype):
@@ -67,7 +67,13 @@ def where(condition, x=pu.dummy, y=pu.dummy):
         if(x.shape != y.shape):
             raise ValueError('x and y must have same shape')
         ret = array(y)
-        ret[idx] = x[idx]
+        idx = afnumpy.arrayfire.index(s.d_array)
+        if(len(ret.shape) > 1):
+            ret = ret.flatten()
+            ret[s] = x.flatten()[s]
+            ret = ret.reshape(x.shape)
+        else:
+            ret[s] = x[s]
         return ret;
     else:
         raise ValueError('either both or neither of x and y should be given')
