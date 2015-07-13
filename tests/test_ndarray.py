@@ -512,6 +512,12 @@ def test_vstack():
     iassert(afnumpy.vstack(a), numpy.vstack(b))
     iassert(afnumpy.vstack((a,a)), numpy.vstack((b,b)))
 
+def test_hstack():
+    b = numpy.random.random((2,3))
+    a = afnumpy.array(b)
+    iassert(afnumpy.hstack(a), numpy.hstack(b))
+    iassert(afnumpy.hstack((a,a)), numpy.hstack((b,b)))
+
 
 def test_empty_ndarray():
     a = afnumpy.zeros(())

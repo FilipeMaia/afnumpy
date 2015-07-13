@@ -315,6 +315,10 @@ class ndarray(object):
         return other - afnumpy.floor(other / self) * self
 
     @property
+    def ndim(self):
+        return len(self.shape)
+
+    @property
     def size(self):
         return numpy.prod(self.shape)
 
