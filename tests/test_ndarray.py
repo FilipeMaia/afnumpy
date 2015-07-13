@@ -361,7 +361,6 @@ def test_getitem():
     iassert(a[1,1,:,:], b[1,1,:,:])
     d = numpy.array([0,2],dtype=numpy.int32)
     c = afnumpy.array(d)
-    Tracer()() 
     iassert(a[1,c,0,:], b[1,d,0,:])
 
 

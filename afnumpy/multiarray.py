@@ -11,7 +11,7 @@ def fromstring(string, dtype=float, count=-1, sep=''):
 
 def vdot(a, b):
     s = afnumpy.arrayfire.dot(afnumpy.arrayfire.conjg(a.d_array), b.d_array)
-    return ndarray(pu.af_shape(s), dtype=a.dtype, af_array=s)
+    return ndarray((), dtype=a.dtype, af_array=s)
 
 def zeros(shape, dtype=float, order='C'):
     b = numpy.zeros(shape, dtype, order)
@@ -89,6 +89,11 @@ class ndarray(object):
         s_a = numpy.array(pu.c2f(shape),dtype=pu.dim_t)
         if(s_a.size < 1):
             self.d_array = None
+            if buffer is None:
+                if af_array is None:
+                    raise ValueError
+                buffer = numpy.array(1, dtype=dtype)
+                af_array.host(buffer.ctypes.data)                
         elif(s_a.size <= 4):
             if(af_array is not None):
                 # We need to make sure to keep a copy of af_array
@@ -331,32 +336,8 @@ class ndarray(object):
             s = self.d_array.__getitem__(idx)
         shape = pu.af_shape(s)
         array = ndarray(shape, dtype=self.dtype, af_array=s)
-        #Tracer()()
         if(shape != new_shape):
             array = array.reshape(new_shape)
-        return array
-        
-
-        shape = list(shape)
-        if isinstance(args, tuple):
-            while(len(shape) < len(args)):
-                shape = [1]+shape
-            while(len(args) < len(shape)):
-                args = args+(slice(None),)
-
-
-        # ISSUE: Looks like afnumpy contracts dimensions in certain
-        # cases and not in others. This should be checked out
-        Tracer()()
-        # Remove dimensions corresponding to non slices
-        if(isinstance(args, tuple)):
-            new_shape = []
-            for axis in range(0,len(args)):
-#                if(isinstance(args[axis], slice)):
-                if not isinstance(args[axis], numbers.Number):
-                    new_shape.append(shape[axis])
-            if(new_shape != list(shape)):
-                array = array.reshape(new_shape)
         return array
 
     def __slice_to_seq__(self, idx, axis):
