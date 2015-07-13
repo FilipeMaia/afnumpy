@@ -466,3 +466,10 @@ def test_copy():
     a[:] = 0
     b[:] = 0
     iassert(c,d)
+
+
+def test_arange():
+    iassert(afnumpy.arange(10), numpy.arange(10))
+    iassert(afnumpy.arange(1,10), numpy.arange(1,10))
+    iassert(afnumpy.arange(10,1,-1), numpy.arange(10,1,-1))
+    iassert(afnumpy.arange(10,1,-1,dtype=numpy.int32), numpy.arange(10,1,-1,dtype=numpy.int32))

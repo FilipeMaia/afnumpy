@@ -46,7 +46,9 @@ def array(object, dtype=None, copy=True, order=None, subok=False, ndmin=0):
     else:
         raise AssertionError
         
-
+def arange(start, stop = None, step = None, dtype=None):
+    return afnumpy.array(numpy.arange(start,stop,step,dtype))        
+ 
 def where(condition, x=pu.dummy, y=pu.dummy):
     a = condition
     s = afnumpy.arrayfire.where(a.d_array)
