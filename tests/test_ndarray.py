@@ -551,3 +551,12 @@ def test_ceil():
     a = afnumpy.array(b)
     iassert(afnumpy.ceil(a), numpy.ceil(b))
     
+
+def test_copy():
+    b = numpy.random.random((2,3))
+    a = afnumpy.array(b)
+    c = afnumpy.copy(a)
+    d = numpy.copy(b)
+    a[:] = 0
+    b[:] = 0
+    iassert(c,d)

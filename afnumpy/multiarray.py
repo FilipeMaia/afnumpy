@@ -18,7 +18,7 @@ def zeros(shape, dtype=float, order='C'):
     return ndarray(b.shape, b.dtype, buffer=b,order=order)
 
 def array(object, dtype=None, copy=True, order=None, subok=False, ndmin=0):
-    if(order is not None):
+    if(order is not None and order is not 'K'):
         raise NotImplementedError
     # We're going to ignore this for now
     # if(subok is not False):

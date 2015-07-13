@@ -39,5 +39,5 @@ setup (name = 'afnumpy',
        description = """Simple swig example from docs""",
        include_dirs = [numpy.get_include()],
        ext_modules = [arrayfire_module],
-       packages = ["afnumpy","afnumpy/core"],
+       packages = ["afnumpy","afnumpy/core","afnumpy/lib"],
        )
