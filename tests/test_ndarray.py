@@ -55,13 +55,13 @@ def test_where():
     b2 = numpy.array(a2)
 
     # Test where with input as indices
-#    iassert(afnumpy.where(a2, a1, a2), numpy.where(b2, b1, b2))
+    iassert(afnumpy.where(a2, a1, a2), numpy.where(b2, b1, b2))
     # Test where with input as indices
-#    iassert(afnumpy.where(a2), numpy.where(b2))
+    iassert(afnumpy.where(a2), numpy.where(b2))
     # Test where with input as booleans
-#    iassert(afnumpy.where(a2 < 2, a1, a2), numpy.where(b2 < 2, b1, b2))
+    iassert(afnumpy.where(a2 < 2, a1, a2), numpy.where(b2 < 2, b1, b2))
     # Test where with input as booleans
-#    iassert(afnumpy.where(a2 < 2), numpy.where(b2 < 2))
+    iassert(afnumpy.where(a2 < 2), numpy.where(b2 < 2))
 
     # And now multidimensional
     a1 = afnumpy.array([[1,2,3],[4,5,6]])
@@ -71,7 +71,6 @@ def test_where():
     b2 = numpy.array(a2)
 
     # Test where with input as indices
-#    Tracer()()
     iassert(afnumpy.where(a2, a1, a2), numpy.where(b2, b1, b2))
     # Test where with input as indices
     iassert(afnumpy.where(a2), numpy.where(b2))
@@ -507,12 +506,11 @@ def test_asanyarray():
     iassert(afnumpy.asanyarray([1,2]), numpy.asanyarray([1,2]))
     iassert(afnumpy.asanyarray(b), numpy.asanyarray(b))
 
-# def test_vstack():
-#     b = numpy.random.random((2,3))
-#     a = afnumpy.array(b)
-#     iassert(afnumpy.vstack(a), numpy.vstack(b))
-#     iassert(afnumpy.vstack((a,a)), numpy.vstack((b,b)))
-#     iassert(afnumpy.vstack((a,a),axis=1), numpy.vstack((b,b),axis=1))
+def test_vstack():
+    b = numpy.random.random((2,3))
+    a = afnumpy.array(b)
+    iassert(afnumpy.vstack(a), numpy.vstack(b))
+    iassert(afnumpy.vstack((a,a)), numpy.vstack((b,b)))
 
 
 def test_empty_ndarray():
