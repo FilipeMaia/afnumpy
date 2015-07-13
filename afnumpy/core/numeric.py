@@ -2,6 +2,7 @@ import numpy
 from .. import private_utils as pu
 import afnumpy
 from numpy import newaxis
+import numbers
 
 def concatenate(arrays, axis=0):
     if(len(arrays) < 1):
@@ -39,7 +40,15 @@ def ones(shape, dtype=float, order='C'):
 def reshape(a, newshape, order='C'):
     if(order is not 'C'):
         raise NotImplementedError
+    if isinstance(newshape,numbers.Number):
+        newshape = (newshape,)
     newshape = numpy.array(pu.c2f(newshape), dtype=pu.dim_t)
+    if a.size != numpy.prod(newshape):
+        raise ValueError('total size of new array must be unchanged')
+    if len(newshape) == 0:
+        # Deal with empty shapes
+        return afnumpy.array(numpy.array(a)[0], dtype=a.dtype)
+        
     ret, handle = afnumpy.arrayfire.af_moddims(a.d_array.get(), newshape.size, newshape.ctypes.data)
     s = afnumpy.arrayfire.array_from_handle(handle)
     a = afnumpy.ndarray(pu.af_shape(s), dtype=a.dtype, af_array=s)
@@ -52,14 +61,14 @@ def asanyarray(a, dtype=None, order=None):
 
 def floor(x, out=None):
     s = afnumpy.arrayfire.floor(x.d_array)
-    a = afnumpy.ndarray(x.shape, dtype=x.dtype, af_array=s)
+    a = afnumpy.ndarray(x.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
     if out is not None:
         out[:] = a[:]
     return a
 
 def ceil(x, out=None):
     s = afnumpy.arrayfire.ceil(x.d_array)
-    a = afnumpy.ndarray(x.shape, dtype=x.dtype, af_array=s)
+    a = afnumpy.ndarray(x.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
     if out is not None:
         out[:] = a[:]
     return a

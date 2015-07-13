@@ -51,8 +51,9 @@ def where(condition, x=pu.dummy, y=pu.dummy):
     s = afnumpy.arrayfire.where(a.d_array)
     idx = []
     mult = 1
+    # numpy uses int64 while arrayfire uses uint32
+    s = ndarray(pu.af_shape(s), dtype=numpy.uint32, af_array=s).astype(numpy.int64)
     Tracer()()
-    s = ndarray(pu.af_shape(s), dtype=numpy.uint32, af_array=s)
     for i in a.shape[::-1]:
         mult *= i
         idx = [s % mult] + idx 
@@ -287,7 +288,13 @@ class ndarray(object):
         return self.shape[0]
 
     def __mod__(self, other):
-        return self - afnumpy.floor(self / other) * other
+        a = self / other
+        if numpy.issubdtype(a.dtype, numpy.float):
+            out = self - afnumpy.floor(self / other) * other
+        else:
+            out = self - a * other
+        out.d_array.eval()
+        return out
 
     def __rmod__(self, other):
         return other - afnumpy.floor(other / self) * self
@@ -297,6 +304,8 @@ class ndarray(object):
         return numpy.prod(self.shape)
 
     def __getitem__(self, args):
+        if not isinstance(args, tuple):
+            args = (args,)
         if(self.d_array is None):
             raise IndexError('too many indices for array')
         idx = self.__convert_dim__(args)
@@ -322,12 +331,15 @@ class ndarray(object):
         if isinstance(args, tuple):
             while(len(shape) < len(args)):
                 shape = [1]+shape
+            while(len(args) < len(shape)):
+                args = args+(slice(None),)
 
 
         # ISSUE: Looks like afnumpy contracts dimensions in certain
         # cases and not in others. This should be checked out
         
         # Remove dimensions corresponding to non slices
+        Tracer()()
         if(isinstance(args, tuple)):
             new_shape = []
             for axis in range(0,len(args)):

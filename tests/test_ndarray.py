@@ -3,6 +3,7 @@ import numpy
 from numpy.testing import assert_allclose as fassert
 from IPython.core.debugger import Tracer
 import numbers
+import collections
 
 def massert(af_a, np_a):
     # Assert the metadata of the arrays
@@ -16,8 +17,12 @@ def massert(af_a, np_a):
         assert isinstance(np_a, numbers.Number)
 
 def iassert(af_a, np_a):
-    assert numpy.all(numpy.array(af_a) == np_a)
-    massert(af_a, np_a)
+    if not isinstance(af_a, tuple):
+        af_a = (af_a,)
+        np_a = (np_a,)
+    for af,np in zip(af_a,np_a):
+        assert numpy.all(numpy.array(af) == np)
+        massert(af, np)
 
 def fassert(af_a, np_a):
     numpy.testing.assert_allclose(numpy.array(af_a), np_a)
@@ -299,6 +304,12 @@ def test_reshape():
     iassert(a.reshape((3,2)), b.reshape((3,2)))
     iassert(a.reshape(6), b.reshape(6))
 
+    b = numpy.random.random((1))
+    a = afnumpy.array(b)
+    # Some empty shape reshape
+    iassert(a.reshape(()), b.reshape(()))
+    iassert(a.reshape([]), b.reshape([]))
+
 def test_getitem():
     b = numpy.random.random((3))
     a = afnumpy.array(b)
@@ -522,8 +533,16 @@ def test_floor():
     a = afnumpy.array(b)
     iassert(afnumpy.floor(a), numpy.floor(b))
 
+    b = numpy.array([1,2,3])
+    a = afnumpy.array(b)
+    iassert(afnumpy.floor(a), numpy.floor(b))
+
 def test_ceil():
     b = numpy.random.random((2,3))
+    a = afnumpy.array(b)
+    iassert(afnumpy.ceil(a), numpy.ceil(b))
+
+    b = numpy.array([1,2,3])
     a = afnumpy.array(b)
     iassert(afnumpy.ceil(a), numpy.ceil(b))
     
