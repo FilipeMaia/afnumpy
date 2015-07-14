@@ -17,7 +17,7 @@ def massert(af_a, np_a):
         assert isinstance(np_a, numbers.Number)
 
 def iassert(af_a, np_a):
-    if not isinstance(af_a, tuple):
+    if not isinstance(af_a, tuple) and not isinstance(af_a, list):
         af_a = (af_a,)
         np_a = (np_a,)
     for af,np in zip(af_a,np_a):

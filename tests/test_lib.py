@@ -22,8 +22,9 @@ def test_meshgrid():
     iassert(afnumpy.meshgrid(x1, y1), numpy.meshgrid(x2, y2))
 
 def test_broadcast_arrays():
-    x2 = numpy.array([[1,2,3]])
-    y2 = numpy.array([[1],[2],[3]])
+    # Currently arrayfire is missing support for int64
+    x2 = numpy.array([[1,2,3]], dtype=numpy.float32)
+    y2 = numpy.array([[1],[2],[3]], dtype=numpy.float32)
     x1 = afnumpy.array(x2)
     y1 = afnumpy.array(y2)
     iassert(afnumpy.broadcast_arrays(x1, y1), numpy.broadcast_arrays(x2, y2))
