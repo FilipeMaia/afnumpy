@@ -42,6 +42,14 @@ def reshape(a, newshape, order='C'):
         raise NotImplementedError
     if isinstance(newshape,numbers.Number):
         newshape = (newshape,)
+    # Replace a possible -1 with the 
+    if -1 in newshape:
+        newshape = list(newshape)
+        i = newshape.index(-1)
+        newshape[i] = 1
+        if -1 in newshape:
+            raise ValueError('Only one -1 allowed in shape')
+        newshape[i] = a.size/numpy.prod(newshape)
     if a.size != numpy.prod(newshape):
         raise ValueError('total size of new array must be unchanged')
     if len(newshape) == 0:
