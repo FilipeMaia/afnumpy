@@ -27,3 +27,11 @@ def test_broadcast_arrays():
     x1 = afnumpy.array(x2)
     y1 = afnumpy.array(y2)
     iassert(afnumpy.broadcast_arrays(x1, y1), numpy.broadcast_arrays(x2, y2))
+
+def test_tile():
+    # Currently arrayfire is missing support for int64
+    b = numpy.array([0, 1, 2], dtype=numpy.float32)
+    a = afnumpy.array(b)
+    iassert(afnumpy.tile(a, 2), numpy.tile(b, 2))
+    iassert(afnumpy.tile(a, (2,2)), numpy.tile(b, (2,2)))
+    iassert(afnumpy.tile(a, (2,1,2)), numpy.tile(b, (2,1,2)))
