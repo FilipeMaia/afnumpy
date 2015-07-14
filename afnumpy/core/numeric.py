@@ -38,30 +38,7 @@ def ones(shape, dtype=float, order='C'):
     return afnumpy.ndarray(b.shape, b.dtype, buffer=b,order=order)
 
 def reshape(a, newshape, order='C'):
-    if(order is not 'C'):
-        raise NotImplementedError
-    if isinstance(newshape,numbers.Number):
-        newshape = (newshape,)
-    # Replace a possible -1 with the 
-    if -1 in newshape:
-        newshape = list(newshape)
-        i = newshape.index(-1)
-        newshape[i] = 1
-        if -1 in newshape:
-            raise ValueError('Only one -1 allowed in shape')
-        newshape[i] = a.size/numpy.prod(newshape)
-    if a.size != numpy.prod(newshape):
-        raise ValueError('total size of new array must be unchanged')
-    if len(newshape) == 0:
-        # Deal with empty shapes
-        return afnumpy.array(numpy.array(a)[0], dtype=a.dtype)
-        
-    af_shape = numpy.array(pu.c2f(newshape), dtype=pu.dim_t)
-    ret, handle = afnumpy.arrayfire.af_moddims(a.d_array.get(), af_shape.size, af_shape.ctypes.data)
-    s = afnumpy.arrayfire.array_from_handle(handle)
-    a = afnumpy.ndarray(newshape, dtype=a.dtype, af_array=s)
-    return a
-
+    return a.reshape(newshape,order)
 
 def asanyarray(a, dtype=None, order=None):
     return afnumpy.array(a, dtype, copy=False, order=order, subok=True)
