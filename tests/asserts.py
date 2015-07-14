@@ -6,7 +6,9 @@ import numbers
 def massert(af_a, np_a):
     # Assert the metadata of the arrays
 
-    if not isinstance(af_a, numbers.Number):
+    if isinstance(af_a, tuple):
+        assert(af_a == np_a)
+    elif not isinstance(af_a, numbers.Number):
         assert (af_a.shape == np_a.shape)
         # I will not strictly enforce float32 vs float64
         assert af_a.dtype == np_a.dtype or (af_a.dtype == numpy.float32 and np_a.dtype == numpy.float64)

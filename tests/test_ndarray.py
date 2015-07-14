@@ -471,3 +471,8 @@ def test_ndarray_shape():
     a.shape = (3,2)
     b.shape = (3,2)
     fassert(a,b)
+
+def test_ndarray_strides():
+    b = numpy.random.random((2,3))
+    a = afnumpy.array(b)
+    iassert(a.strides, b.strides)

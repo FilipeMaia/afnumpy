@@ -332,6 +332,10 @@ class ndarray(object):
     def shape(self, value):
         self.__reshape__(value)
 
+    @property
+    def strides(self):
+        return self.h_array.strides
+
     def __getitem__(self, args):
         if not isinstance(args, tuple):
             args = (args,)

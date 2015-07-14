@@ -20,7 +20,6 @@ def meshgrid(*xi, **kwargs):
             "Valid values for `indexing` are 'xy' and 'ij'.")
 
     s0 = (1,) * ndim
-    Tracer()()
 
     output = [afnumpy.asanyarray(x).reshape(s0[:i] + (-1,) + s0[i + 1::])
               for i, x in enumerate(xi)]
