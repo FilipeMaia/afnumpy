@@ -34,3 +34,9 @@ def sum(a, axis=None, dtype=None, out=None, keepdims=False):
         shape = tuple()
     return afnumpy.ndarray(shape, dtype=a.dtype, af_array=s)
 
+
+def round(a, decimals=0, out=None):
+    try:
+        return a.round(decimals, out)
+    except AttributeError:
+        return numpy.round(a, decimals, out)

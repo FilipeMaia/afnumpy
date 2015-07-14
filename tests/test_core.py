@@ -79,3 +79,8 @@ def test_concatenate():
     iassert(afnumpy.concatenate(a), numpy.concatenate(b))
     iassert(afnumpy.concatenate((a,a)), numpy.concatenate((b,b)))
     iassert(afnumpy.concatenate((a,a),axis=1), numpy.concatenate((b,b),axis=1))
+
+def test_round():
+    b = numpy.random.random((2,3))
+    a = afnumpy.array(b)
+    fassert(afnumpy.round(a), numpy.round(b))
