@@ -1,5 +1,6 @@
 from IPython.core.debugger import Tracer
 import afnumpy
+import numpy
 
 def copy(a, order='K'):
     return afnumpy.array(a, order=order, copy=True)
@@ -40,7 +41,8 @@ def meshgrid(*xi, **kwargs):
     else:
         # Return the full N-D matrix (not only the 1-D vector)
         if copy_:
-            mult_fact = afnumpy.ones(shape, dtype=int)
+            # Numpy uses dtype=int but Arrayfire does not support int64 in all functions
+            mult_fact = afnumpy.ones(shape, dtype=numpy.int32)
             return [x * mult_fact for x in output]
         else:
             return afnumpy.broadcast_arrays(*output)

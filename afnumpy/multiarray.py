@@ -6,6 +6,13 @@ import private_utils as pu
 import afnumpy
 import indexing
 
+def ufunc(func):
+    def wrapper(*args, **kws):
+        if all(isinstance(A, ndarray) for A in args):
+            args = afnumpy.broadcast_arrays(*args)            
+        return func(*args, **kws)
+    return wrapper
+
 def fromstring(string, dtype=float, count=-1, sep=''):
     return array(numpy.fromstring(string, dtype, count, sep))
 
@@ -169,6 +176,7 @@ class ndarray(object):
         else:
             return array(other - self.h_array, dtype=self.dtype)
 
+    @ufunc
     def __mul__(self, other):
         if(self.d_array):
             s = afnumpy.arrayfire.__mul__(self.d_array, pu.raw(other))
