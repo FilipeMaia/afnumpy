@@ -499,9 +499,16 @@ class ndarray(object):
         else:
             return array(self.h_array.astype(dtype, order, casting, subok, copy), dtype=dtype)
 
-#    def __getattr__(self,name):
-#        print name
-#        raise AttributeError
+
+    def round(self, decimals=0, out=None):
+        if decimals != 0:
+            raise NotImplementedError('only supports decimals=0')
+        s = afnumpy.arrayfire.round(self.d_array)
+        ret = ndarray(self.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+        if(out):
+            out[:] = ret[:]
+        return ret
+
         
 
     

@@ -498,3 +498,8 @@ def test_ndarray_strides():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
     iassert(a.strides, b.strides)
+
+def test_ndarray_round():
+    b = numpy.random.random((2,3))
+    a = afnumpy.array(b)
+    fassert(a.round(), b.round())
