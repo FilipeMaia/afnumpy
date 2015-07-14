@@ -404,7 +404,7 @@ class ndarray(object):
             return array(self.h_array.transpose(axes), dtype=self.dtype)
 
     def reshape(self, shape, order = 'C'):
-        return self.copy().__reshape__(self, shape, order)
+        return afnumpy.copy(self).__reshape__(shape, order)
         
     # In place reshape    
     def __reshape__(self, newshape, order = 'C'):
@@ -419,12 +419,12 @@ class ndarray(object):
             newshape[i] = 1
             if -1 in newshape:
                 raise ValueError('Only one -1 allowed in shape')
-            newshape[i] = a.size/numpy.prod(newshape)
+            newshape[i] = self.size/numpy.prod(newshape)
         if self.size != numpy.prod(newshape):
             raise ValueError('total size of new array must be unchanged')
         if len(newshape) == 0:
             # Deal with empty shapes
-            return afnumpy.array(numpy.array(a)[0], dtype=a.dtype)
+            return afnumpy.array(numpy.array(self)[0], dtype=self.dtype)
 
         af_shape = numpy.array(pu.c2f(newshape), dtype=pu.dim_t)
         ret, handle = afnumpy.arrayfire.af_moddims(self.d_array.get(), af_shape.size, af_shape.ctypes.data)
