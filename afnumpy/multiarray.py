@@ -330,7 +330,7 @@ class ndarray(object):
 
     @shape.setter
     def shape(self, value):
-        self._shape = self.__reshape__(value)
+        self.__reshape__(value)
 
     def __getitem__(self, args):
         if not isinstance(args, tuple):
@@ -404,7 +404,9 @@ class ndarray(object):
             return array(self.h_array.transpose(axes), dtype=self.dtype)
 
     def reshape(self, shape, order = 'C'):
-        return afnumpy.copy(self).__reshape__(shape, order)
+        ret =  afnumpy.copy(self)
+        ret.__reshape__(shape, order)
+        return ret
         
     # In place reshape    
     def __reshape__(self, newshape, order = 'C'):
@@ -424,14 +426,17 @@ class ndarray(object):
             raise ValueError('total size of new array must be unchanged')
         if len(newshape) == 0:
             # Deal with empty shapes
-            return afnumpy.array(numpy.array(self)[0], dtype=self.dtype)
+            self.d_array.host(self.h_array.ctypes.data)
+            self._shape = tuple()
+            self.d_array = None
+            return
 
         af_shape = numpy.array(pu.c2f(newshape), dtype=pu.dim_t)
         ret, handle = afnumpy.arrayfire.af_moddims(self.d_array.get(), af_shape.size, af_shape.ctypes.data)
         s = afnumpy.arrayfire.array_from_handle(handle)
         self.d_array = s
         self.h_array.shape = newshape
-        return newshape
+        self._shape = tuple(newshape)
         
     def flatten(self):
         return afnumpy.reshape(self, self.size)
