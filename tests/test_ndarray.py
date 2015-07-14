@@ -131,6 +131,21 @@ def test_broadcast_binary_arithmetic():
     c = numpy.array(a)
     d = numpy.array(b)    
     fassert(a*b, c*d)
+    # a*=b
+    # c*=d
+    fassert(a, c)
+    fassert(a/b, c/d)
+    # a/=b
+    # c/=d
+    fassert(a, c)
+    fassert(a+b, c+d)
+    # a+=b
+    # c+=d
+    fassert(a, c)
+    fassert(a-b, c-d)
+    # a-=b
+    # c-=d
+    fassert(a, c)
 
 def test_augmented_assignment():
     a = afnumpy.random.rand(3)

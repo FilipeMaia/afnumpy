@@ -134,6 +134,7 @@ class ndarray(object):
             self.d_array.host(self.h_array.ctypes.data)
         return self.h_array.__str__()        
 
+    @ufunc
     def __add__(self, other):
         if(self.d_array):
             s = afnumpy.arrayfire.__add__(self.d_array, pu.raw(other))
@@ -155,6 +156,7 @@ class ndarray(object):
         else:
             return array(other + self.h_array, dtype=self.dtype)
 
+    @ufunc
     def __sub__(self, other):
         if(self.d_array):
             s = afnumpy.arrayfire.__sub__(self.d_array, pu.raw(other))
@@ -198,6 +200,7 @@ class ndarray(object):
         else:
             return array(other * self.h_array, dtype=self.dtype)
 
+    @ufunc
     def __div__(self, other):
         if(self.d_array):
             s = afnumpy.arrayfire.__div__(self.d_array, pu.raw(other))
