@@ -458,18 +458,16 @@ def test_empty_ndarray():
     iassert(a[0:0],b[0:0])
     
 
-def test_copy():
-    b = numpy.random.random((2,3))
-    a = afnumpy.array(b)
-    c = afnumpy.copy(a)
-    d = numpy.copy(b)
-    a[:] = 0
-    b[:] = 0
-    iassert(c,d)
-
 
 def test_arange():
     iassert(afnumpy.arange(10), numpy.arange(10))
     iassert(afnumpy.arange(1,10), numpy.arange(1,10))
     iassert(afnumpy.arange(10,1,-1), numpy.arange(10,1,-1))
     iassert(afnumpy.arange(10,1,-1,dtype=numpy.int32), numpy.arange(10,1,-1,dtype=numpy.int32))
+
+def test_ndarray_shape():
+    b = numpy.random.random((2,3))
+    a = afnumpy.array(b)
+    a.shape = (3,2)
+    b.shape = (3,2)
+    fassert(a,b)

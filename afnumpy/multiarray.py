@@ -90,9 +90,9 @@ class ndarray(object):
         if(order is not None and order != 'C'):
             raise NotImplementedError('order must be None')
         if isinstance(shape, numbers.Number):
-            self.shape = (shape,)
+            self._shape = (shape,)
         else:
-            self.shape = tuple(shape)
+            self._shape = tuple(shape)
         self.dtype = dtype
         s_a = numpy.array(pu.c2f(shape),dtype=pu.dim_t)
         if(s_a.size < 1):
@@ -324,6 +324,14 @@ class ndarray(object):
     def size(self):
         return numpy.prod(self.shape)
 
+    @property
+    def shape(self):
+        return self._shape
+
+    @shape.setter
+    def shape(self, value):
+        self._shape = self.__reshape__(value)
+
     def __getitem__(self, args):
         if not isinstance(args, tuple):
             args = (args,)
@@ -396,8 +404,35 @@ class ndarray(object):
             return array(self.h_array.transpose(axes), dtype=self.dtype)
 
     def reshape(self, shape, order = 'C'):
-        return afnumpy.reshape(self, shape, order)
+        return self.copy().__reshape__(self, shape, order)
+        
+    # In place reshape    
+    def __reshape__(self, newshape, order = 'C'):
+        if(order is not 'C'):
+            raise NotImplementedError
+        if isinstance(newshape,numbers.Number):
+            newshape = (newshape,)
+        # Replace a possible -1 with the 
+        if -1 in newshape:
+            newshape = list(newshape)
+            i = newshape.index(-1)
+            newshape[i] = 1
+            if -1 in newshape:
+                raise ValueError('Only one -1 allowed in shape')
+            newshape[i] = a.size/numpy.prod(newshape)
+        if self.size != numpy.prod(newshape):
+            raise ValueError('total size of new array must be unchanged')
+        if len(newshape) == 0:
+            # Deal with empty shapes
+            return afnumpy.array(numpy.array(a)[0], dtype=a.dtype)
 
+        af_shape = numpy.array(pu.c2f(newshape), dtype=pu.dim_t)
+        ret, handle = afnumpy.arrayfire.af_moddims(self.d_array.get(), af_shape.size, af_shape.ctypes.data)
+        s = afnumpy.arrayfire.array_from_handle(handle)
+        self.d_array = s
+        self.h_array.shape = newshape
+        return newshape
+        
     def flatten(self):
         return afnumpy.reshape(self, self.size)
 
