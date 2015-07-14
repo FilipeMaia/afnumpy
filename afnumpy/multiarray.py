@@ -6,6 +6,18 @@ import private_utils as pu
 import afnumpy
 import indexing
 
+def iufunc(func):
+    def wrapper(*args, **kws):
+        if all(isinstance(A, ndarray) for A in args):
+            bcast_args = afnumpy.broadcast_arrays(*args)
+            if(bcast_args[0].shape is not args[0].shape):
+                raise ValueError("non-broadcastable output operand with"
+                                 " shape %s doesn't match the broadcast"
+                                 " shape %s" % (args[0].shape, bcast_args[0].shape))
+            
+        return func(*bcast_args, **kws)
+    return wrapper
+
 def ufunc(func):
     def wrapper(*args, **kws):
         if all(isinstance(A, ndarray) for A in args):
@@ -142,6 +154,7 @@ class ndarray(object):
         else:
             return array(self.h_array + other, dtype=self.dtype)
 
+    @iufunc
     def __iadd__(self, other):
         if(self.d_array):
             self[:] = self[:] + pu.raw(other)
@@ -164,6 +177,7 @@ class ndarray(object):
         else:
             return array(self.h_array - other, dtype=self.dtype)
 
+    @iufunc
     def __isub__(self, other):
         if(self.d_array):
             self[:] = self[:] - pu.raw(other)
@@ -186,6 +200,7 @@ class ndarray(object):
         else:
             return array(self.h_array * other, dtype=self.dtype)
 
+    @iufunc
     def __imul__(self, other):
         if(self.d_array):
             self[:] = self[:] * pu.raw(other)
@@ -208,6 +223,7 @@ class ndarray(object):
         else:
             return array(self.h_array / other, dtype=self.dtype)
 
+    @iufunc
     def __idiv__(self, other):
         if(self.d_array):
             self[:] = self[:] / pu.raw(other)
