@@ -1,0 +1,22 @@
+import afnumpy
+import numpy
+from asserts import *
+
+def test_copy():
+    b = numpy.random.random((2,3))
+    a = afnumpy.array(b)
+    c = afnumpy.copy(a)
+    d = numpy.copy(b)
+    a[:] = 0
+    b[:] = 0
+    iassert(c,d)
+
+
+def test_meshgrid():
+    nx, ny = (3, 2)
+    x2 = numpy.linspace(0, 1, nx)
+    y2 = numpy.linspace(0, 1, ny)
+    x1 = afnumpy.array(x2)
+    y1 = afnumpy.array(y2)
+
+    iassert(afnumpy.meshgrid(x1, y1), numpy.meshgrid(x2, y2))
