@@ -38,17 +38,16 @@ def zeros(shape, dtype=float, order='C'):
     return ndarray(b.shape, b.dtype, buffer=b,order=order)
 
 def array(object, dtype=None, copy=True, order=None, subok=False, ndmin=0):
-    if(order is not None and order is not 'K'):
-        raise NotImplementedError
     # We're going to ignore this for now
     # if(subok is not False):
     #     raise NotImplementedError
+    if(order is not None and order is not 'K' and order is not 'C'):
+        raise NotImplementedError
 
     # If it's not a numpy or afnumpy array first create a numpy array from it
     if(not isinstance(object, ndarray) and
        not isinstance(object, numpy.ndarray)):
         object = numpy.array(object, dtype=dtype, copy=copy, order=order, subok=subok, ndmin=ndmin)
-#        return ndarray(a.shape, dtype=a.dtype, buffer=a)       
 
     shape = object.shape
     while(ndmin > len(shape)):

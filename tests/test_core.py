@@ -92,3 +92,8 @@ def test_take():
     b = numpy.array(a)
     a = afnumpy.array(a)
     iassert(afnumpy.take(a, indices), numpy.take(b, indices))
+
+def test_ascontiguousarray():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.ascontiguousarray(a), numpy.ascontiguousarray(b))

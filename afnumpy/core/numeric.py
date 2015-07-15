@@ -69,3 +69,6 @@ def abs(x, out=None):
 
 def asarray(a, dtype=None, order=None):
     return afnumpy.array(a, dtype, copy=False, order=order)
+
+def ascontiguousarray(a, dtype=None):
+    return afnumpy.array(a, dtype, copy=False, order='C', ndmin=1)
