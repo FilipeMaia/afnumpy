@@ -147,3 +147,12 @@ def test_tanh():
     fassert(afnumpy.tanh(a, out=c), numpy.tanh(b, out=d))
     fassert(c, d)
 
+def test_exp():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.exp(a), numpy.exp(b))
+
+def test_log():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.log(a), numpy.log(b))
