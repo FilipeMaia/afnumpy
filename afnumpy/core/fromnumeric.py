@@ -1,6 +1,7 @@
 import numpy
 import afnumpy
-from .. import private_utils as pu
+from afnumpy import private_utils as pu
+from afnumpy.decorators import *
 
 def all(a, axis=None, out=None, keepdims=False):
     if(out is not None):
@@ -62,3 +63,10 @@ def amax(a, axis=None, out=None, keepdims=False):
         return numpy.amax(a, axis, out, keepdims)
         
 max = amax
+
+def prod(a, axis=None, dtype=None, out=None, keepdims=False):
+    try:
+        return a.prod(axis=axis, dtype=dtype, out=out, keepdims=keepdims)
+    except AttributeError:
+        return numpy.prod(a, axis=axis, dtype=dtype, out=out, keepdims=keepdims)
+

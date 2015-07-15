@@ -111,3 +111,10 @@ def test_max():
     fassert(afnumpy.max(a), numpy.max(b))
     fassert(afnumpy.max(a,axis=0), numpy.max(b,axis=0))
     fassert(afnumpy.max(a,axis=1), numpy.max(b,axis=1))
+
+def test_prod():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.prod(a), numpy.prod(b))
+    fassert(afnumpy.prod(a,axis=0), numpy.prod(b,axis=0))
+    fassert(afnumpy.prod(a,axis=1), numpy.prod(b,axis=1))
