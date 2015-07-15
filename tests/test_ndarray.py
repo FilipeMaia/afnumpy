@@ -320,6 +320,7 @@ def test_getitem():
     iassert(a[-2:0:-1], b[-2:0:-1])
     iassert(a[-2::-2], b[-2::-2])
     iassert(a[-2::2], b[-2::2])
+    iassert(a[([0],)], b[([0],)])
     
     # Now multidimensional!
     b = numpy.random.random((2,3))

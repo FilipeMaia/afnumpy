@@ -14,8 +14,9 @@ def iufunc(func):
                 raise ValueError("non-broadcastable output operand with"
                                  " shape %s doesn't match the broadcast"
                                  " shape %s" % (args[0].shape, bcast_args[0].shape))
+            args = bcast_args
             
-        return func(*bcast_args, **kws)
+        return func(*args, **kws)
     return wrapper
 
 def ufunc(func):
@@ -363,6 +364,10 @@ class ndarray(object):
     def strides(self):
         return self.h_array.strides
 
+    @property
+    def flat(self):
+        return ndarray(self.size, dtype=dtype, af_array=self.d_array)
+
     def __getitem__(self, args):
         if not isinstance(args, tuple):
             args = (args,)
@@ -510,6 +515,14 @@ class ndarray(object):
         return ret
 
         
-
-    
+    def take(self, indices, axis=None, out=None, mode='raise'):
+        if mode != 'raise':
+            raise NotImplementedError('only supports mode=raise')
+        if axis is None:
+            ret = self.flat[indices]
+        else:
+            ret = self[(slice(None),)*axis+(indices,)]
+        if out:
+            out[:] = ret[:]
+        return ret
 

@@ -58,6 +58,19 @@ def __fftn__(a, s, axes, direction='forward'):
 
 
 def fftshift(a, axes=None):
-    raise NotImplemented
+    tmp = afnumpy.asarray(x)
+    ndim = len(tmp.shape)
+    if axes is None:
+        axes = list(range(ndim))
+    elif isinstance(axes, integer_types):
+        axes = (axes,)
+    y = tmp
+    for k in axes:
+        n = tmp.shape[k]
+        p2 = (n+1)//2
+        mylist = afnumpy.concatenate((afnumpy.arange(p2, n), afnumpy.arange(p2)))
+        y = take(y, mylist, k)
+    return y
+
 
     

@@ -15,6 +15,9 @@ def __slice_to_seq__(shape, idx, axis):
     if(isinstance(idx, afnumpy.ndarray)):
         return idx.d_array
 
+    if not isinstance(idx, slice):
+        return afnumpy.array(idx).d_array
+
     if idx.step is None:
         step = 1
     else:
