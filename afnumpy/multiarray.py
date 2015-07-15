@@ -366,7 +366,7 @@ class ndarray(object):
 
     @property
     def flat(self):
-        return ndarray(self.size, dtype=dtype, af_array=self.d_array)
+        return ndarray(self.size, dtype=self.dtype, af_array=self.d_array)
 
     def __getitem__(self, args):
         if not isinstance(args, tuple):

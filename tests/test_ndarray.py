@@ -504,3 +504,13 @@ def test_ndarray_round():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
     fassert(a.round(), b.round())
+
+def test_ndarray_take():
+    b = numpy.array([4, 3, 5, 7, 6, 8])
+    a = afnumpy.array(b)
+    indices = [0, 1, 4]
+    iassert(a.take(indices), b.take(indices))
+    b = numpy.random.random((2,3))
+    a = afnumpy.array(b)
+    iassert(a.take([0,1],axis=1), b.take([0,1],axis=1))
+    iassert(a.take([0,1]), b.take([0,1]))
