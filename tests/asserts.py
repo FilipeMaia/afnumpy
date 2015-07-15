@@ -1,6 +1,6 @@
 import afnumpy
 import numpy
-from numpy.testing import assert_allclose as fassert
+from numpy.testing import assert_allclose
 import numbers
 
 def massert(af_a, np_a):

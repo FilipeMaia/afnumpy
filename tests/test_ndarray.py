@@ -1,9 +1,6 @@
 import afnumpy
 import numpy
-from numpy.testing import assert_allclose as fassert
 from IPython.core.debugger import Tracer
-import numbers
-import collections
 from asserts import *
 
 def test_zeros():
@@ -518,21 +515,21 @@ def test_ndarray_take():
 
 def test_ndarray_min():
     a = afnumpy.random.random((2,3))
-    b = afnumpy.array(a)
+    b = numpy.array(a)
     fassert(a.min(), b.min())
     fassert(a.min(axis=1), b.min(axis=1))
     fassert(a.min(axis=1, keepdims=True), b.min(axis=1, keepdims=True))
 
 def test_ndarray_max():
     a = afnumpy.random.random((2,3))
-    b = afnumpy.array(a)
+    b = numpy.array(a)
     fassert(a.max(), b.max())
     fassert(a.max(axis=1), b.max(axis=1))
     fassert(a.max(axis=1, keepdims=True), b.max(axis=1, keepdims=True))
 
 def test_ndarray_sum():
     a = afnumpy.random.random((2,3))
-    b = afnumpy.array(a)
+    b = numpy.array(a)
     fassert(a.sum(), b.sum())
     fassert(a.sum(axis=1), b.sum(axis=1))
     fassert(a.sum(axis=1, keepdims=True), b.sum(axis=1, keepdims=True))
@@ -541,3 +538,9 @@ def test_ndarray_sum():
     a = afnumpy.random.random(())
     b = afnumpy.array(a)
     fassert(a.sum(), b.sum())
+
+def test_ndarray_conj():
+    # The weird astype is because of issue #914 in arrayfire
+    a =afnumpy.random.random((2,3)).astype(numpy.complex64)+1.0j
+    b = numpy.array(a)
+    fassert(a.conj(), b.conj())

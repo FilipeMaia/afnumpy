@@ -344,6 +344,22 @@ class ndarray(object):
     def flat(self):        
         return ndarray(self.size, dtype=self.dtype, af_array=afnumpy.arrayfire.flat(self.d_array))
 
+    @property
+    def real(self):
+        if(self.d_array):
+            s = afnumpy.arrayfire.real(self.d_array)
+            return ndarray(self.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+        else:
+            return self.h_array.real
+
+    @property
+    def imag(self):
+        if(self.d_array):
+            s = afnumpy.arrayfire.real(self.d_array)
+            return ndarray(self.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+        else:
+            return self.h_array.real
+
     def ravel(self, order=None):
         if(order != None and order != 'K' and order != 'C'):
             raise NotImplementedError('order %s not supported' % (order))
@@ -458,45 +474,15 @@ class ndarray(object):
     def flatten(self):
         return afnumpy.reshape(self, self.size)
 
-    def max(self, axis=None, out=None, keepdims=False):
-        if(self.d_array):
-            if axis is None:
-                return self.flat.max(axis=0, out=out, keepdims=keepdims)
-            else:
-                s = afnumpy.arrayfire.max(self.d_array, pu.c2f(self.shape, axis))
-                shape = list(self.shape)
-                if keepdims:
-                    shape[axis] = 1
-                else:
-                    shape.pop(axis)
-                ret = ndarray(tuple(shape), dtype=self.dtype, af_array=s)
-                if(len(shape) == 0):
-                    ret = ret[()]
-                if out:
-                    out[:] = ret
-                return ret
-        else:
-            return self.h_array.max()
+    # Need to remove dtype argument from decorator!
+    @reductufunc
+    def max(self, s, axis):
+        return afnumpy.arrayfire.max(s, axis)
 
-    def min(self, axis=None, out=None, keepdims=False):
-        if(self.d_array):
-            if axis is None:
-                return self.flat.min(axis=0, out=out, keepdims=keepdims)
-            else:
-                s = afnumpy.arrayfire.min(self.d_array, pu.c2f(self.shape, axis))
-                shape = list(self.shape)
-                if keepdims:
-                    shape[axis] = 1
-                else:
-                    shape.pop(axis)
-                ret = ndarray(tuple(shape), dtype=self.dtype, af_array=s)
-                if(len(shape) == 0):
-                    ret = ret[()]
-                if out:
-                    out[:] = ret
-                return ret
-        else:
-            return self.h_array.min()
+    # Need to remove dtype argument from decorator!
+    @reductufunc
+    def min(self, s, axis):
+        return afnumpy.arrayfire.min(s, axis)
 
     def astype(self, dtype, order='K', casting='unsafe', subok=True, copy=True):
         if(self.d_array):
@@ -536,16 +522,31 @@ class ndarray(object):
     @outufunc
     @reductufunc
     def sum(self, s, axis):
+        if self.dtype == numpy.bool:
+            s = s.astype(pu.TypeMap[numpy.int64])
         return afnumpy.arrayfire.sum(s, axis)
 
     @outufunc
     @reductufunc
     def mean(self, s, axis):
+        if self.dtype == numpy.bool:
+            s = s.astype(pu.TypeMap[numpy.float64])
         return afnumpy.arrayfire.mean(s, axis)
 
     @outufunc
     @reductufunc
     def prod(self, s, axis):
+        if self.dtype == numpy.bool:
+            s = s.astype(pu.TypeMap[numpy.int64])
         return afnumpy.arrayfire.product(s, axis)
 
     product = prod
+
+    def conj(self):
+        if not numpy.issubdtype(self.dtype, numpy.complex):
+            return afnumpy.copy(self)
+        if(self.d_array):
+            s = afnumpy.arrayfire.conjg(self.d_array)
+            return ndarray(self.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+        else:
+            return self.h_array.conj()
