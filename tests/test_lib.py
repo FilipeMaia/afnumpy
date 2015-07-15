@@ -92,3 +92,58 @@ def test_arctanh():
     fassert(afnumpy.arctanh(a, out=c), numpy.arctanh(b, out=d))
     fassert(c, d)
 
+
+def test_cos():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.cos(a), numpy.cos(b))
+    c = afnumpy.random.random((2,3))
+    d = numpy.array(a)
+    fassert(afnumpy.cos(a, out=c), numpy.cos(b, out=d))
+    fassert(c, d)
+
+def test_sin():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.sin(a), numpy.sin(b))
+    c = afnumpy.random.random((2,3))
+    d = numpy.array(a)
+    fassert(afnumpy.sin(a, out=c), numpy.sin(b, out=d))
+    fassert(c, d)
+
+def test_tan():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.tan(a), numpy.tan(b))
+    c = afnumpy.random.random((2,3))
+    d = numpy.array(a)
+    fassert(afnumpy.tan(a, out=c), numpy.tan(b, out=d))
+    fassert(c, d)
+
+def test_cosh():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.cosh(a), numpy.cosh(b))
+    c = afnumpy.random.random((2,3))
+    d = numpy.array(a)
+    fassert(afnumpy.cosh(a, out=c), numpy.cosh(b, out=d))
+    fassert(c, d)
+
+def test_sinh():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.sinh(a), numpy.sinh(b))
+    c = afnumpy.random.random((2,3))
+    d = numpy.array(a)
+    fassert(afnumpy.sinh(a, out=c), numpy.sinh(b, out=d))
+    fassert(c, d)
+
+def test_tanh():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.tanh(a), numpy.tanh(b))
+    c = afnumpy.random.random((2,3))
+    d = numpy.array(a)
+    fassert(afnumpy.tanh(a, out=c), numpy.tanh(b, out=d))
+    fassert(c, d)
+
