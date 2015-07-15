@@ -76,3 +76,10 @@ def mean(a, axis=None, dtype=None, out=None, keepdims=False):
     except AttributeError:
         return numpy.mean(a, axis=axis, dtype=dtype, out=out, keepdims=keepdims)
 
+@outufunc
+def sqrt(x):
+    if isinstance(x, afnumpy.ndarray):
+        s = afnumpy.arrayfire.sqrt(x.d_array)
+        return afnumpy.ndarray(x.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+    else:
+        return numpy.sqrt(x)

@@ -125,3 +125,9 @@ def test_mean():
     fassert(afnumpy.mean(a), numpy.mean(b))
     fassert(afnumpy.mean(a,axis=0), numpy.mean(b,axis=0))
     fassert(afnumpy.mean(a,axis=1), numpy.mean(b,axis=1))
+
+
+def test_sqrt():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.sqrt(a), numpy.sqrt(b))

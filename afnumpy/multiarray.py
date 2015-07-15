@@ -554,6 +554,8 @@ class ndarray(object):
         else:
             return self.h_array.prod(axis=axis, dtype=dtype, keepdims=keepdims)
 
+    product = prod
+
     @outufunc
     def mean(self, axis=None, dtype=None, keepdims=False):
         if(self.d_array):
