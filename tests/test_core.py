@@ -104,3 +104,10 @@ def test_min():
     fassert(afnumpy.min(a), numpy.min(b))
     fassert(afnumpy.min(a,axis=0), numpy.min(b,axis=0))
     fassert(afnumpy.min(a,axis=1), numpy.min(b,axis=1))
+
+def test_max():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.max(a), numpy.max(b))
+    fassert(afnumpy.max(a,axis=0), numpy.max(b,axis=0))
+    fassert(afnumpy.max(a,axis=1), numpy.max(b,axis=1))

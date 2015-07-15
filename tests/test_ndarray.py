@@ -527,3 +527,10 @@ def test_ndarray_min():
     fassert(a.min(), b.min())
     fassert(a.min(axis=1), b.min(axis=1))
     fassert(a.min(axis=1, keepdims=True), b.min(axis=1, keepdims=True))
+
+def test_ndarray_max():
+    a = afnumpy.random.random((2,3))
+    b = afnumpy.array(a)
+    fassert(a.max(), b.max())
+    fassert(a.max(axis=1), b.max(axis=1))
+    fassert(a.max(axis=1, keepdims=True), b.max(axis=1, keepdims=True))

@@ -54,3 +54,11 @@ def amin(a, axis=None, out=None, keepdims=False):
         return numpy.amin(a, axis, out, keepdims)
         
 min = amin
+
+def amax(a, axis=None, out=None, keepdims=False):
+    try:
+        return a.max(axis, out, keepdims)
+    except AttributeError:
+        return numpy.amax(a, axis, out, keepdims)
+        
+max = amax

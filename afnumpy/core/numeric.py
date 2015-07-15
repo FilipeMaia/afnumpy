@@ -56,10 +56,8 @@ def ceil(x, out=None):
     if out is not None:
         out[:] = a[:]
     return a
-    
-        
+            
 def abs(x, out=None):
-
     if not isinstance(x, afnumpy.ndarray):
         return numpy.abs(x, out)
     a = x.__abs__()
@@ -72,3 +70,4 @@ def asarray(a, dtype=None, order=None):
 
 def ascontiguousarray(a, dtype=None):
     return afnumpy.array(a, dtype, copy=False, order='C', ndmin=1)
+

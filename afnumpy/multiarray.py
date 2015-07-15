@@ -476,10 +476,23 @@ class ndarray(object):
     def flatten(self):
         return afnumpy.reshape(self, self.size)
 
-    def max(self):
+    def max(self, axis=None, out=None, keepdims=False):
         if(self.d_array):
-            type_max = getattr(afnumpy.arrayfire, 'max_'+pu.TypeToString[self.d_array.type()])
-            return type_max(self.d_array)
+            if axis is None:
+                return self.flat.max(axis=0, out=out, keepdims=keepdims)
+            else:
+                s = afnumpy.arrayfire.max(self.d_array, pu.c2f(self.shape, axis))
+                shape = list(self.shape)
+                if keepdims:
+                    shape[axis] = 1
+                else:
+                    shape.pop(axis)
+                ret = ndarray(tuple(shape), dtype=self.dtype, af_array=s)
+                if(len(shape) == 0):
+                    ret = ret[()]
+                if out:
+                    out[:] = ret
+                return ret
         else:
             return self.h_array.max()
 
