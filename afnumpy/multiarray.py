@@ -7,13 +7,8 @@ import afnumpy
 import indexing
 from decorators import *
 
-
 def fromstring(string, dtype=float, count=-1, sep=''):
     return array(numpy.fromstring(string, dtype, count, sep))
-
-def vdot(a, b):
-    s = afnumpy.arrayfire.dot(afnumpy.arrayfire.conjg(a.d_array), b.d_array)
-    return ndarray((), dtype=a.dtype, af_array=s)
 
 def zeros(shape, dtype=float, order='C'):
     b = numpy.zeros(shape, dtype, order)
@@ -349,6 +344,11 @@ class ndarray(object):
     def flat(self):        
         return ndarray(self.size, dtype=self.dtype, af_array=afnumpy.arrayfire.flat(self.d_array))
 
+    def ravel(self, order=None):
+        if(order != None and order != 'K' and order != 'C'):
+            raise NotImplementedError('order %s not supported' % (order))
+        return self.flat
+
     def __getitem__(self, args):
         if not isinstance(args, tuple):
             args = (args,)
@@ -534,45 +534,18 @@ class ndarray(object):
         return ret
 
     @outufunc
-    def prod(self, axis=None, dtype=None, keepdims=False):
-        if(self.d_array):
-            if axis is None:
-                return self.flat.prod(axis=0, dtype=dtype, keepdims=keepdims)
-            else:
-                s = afnumpy.arrayfire.product(self.d_array, pu.c2f(self.shape, axis))
-                shape = list(self.shape)
-                if keepdims:
-                    shape[axis] = 1
-                else:
-                    shape.pop(axis)                
-                ret = ndarray(tuple(shape), dtype=self.dtype, af_array=s)
-                if(dtype is not None):
-                    ret = ret.astype(dtype)
-                if(len(shape) == 0):
-                    ret = ret[()]
-                return ret
-        else:
-            return self.h_array.prod(axis=axis, dtype=dtype, keepdims=keepdims)
-
-    product = prod
+    @reductufunc
+    def sum(self, s, axis):
+        return afnumpy.arrayfire.sum(s, axis)
 
     @outufunc
-    def mean(self, axis=None, dtype=None, keepdims=False):
-        if(self.d_array):
-            if axis is None:
-                return self.flat.mean(axis=0, dtype=dtype, keepdims=keepdims)
-            else:
-                s = afnumpy.arrayfire.mean(self.d_array, pu.c2f(self.shape, axis))
-                shape = list(self.shape)
-                if keepdims:
-                    shape[axis] = 1
-                else:
-                    shape.pop(axis)
-                ret = ndarray(tuple(shape), dtype=self.dtype, af_array=s)
-                if(dtype is not None):
-                    ret = ret.astype(dtype)
-                if(len(shape) == 0):
-                    ret = ret[()]
-                return ret
-        else:
-            return self.h_array.mean(axis=axis, dtype=dtype, keepdims=keepdims)
+    @reductufunc
+    def mean(self, s, axis):
+        return afnumpy.arrayfire.mean(s, axis)
+
+    @outufunc
+    @reductufunc
+    def prod(self, s, axis):
+        return afnumpy.arrayfire.product(s, axis)
+
+    product = prod

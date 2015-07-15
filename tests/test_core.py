@@ -125,6 +125,7 @@ def test_mean():
     fassert(afnumpy.mean(a), numpy.mean(b))
     fassert(afnumpy.mean(a,axis=0), numpy.mean(b,axis=0))
     fassert(afnumpy.mean(a,axis=1), numpy.mean(b,axis=1))
+    fassert(afnumpy.mean(a,axis=(0,1)), numpy.mean(b,axis=(0,1)))
 
 
 def test_sqrt():

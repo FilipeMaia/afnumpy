@@ -259,11 +259,6 @@ def test_sum():
     fassert(afnumpy.sum(a), numpy.sum(b))
     fassert(afnumpy.sum(a,axis=0), numpy.sum(b,axis=0))
 
-def test_vdot():    
-    b = numpy.random.random(3)+numpy.random.random(3)*1.0j
-    a = afnumpy.array(b)
-    fassert(afnumpy.vdot(a,a), numpy.vdot(b,b))
-
 def test_max():    
     b = numpy.random.random(3)+numpy.random.random(3)*1.0j
     a = afnumpy.array(b)
@@ -534,3 +529,15 @@ def test_ndarray_max():
     fassert(a.max(), b.max())
     fassert(a.max(axis=1), b.max(axis=1))
     fassert(a.max(axis=1, keepdims=True), b.max(axis=1, keepdims=True))
+
+def test_ndarray_sum():
+    a = afnumpy.random.random((2,3))
+    b = afnumpy.array(a)
+    fassert(a.sum(), b.sum())
+    fassert(a.sum(axis=1), b.sum(axis=1))
+    fassert(a.sum(axis=1, keepdims=True), b.sum(axis=1, keepdims=True))
+    fassert(a.sum(axis=(0,1), keepdims=True), b.sum(axis=(0,1), keepdims=True))
+    fassert(a.sum(axis=(0,1)), b.sum(axis=(0,1)))
+    a = afnumpy.random.random(())
+    b = afnumpy.array(a)
+    fassert(a.sum(), b.sum())
