@@ -544,8 +544,7 @@ class ndarray(object):
                 if keepdims:
                     shape[axis] = 1
                 else:
-                    shape.pop(axis)
-                
+                    shape.pop(axis)                
                 ret = ndarray(tuple(shape), dtype=self.dtype, af_array=s)
                 if(dtype is not None):
                     ret = ret.astype(dtype)
@@ -554,3 +553,24 @@ class ndarray(object):
                 return ret
         else:
             return self.h_array.prod(axis=axis, dtype=dtype, keepdims=keepdims)
+
+    @outufunc
+    def mean(self, axis=None, dtype=None, keepdims=False):
+        if(self.d_array):
+            if axis is None:
+                return self.flat.mean(axis=0, dtype=dtype, keepdims=keepdims)
+            else:
+                s = afnumpy.arrayfire.mean(self.d_array, pu.c2f(self.shape, axis))
+                shape = list(self.shape)
+                if keepdims:
+                    shape[axis] = 1
+                else:
+                    shape.pop(axis)
+                ret = ndarray(tuple(shape), dtype=self.dtype, af_array=s)
+                if(dtype is not None):
+                    ret = ret.astype(dtype)
+                if(len(shape) == 0):
+                    ret = ret[()]
+                return ret
+        else:
+            return self.h_array.mean(axis=axis, dtype=dtype, keepdims=keepdims)

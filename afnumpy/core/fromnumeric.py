@@ -70,3 +70,9 @@ def prod(a, axis=None, dtype=None, out=None, keepdims=False):
     except AttributeError:
         return numpy.prod(a, axis=axis, dtype=dtype, out=out, keepdims=keepdims)
 
+def mean(a, axis=None, dtype=None, out=None, keepdims=False):
+    try:
+        return a.mean(axis=axis, dtype=dtype, out=out, keepdims=keepdims)
+    except AttributeError:
+        return numpy.mean(a, axis=axis, dtype=dtype, out=out, keepdims=keepdims)
+

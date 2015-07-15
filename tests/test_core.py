@@ -118,3 +118,10 @@ def test_prod():
     fassert(afnumpy.prod(a), numpy.prod(b))
     fassert(afnumpy.prod(a,axis=0), numpy.prod(b,axis=0))
     fassert(afnumpy.prod(a,axis=1), numpy.prod(b,axis=1))
+
+def test_mean():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.mean(a), numpy.mean(b))
+    fassert(afnumpy.mean(a,axis=0), numpy.mean(b,axis=0))
+    fassert(afnumpy.mean(a,axis=1), numpy.mean(b,axis=1))
