@@ -46,3 +46,11 @@ def take(a, indices, axis=None, out=None, mode='raise'):
         return a.take(indices, axis, out, mode)
     except AttributeError:
         return numpy.take(a, indices, axis, out, mode)
+
+def amin(a, axis=None, out=None, keepdims=False):
+    try:
+        return a.min(axis, out, keepdims)
+    except AttributeError:
+        return numpy.amin(a, axis, out, keepdims)
+        
+min = amin

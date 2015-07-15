@@ -97,3 +97,10 @@ def test_ascontiguousarray():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
     fassert(afnumpy.ascontiguousarray(a), numpy.ascontiguousarray(b))
+
+def test_min():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.min(a), numpy.min(b))
+    fassert(afnumpy.min(a,axis=0), numpy.min(b,axis=0))
+    fassert(afnumpy.min(a,axis=1), numpy.min(b,axis=1))

@@ -347,6 +347,12 @@ def test_getitem():
     c = afnumpy.array(d)
     iassert(a[1,c,0,:], b[1,d,0,:])
 
+    # Zero dimensional
+    b = numpy.ones(())
+    a = afnumpy.array(b)
+    iassert(a[()],b[()])
+
+
 
 def test_newaxis():
     b = numpy.random.random((3))
@@ -514,3 +520,10 @@ def test_ndarray_take():
     a = afnumpy.array(b)
     iassert(a.take([0,1],axis=1), b.take([0,1],axis=1))
     iassert(a.take([0,1]), b.take([0,1]))
+
+def test_ndarray_min():
+    a = afnumpy.random.random((2,3))
+    b = afnumpy.array(a)
+    fassert(a.min(), b.min())
+    fassert(a.min(axis=1), b.min(axis=1))
+    fassert(a.min(axis=1, keepdims=True), b.min(axis=1, keepdims=True))

@@ -364,14 +364,14 @@ class ndarray(object):
         return self.h_array.strides
 
     @property
-    def flat(self):
-        return ndarray(self.size, dtype=self.dtype, af_array=self.d_array)
+    def flat(self):        
+        return ndarray(self.size, dtype=self.dtype, af_array=afnumpy.arrayfire.flat(self.d_array))
 
     def __getitem__(self, args):
         if not isinstance(args, tuple):
             args = (args,)
         if(self.d_array is None):
-            raise IndexError('too many indices for array')
+            return self.h_array[args]
         idx, new_shape = indexing.__convert_dim__(self.shape, args)
         if None in idx:
             # one of the indices is empty
@@ -483,10 +483,23 @@ class ndarray(object):
         else:
             return self.h_array.max()
 
-    def min(self):
+    def min(self, axis=None, out=None, keepdims=False):
         if(self.d_array):
-            type_min = getattr(afnumpy.arrayfire, 'min_'+pu.TypeToString[self.d_array.type()])
-            return type_min(self.d_array)
+            if axis is None:
+                return self.flat.min(axis=0, out=out, keepdims=keepdims)
+            else:
+                s = afnumpy.arrayfire.min(self.d_array, pu.c2f(self.shape, axis))
+                shape = list(self.shape)
+                if keepdims:
+                    shape[axis] = 1
+                else:
+                    shape.pop(axis)
+                ret = ndarray(tuple(shape), dtype=self.dtype, af_array=s)
+                if(len(shape) == 0):
+                    ret = ret[()]
+                if out:
+                    out[:] = ret
+                return ret
         else:
             return self.h_array.min()
 
