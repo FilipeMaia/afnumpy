@@ -36,3 +36,59 @@ def test_tile():
     iassert(afnumpy.tile(a, 2), numpy.tile(b, 2))
     iassert(afnumpy.tile(a, (2,2)), numpy.tile(b, (2,2)))
     iassert(afnumpy.tile(a, (2,1,2)), numpy.tile(b, (2,1,2)))
+
+def test_arccos():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.arccos(a), numpy.arccos(b))
+    c = afnumpy.random.random((2,3))
+    d = numpy.array(a)
+    fassert(afnumpy.arccos(a, out=c), numpy.arccos(b, out=d))
+    fassert(c, d)
+
+def test_arcsin():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.arcsin(a), numpy.arcsin(b))
+    c = afnumpy.random.random((2,3))
+    d = numpy.array(a)
+    fassert(afnumpy.arcsin(a, out=c), numpy.arcsin(b, out=d))
+    fassert(c, d)
+
+def test_arctan():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.arctan(a), numpy.arctan(b))
+    c = afnumpy.random.random((2,3))
+    d = numpy.array(a)
+    fassert(afnumpy.arctan(a, out=c), numpy.arctan(b, out=d))
+    fassert(c, d)
+
+def test_arccosh():
+    # Domain for arccosh starts at 1
+    a = afnumpy.random.random((2,3))+1
+    b = numpy.array(a)
+    fassert(afnumpy.arccosh(a), numpy.arccosh(b))
+    c = afnumpy.random.random((2,3))
+    d = numpy.array(a)
+    fassert(afnumpy.arccosh(a, out=c), numpy.arccosh(b, out=d))
+    fassert(c, d)
+
+def test_arcsinh():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.arcsinh(a), numpy.arcsinh(b))
+    c = afnumpy.random.random((2,3))
+    d = numpy.array(a)
+    fassert(afnumpy.arcsinh(a, out=c), numpy.arcsinh(b, out=d))
+    fassert(c, d)
+
+def test_arctanh():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.arctanh(a), numpy.arctanh(b))
+    c = afnumpy.random.random((2,3))
+    d = numpy.array(a)
+    fassert(afnumpy.arctanh(a, out=c), numpy.arctanh(b, out=d))
+    fassert(c, d)
+

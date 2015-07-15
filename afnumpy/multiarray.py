@@ -5,26 +5,8 @@ from IPython.core.debugger import Tracer
 import private_utils as pu
 import afnumpy
 import indexing
+from decorators import *
 
-def iufunc(func):
-    def wrapper(*args, **kws):
-        if all(isinstance(A, ndarray) for A in args):
-            bcast_args = afnumpy.broadcast_arrays(*args)
-            if(bcast_args[0].shape is not args[0].shape):
-                raise ValueError("non-broadcastable output operand with"
-                                 " shape %s doesn't match the broadcast"
-                                 " shape %s" % (args[0].shape, bcast_args[0].shape))
-            args = bcast_args
-            
-        return func(*args, **kws)
-    return wrapper
-
-def ufunc(func):
-    def wrapper(*args, **kws):
-        if all(isinstance(A, ndarray) for A in args):
-            args = afnumpy.broadcast_arrays(*args)            
-        return func(*args, **kws)
-    return wrapper
 
 def fromstring(string, dtype=float, count=-1, sep=''):
     return array(numpy.fromstring(string, dtype, count, sep))
