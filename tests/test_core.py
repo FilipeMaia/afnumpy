@@ -84,3 +84,11 @@ def test_round():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
     fassert(afnumpy.round(a), numpy.round(b))
+
+def test_take():
+    a = [4, 3, 5, 7, 6, 8]
+    indices = [0, 1, 4]
+    iassert(afnumpy.take(a, indices), numpy.take(a, indices))
+    b = numpy.array(a)
+    a = afnumpy.array(a)
+    iassert(afnumpy.take(a, indices), numpy.take(b, indices))

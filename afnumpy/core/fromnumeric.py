@@ -40,3 +40,9 @@ def round(a, decimals=0, out=None):
         return a.round(decimals, out)
     except AttributeError:
         return numpy.round(a, decimals, out)
+
+def take(a, indices, axis=None, out=None, mode='raise'):
+    try:
+        return a.take(indices, axis, out, mode)
+    except AttributeError:
+        return numpy.take(a, indices, axis, out, mode)
