@@ -113,3 +113,17 @@ def test_ifftn():
     a = afnumpy.array(b)
     fassert(afnumpy.fft.ifftn(a), numpy.fft.ifftn(b))
 
+def test_fftshift():
+    b = numpy.random.random((3))
+    a = afnumpy.array(b)
+    fassert(afnumpy.fft.fftshift(a), numpy.fft.fftshift(b))
+    b = numpy.random.random((3,3))
+    a = afnumpy.array(b)
+    fassert(afnumpy.fft.fftshift(a), numpy.fft.fftshift(b))
+    b = numpy.random.random((3,3,3))
+    a = afnumpy.array(b)
+    fassert(afnumpy.fft.fftshift(a), numpy.fft.fftshift(b))
+    fassert(afnumpy.fft.fftshift(a,axes=0), numpy.fft.fftshift(b,axes=0))
+    fassert(afnumpy.fft.fftshift(a,axes=1), numpy.fft.fftshift(b,axes=1))
+    fassert(afnumpy.fft.fftshift(a,axes=2), numpy.fft.fftshift(b,axes=2))
+    fassert(afnumpy.fft.fftshift(a,axes=(1,2)), numpy.fft.fftshift(b,axes=(1,2)))

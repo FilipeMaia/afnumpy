@@ -43,7 +43,6 @@ def reshape(a, newshape, order='C'):
 def asanyarray(a, dtype=None, order=None):
     return afnumpy.array(a, dtype, copy=False, order=order, subok=True)
 
-
 def floor(x, out=None):
     s = afnumpy.arrayfire.floor(x.d_array)
     a = afnumpy.ndarray(x.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
@@ -67,3 +66,6 @@ def abs(x, out=None):
     if out is not None:
         out[:] = a
     return a
+
+def asarray(a, dtype=None, order=None):
+    return afnumpy.array(a, dtype, copy=False, order=order)
