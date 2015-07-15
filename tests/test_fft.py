@@ -127,3 +127,18 @@ def test_fftshift():
     fassert(afnumpy.fft.fftshift(a,axes=1), numpy.fft.fftshift(b,axes=1))
     fassert(afnumpy.fft.fftshift(a,axes=2), numpy.fft.fftshift(b,axes=2))
     fassert(afnumpy.fft.fftshift(a,axes=(1,2)), numpy.fft.fftshift(b,axes=(1,2)))
+
+def test_ifftshift():
+    b = numpy.random.random((3))
+    a = afnumpy.array(b)
+    fassert(afnumpy.fft.ifftshift(a), numpy.fft.ifftshift(b))
+    b = numpy.random.random((3,3))
+    a = afnumpy.array(b)
+    fassert(afnumpy.fft.ifftshift(a), numpy.fft.ifftshift(b))
+    b = numpy.random.random((3,3,3))
+    a = afnumpy.array(b)
+    fassert(afnumpy.fft.ifftshift(a), numpy.fft.ifftshift(b))
+    fassert(afnumpy.fft.ifftshift(a,axes=0), numpy.fft.ifftshift(b,axes=0))
+    fassert(afnumpy.fft.ifftshift(a,axes=1), numpy.fft.ifftshift(b,axes=1))
+    fassert(afnumpy.fft.ifftshift(a,axes=2), numpy.fft.ifftshift(b,axes=2))
+    fassert(afnumpy.fft.ifftshift(a,axes=(1,2)), numpy.fft.ifftshift(b,axes=(1,2)))
