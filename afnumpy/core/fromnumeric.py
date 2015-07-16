@@ -73,3 +73,9 @@ def sqrt(x):
         return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.type()), af_array=s)
     else:
         return numpy.sqrt(x)
+
+def transpose(a, axes=None):
+    try:
+        return a.transpose(axes)
+    except AttributeError:
+        return numpy.tranpose(a, axes)

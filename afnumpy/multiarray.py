@@ -5,6 +5,7 @@ import private_utils as pu
 import afnumpy
 import indexing
 from decorators import *
+import collections
 
 def fromstring(string, dtype=float, count=-1, sep=''):
     return array(numpy.fromstring(string, dtype, count, sep))
@@ -429,8 +430,26 @@ class ndarray(object):
         return numpy.copy(self.h_array)
 
     def transpose(self, *axes):
+        if(self.ndim == 1):
+            return self
         if(self.d_array):
-            s = afnumpy.arrayfire.transpose(self.d_array)
+            if len(axes) == 0 and self.ndim == 2:
+                s = afnumpy.arrayfire.transpose(self.d_array)
+            else:
+                order = [0,1,2,3]
+                if len(axes) == 0 or axes[0] is None:
+                    order[:self.ndim] = order[:self.ndim][::-1]
+                else:
+                    if isinstance(axes[0], collections.Iterable):
+                        axes = axes[0]
+                    for i,ax in enumerate(axes):
+                        order[i] = pu.c2f(self.shape, ax)
+                    # We have to do this gymnastic due to the fact that arrayfire
+                    # uses Fortran order
+                    order[:len(axes)] = order[:len(axes)][::-1]
+                        
+                #print order
+                s = afnumpy.arrayfire.reorder(self.d_array, order[0],order[1],order[2],order[3])
             return ndarray(pu.af_shape(s), dtype=self.dtype, af_array=s)
         else:
             return array(self.h_array.transpose(axes), dtype=self.dtype)
