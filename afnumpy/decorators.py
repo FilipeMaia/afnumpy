@@ -7,7 +7,10 @@ def outufunc(func):
         out = kws.pop('out', None)
         ret = func(*args, **kws)
         if out is not None:
-            out[:] = ret
+            if(out.ndim):
+                out[:] = ret
+            else:
+                out[()] = ret
         return ret
     return wrapper
 

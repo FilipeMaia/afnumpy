@@ -35,6 +35,8 @@ def array(object, dtype=None, copy=True, order=None, subok=False, ndmin=0):
     if(dtype is None):
         dtype = object.dtype
     if(isinstance(object, ndarray)):
+        if(object.d_array is None):
+            return  ndarray(shape, dtype=dtype, buffer=object.h_array.astype(dtype, copy=copy))
         if(copy):
             s = object.d_array.copy().astype(pu.typemap(dtype))
         else:
@@ -398,7 +400,8 @@ class ndarray(object):
 
     def __setitem__(self, idx, value):
         if(self.d_array is None):
-            raise IndexError('too many indices for array')
+            self.h_array[idx] = numpy.array(value)
+            return
         idx, idx_shape = indexing.__convert_dim__(self.shape, idx)
         if None in idx:
             # one of the indices is empty

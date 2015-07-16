@@ -4,6 +4,7 @@ import afnumpy
 from numpy import newaxis
 import numbers
 from numpy import broadcast
+from IPython.core.debugger import Tracer
 
 
 def concatenate(arrays, axis=0):
@@ -130,7 +131,7 @@ def cross(a, b, axisa=-1, axisb=-1, axisc=-1, axis=None):
     if a.shape[-1] == 2:
         if b.shape[-1] == 2:
             # a0 * b1 - a1 * b0
-            multiply(a0, b1, out=cp)
+            afnumpy.multiply(a0, b1, out=cp)
             cp -= a1 * b0
             if cp.ndim == 0:
                 return cp
@@ -141,33 +142,34 @@ def cross(a, b, axisa=-1, axisb=-1, axisc=-1, axis=None):
             # cp0 = a1 * b2 - 0  (a2 = 0)
             # cp1 = 0 - a0 * b2  (a2 = 0)
             # cp2 = a0 * b1 - a1 * b0
-            multiply(a1, b2, out=cp0)
-            multiply(a0, b2, out=cp1)
+            afnumpy.multiply(a1, b2, out=cp0)
+            afnumpy.multiply(a0, b2, out=cp1)
             negative(cp1, out=cp1)
-            multiply(a0, b1, out=cp2)
+            afnumpy.multiply(a0, b1, out=cp2)
             cp2 -= a1 * b0
     elif a.shape[-1] == 3:
         if b.shape[-1] == 3:
             # cp0 = a1 * b2 - a2 * b1
             # cp1 = a2 * b0 - a0 * b2
             # cp2 = a0 * b1 - a1 * b0
-            multiply(a1, b2, out=cp0)
+            Tracer()()
+            afnumpy.multiply(a1, b2, out=cp0)
             tmp = array(a2 * b1)
             cp0 -= tmp
-            multiply(a2, b0, out=cp1)
-            multiply(a0, b2, out=tmp)
+            afnumpy.multiply(a2, b0, out=cp1)
+            afnumpy.multiply(a0, b2, out=tmp)
             cp1 -= tmp
-            multiply(a0, b1, out=cp2)
-            multiply(a1, b0, out=tmp)
+            afnumpy.multiply(a0, b1, out=cp2)
+            afnumpy.multiply(a1, b0, out=tmp)
             cp2 -= tmp
         else:
             # cp0 = 0 - a2 * b1  (b2 = 0)
             # cp1 = a2 * b0 - 0  (b2 = 0)
             # cp2 = a0 * b1 - a1 * b0
-            multiply(a2, b1, out=cp0)
+            afnumpy.multiply(a2, b1, out=cp0)
             negative(cp0, out=cp0)
-            multiply(a2, b0, out=cp1)
-            multiply(a0, b1, out=cp2)
+            afnumpy.multiply(a2, b0, out=cp1)
+            afnumpy.multiply(a0, b1, out=cp2)
             cp2 -= a1 * b0
 
     if cp.ndim == 1:
