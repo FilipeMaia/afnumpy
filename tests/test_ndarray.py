@@ -15,6 +15,17 @@ def test_ndarray_transpose():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
     iassert(a.transpose(), b.transpose())
+    iassert(a.transpose(0,1), b.transpose(0,1))
+    iassert(a.transpose(1,0), b.transpose(1,0))
+    b = numpy.random.random((2))
+    a = afnumpy.array(b)
+    iassert(a.transpose(), b.transpose())
+    b = numpy.random.random((2,3,4))
+    a = afnumpy.array(b)
+    iassert(a.transpose(), b.transpose())
+    iassert(a.transpose((2,0,1)), b.transpose((2,0,1)))
+    iassert(a.transpose(2,0,1), b.transpose(2,0,1))
+
     
 
 def test_where():
