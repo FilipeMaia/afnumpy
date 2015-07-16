@@ -99,10 +99,9 @@ class ndarray(object):
         if(s_a.size < 1):
             self.d_array = None
             if buffer is None:
-                if af_array is None:
-                    raise ValueError
-                buffer = numpy.array(1, dtype=dtype)
-                af_array.host(buffer.ctypes.data)                
+                buffer = numpy.ndarray((),dtype=dtype)
+                if af_array is not None:
+                    af_array.host(buffer.ctypes.data)                
         elif(s_a.size <= 4):
             if(af_array is not None):
                 # We need to make sure to keep a copy of af_array
@@ -402,6 +401,8 @@ class ndarray(object):
         if(self.d_array is None):
             self.h_array[idx] = numpy.array(value)
             return
+        if(isinstance(value, ndarray) and value.d_array is None):
+            value = self.h_array[()]
         idx, idx_shape = indexing.__convert_dim__(self.shape, idx)
         if None in idx:
             # one of the indices is empty
@@ -492,6 +493,7 @@ class ndarray(object):
         if len(newshape) == 0:
             # Deal with empty shapes
             self.d_array.host(self.h_array.ctypes.data)
+            self.h_array.shape = newshape
             self._shape = tuple()
             self.d_array = None
             return

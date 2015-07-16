@@ -154,7 +154,7 @@ def cross(a, b, axisa=-1, axisb=-1, axisc=-1, axis=None):
             # cp2 = a0 * b1 - a1 * b0
             Tracer()()
             afnumpy.multiply(a1, b2, out=cp0)
-            tmp = array(a2 * b1)
+            tmp = afnumpy.array(a2 * b1)
             cp0 -= tmp
             afnumpy.multiply(a2, b0, out=cp1)
             afnumpy.multiply(a0, b2, out=tmp)

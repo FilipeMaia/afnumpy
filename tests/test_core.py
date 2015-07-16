@@ -1,6 +1,7 @@
 import afnumpy
 import numpy
 from asserts import *
+from IPython.core.debugger import Tracer
 
 def test_floor():
     b = numpy.random.random((2,3))
@@ -165,4 +166,5 @@ def test_rollaxis():
 def test_cross():
     x = [1, 2, 3]
     y = [4, 5, 6]
+    Tracer()()
     iassert(afnumpy.cross(x, y), numpy.cross(x, y))

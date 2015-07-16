@@ -307,6 +307,7 @@ def test_getitem():
     iassert(a[0:-1], b[0:-1])
     iassert(a[1:-1], b[1:-1])
     iassert(a[1:2], b[1:2])
+    iassert(a[...,0], b[...,0])
     # This will return an empty array, which is not yet supported
     # iassert(a[1:1], b[1:1])
     iassert(a[-2:], b[-2:])
