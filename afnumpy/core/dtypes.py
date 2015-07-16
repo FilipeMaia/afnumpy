@@ -146,3 +146,4 @@ bool = bool
 int = int
 long = long
 
+promote_types = numpy.promote_types
