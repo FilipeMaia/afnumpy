@@ -154,3 +154,10 @@ def test_transpose():
     a = afnumpy.array(b)
     iassert(a.transpose(), b.transpose())
     iassert(a.transpose((2,0,1)), b.transpose((2,0,1)))
+
+def test_rollaxis():
+    b = numpy.random.random((3,4,5,6))
+    a = afnumpy.array(b)
+    iassert(afnumpy.rollaxis(a, 3, 1),numpy.rollaxis(b, 3, 1))
+    iassert(afnumpy.rollaxis(a, 2),numpy.rollaxis(b, 2))
+    iassert(afnumpy.rollaxis(a, 1, 4),numpy.rollaxis(b, 1, 4))
