@@ -7,7 +7,7 @@ from afnumpy.decorators import *
 def arccos(x):
     if isinstance(x, afnumpy.ndarray):
         s = afnumpy.arrayfire.acos(x.d_array)
-        return afnumpy.ndarray(x.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+        return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.type()), af_array=s)
     else:
         return numpy.arccos(x)
 
@@ -15,7 +15,7 @@ def arccos(x):
 def arcsin(x):
     if isinstance(x, afnumpy.ndarray):
         s = afnumpy.arrayfire.asin(x.d_array)
-        return afnumpy.ndarray(x.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+        return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.type()), af_array=s)
     else:
         return numpy.arcsin(x)
 
@@ -23,7 +23,7 @@ def arcsin(x):
 def arctan(x):
     if isinstance(x, afnumpy.ndarray):
         s = afnumpy.arrayfire.atan(x.d_array)
-        return afnumpy.ndarray(x.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+        return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.type()), af_array=s)
     else:
         return numpy.arctan(x)
 
@@ -31,7 +31,7 @@ def arctan(x):
 def arccosh(x):
     if isinstance(x, afnumpy.ndarray):
         s = afnumpy.arrayfire.acosh(x.d_array)
-        return afnumpy.ndarray(x.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+        return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.type()), af_array=s)
     else:
         return numpy.arccosh(x)
 
@@ -39,7 +39,7 @@ def arccosh(x):
 def arcsinh(x):
     if isinstance(x, afnumpy.ndarray):
         s = afnumpy.arrayfire.asinh(x.d_array)
-        return afnumpy.ndarray(x.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+        return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.type()), af_array=s)
     else:
         return numpy.arcsinh(x)
 
@@ -47,7 +47,7 @@ def arcsinh(x):
 def arctanh(x):
     if isinstance(x, afnumpy.ndarray):
         s = afnumpy.arrayfire.atanh(x.d_array)
-        return afnumpy.ndarray(x.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+        return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.type()), af_array=s)
     else:
         return numpy.arctanh(x)
 
@@ -56,7 +56,7 @@ def arctanh(x):
 def cos(x):
     if isinstance(x, afnumpy.ndarray):
         s = afnumpy.arrayfire.cos(x.d_array)
-        return afnumpy.ndarray(x.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+        return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.type()), af_array=s)
     else:
         return numpy.cos(x)
 
@@ -64,7 +64,7 @@ def cos(x):
 def sin(x):
     if isinstance(x, afnumpy.ndarray):
         s = afnumpy.arrayfire.sin(x.d_array)
-        return afnumpy.ndarray(x.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+        return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.type()), af_array=s)
     else:
         return numpy.sin(x)
 
@@ -72,7 +72,7 @@ def sin(x):
 def tan(x):
     if isinstance(x, afnumpy.ndarray):
         s = afnumpy.arrayfire.tan(x.d_array)
-        return afnumpy.ndarray(x.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+        return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.type()), af_array=s)
     else:
         return numpy.tan(x)
 
@@ -80,7 +80,7 @@ def tan(x):
 def cosh(x):
     if isinstance(x, afnumpy.ndarray):
         s = afnumpy.arrayfire.cosh(x.d_array)
-        return afnumpy.ndarray(x.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+        return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.type()), af_array=s)
     else:
         return numpy.cosh(x)
 
@@ -88,7 +88,7 @@ def cosh(x):
 def sinh(x):
     if isinstance(x, afnumpy.ndarray):
         s = afnumpy.arrayfire.sinh(x.d_array)
-        return afnumpy.ndarray(x.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+        return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.type()), af_array=s)
     else:
         return numpy.sinh(x)
 
@@ -96,7 +96,7 @@ def sinh(x):
 def tanh(x):
     if isinstance(x, afnumpy.ndarray):
         s = afnumpy.arrayfire.tanh(x.d_array)
-        return afnumpy.ndarray(x.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+        return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.type()), af_array=s)
     else:
         return numpy.tanh(x)
 
@@ -104,7 +104,7 @@ def tanh(x):
 def exp(x):
     if isinstance(x, afnumpy.ndarray):
         s = afnumpy.arrayfire.exp(x.d_array)
-        return afnumpy.ndarray(x.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+        return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.type()), af_array=s)
     else:
         return numpy.exp(x)
 
@@ -112,7 +112,7 @@ def exp(x):
 def log(x):
     if isinstance(x, afnumpy.ndarray):
         s = afnumpy.arrayfire.log(x.d_array)
-        return afnumpy.ndarray(x.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+        return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.type()), af_array=s)
     else:
         return numpy.log(x)
 

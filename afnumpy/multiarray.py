@@ -1,5 +1,4 @@
 import numpy
-#import arrayfire
 import numbers
 from IPython.core.debugger import Tracer
 import private_utils as pu
@@ -33,9 +32,9 @@ def array(object, dtype=None, copy=True, order=None, subok=False, ndmin=0):
         dtype = object.dtype
     if(isinstance(object, ndarray)):
         if(copy):
-            s = object.d_array.copy().astype(pu.TypeMap[dtype])
+            s = object.d_array.copy().astype(pu.typemap(dtype))
         else:
-            s = object.d_array.astype(pu.TypeMap[dtype])
+            s = object.d_array.astype(pu.typemap(dtype))
         return ndarray(shape, dtype=dtype, af_array=s)
     elif(isinstance(object, numpy.ndarray)):
         return ndarray(shape, dtype=dtype, buffer=object.astype(dtype, copy=False))
@@ -105,9 +104,9 @@ class ndarray(object):
                 self.d_array = af_array
             else:
                 if(buffer is not None):
-                    ret, self.handle = afnumpy.arrayfire.af_create_array(buffer.ctypes.data, s_a.size, s_a.ctypes.data, pu.TypeMap[dtype])
+                    ret, self.handle = afnumpy.arrayfire.af_create_array(buffer.ctypes.data, s_a.size, s_a.ctypes.data, pu.typemap(dtype))
                 else:
-                    ret, self.handle = afnumpy.arrayfire.af_create_handle(s_a.size, s_a.ctypes.data, pu.TypeMap[dtype])
+                    ret, self.handle = afnumpy.arrayfire.af_create_handle(s_a.size, s_a.ctypes.data, pu.typemap(dtype))
                 self.d_array = afnumpy.arrayfire.array_from_handle(self.handle)
         else:
             raise NotImplementedError('Only up to 4 dimensions are supported')
@@ -127,7 +126,7 @@ class ndarray(object):
     def __add__(self, other):
         if(self.d_array):
             s = afnumpy.arrayfire.__add__(self.d_array, pu.raw(other))
-            return ndarray(self.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+            return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
         else:
             return array(self.h_array + other, dtype=self.dtype)
 
@@ -142,7 +141,7 @@ class ndarray(object):
     def __radd__(self, other):
         if(self.d_array):
             s = afnumpy.arrayfire.__add__(pu.raw(other), self.d_array)
-            return ndarray(self.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+            return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
         else:
             return array(other + self.h_array, dtype=self.dtype)
 
@@ -150,7 +149,7 @@ class ndarray(object):
     def __sub__(self, other):
         if(self.d_array):
             s = afnumpy.arrayfire.__sub__(self.d_array, pu.raw(other))
-            return ndarray(self.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+            return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
         else:
             return array(self.h_array - other, dtype=self.dtype)
 
@@ -165,7 +164,7 @@ class ndarray(object):
     def __rsub__(self, other):
         if(self.d_array):
             s = afnumpy.arrayfire.__sub__(pu.raw(other), self.d_array)
-            return ndarray(self.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+            return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
         else:
             return array(other - self.h_array, dtype=self.dtype)
 
@@ -173,7 +172,7 @@ class ndarray(object):
     def __mul__(self, other):
         if(self.d_array):
             s = afnumpy.arrayfire.__mul__(self.d_array, pu.raw(other))
-            return ndarray(self.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+            return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
         else:
             return array(self.h_array * other, dtype=self.dtype)
 
@@ -188,7 +187,7 @@ class ndarray(object):
     def __rmul__(self, other):
         if(self.d_array):
             s = afnumpy.arrayfire.__mul__(pu.raw(other), self.d_array)
-            return ndarray(self.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+            return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
         else:
             return array(other * self.h_array, dtype=self.dtype)
 
@@ -196,7 +195,7 @@ class ndarray(object):
     def __div__(self, other):
         if(self.d_array):
             s = afnumpy.arrayfire.__div__(self.d_array, pu.raw(other))
-            return ndarray(self.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+            return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
         else:
             return array(self.h_array / other, dtype=self.dtype)
 
@@ -211,7 +210,7 @@ class ndarray(object):
     def __rdiv__(self, other):
         if(self.d_array):
             s = afnumpy.arrayfire.__div__(pu.raw(other), self.d_array)
-            return ndarray(self.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+            return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
         else:
             return array(other / self.h_array, dtype=self.dtype)
         
@@ -223,7 +222,7 @@ class ndarray(object):
                 s = afnumpy.arrayfire.pow(self.astype(type(other)).d_array, pu.raw(other))
             else:
                 s = afnumpy.arrayfire.pow(self.d_array, pu.raw(other))
-            return ndarray(self.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+            return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
         else:
             return array(self.h_array ** other, dtype=self.dtype)
 
@@ -235,7 +234,7 @@ class ndarray(object):
                 s = afnumpy.arrayfire.pow(pu.raw(other), self.astype(type(other)).d_array)
             else:
                 s = afnumpy.arrayfire.pow(pu.raw(other), self.d_array)
-            return ndarray(self.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+            return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
         else:
             return array(other ** self.h_array, dtype=self.dtype)
 
@@ -289,7 +288,7 @@ class ndarray(object):
         if(self.d_array):
             s = afnumpy.arrayfire.abs(self.d_array)
             # dtype is wrong for complex types
-            return ndarray(self.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+            return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
         else:
             return array(abs(self.h_array), dtype=self.dtype)
 
@@ -348,7 +347,7 @@ class ndarray(object):
     def real(self):
         if(self.d_array):
             s = afnumpy.arrayfire.real(self.d_array)
-            return ndarray(self.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+            return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
         else:
             return self.h_array.real
 
@@ -356,7 +355,7 @@ class ndarray(object):
     def imag(self):
         if(self.d_array):
             s = afnumpy.arrayfire.real(self.d_array)
-            return ndarray(self.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+            return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
         else:
             return self.h_array.real
 
@@ -474,12 +473,10 @@ class ndarray(object):
     def flatten(self):
         return afnumpy.reshape(self, self.size)
 
-    # Need to remove dtype argument from decorator!
     @reductufunc
     def max(self, s, axis):
         return afnumpy.arrayfire.max(s, axis)
 
-    # Need to remove dtype argument from decorator!
     @reductufunc
     def min(self, s, axis):
         return afnumpy.arrayfire.min(s, axis)
@@ -492,7 +489,7 @@ class ndarray(object):
                 raise NotImplementedError('only casting=unsafe implemented')
             if(copy == False and order == 'K' and dtype == self.dtype):
                 return self
-            s = self.d_array.astype(pu.TypeMap[dtype])
+            s = self.d_array.astype(pu.typemap(dtype))
             return ndarray(self.shape, dtype=dtype, af_array=s)
         else:
             return array(self.h_array.astype(dtype, order, casting, subok, copy), dtype=dtype)
@@ -502,7 +499,7 @@ class ndarray(object):
         if decimals != 0:
             raise NotImplementedError('only supports decimals=0')
         s = afnumpy.arrayfire.round(self.d_array)
-        ret = ndarray(self.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+        ret = ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
         if(out):
             out[:] = ret[:]
         return ret
@@ -523,21 +520,21 @@ class ndarray(object):
     @reductufunc
     def sum(self, s, axis):
         if self.dtype == numpy.bool:
-            s = s.astype(pu.TypeMap[numpy.int64])
+            s = s.astype(pu.typemap(numpy.int64))
         return afnumpy.arrayfire.sum(s, axis)
 
     @outufunc
     @reductufunc
     def mean(self, s, axis):
         if self.dtype == numpy.bool:
-            s = s.astype(pu.TypeMap[numpy.float64])
+            s = s.astype(pu.typemap(numpy.float64))
         return afnumpy.arrayfire.mean(s, axis)
 
     @outufunc
     @reductufunc
     def prod(self, s, axis):
         if self.dtype == numpy.bool:
-            s = s.astype(pu.TypeMap[numpy.int64])
+            s = s.astype(pu.typemap(numpy.int64))
         return afnumpy.arrayfire.product(s, axis)
 
     product = prod
@@ -547,6 +544,6 @@ class ndarray(object):
             return afnumpy.copy(self)
         if(self.d_array):
             s = afnumpy.arrayfire.conjg(self.d_array)
-            return ndarray(self.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+            return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
         else:
             return self.h_array.conj()

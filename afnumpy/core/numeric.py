@@ -45,14 +45,14 @@ def asanyarray(a, dtype=None, order=None):
 
 def floor(x, out=None):
     s = afnumpy.arrayfire.floor(x.d_array)
-    a = afnumpy.ndarray(x.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+    a = afnumpy.ndarray(x.shape, dtype=pu.typemap(s.type()), af_array=s)
     if out is not None:
         out[:] = a[:]
     return a
 
 def ceil(x, out=None):
     s = afnumpy.arrayfire.ceil(x.d_array)
-    a = afnumpy.ndarray(x.shape, dtype=pu.InvTypeMap[s.type()], af_array=s)
+    a = afnumpy.ndarray(x.shape, dtype=pu.typemap(s.type()), af_array=s)
     if out is not None:
         out[:] = a[:]
     return a

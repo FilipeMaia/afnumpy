@@ -132,3 +132,12 @@ def test_sqrt():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
     fassert(afnumpy.sqrt(a), numpy.sqrt(b))
+
+
+def test_dtypes():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.int32(a), numpy.int32(b))
+    fassert(afnumpy.complex64(a), numpy.complex64(b))
+    assert(afnumpy.float(a.sum()), numpy.float(b.sum()))
+

@@ -56,7 +56,7 @@ def __fftn__(a, s, axes, direction='forward'):
             fa = arrayfire.ifft(a.d_array, s[0])
     else:
         raise ValueError('Wrong FFT direction')
-    return ndarray(a.shape, dtype=pu.InvTypeMap[fa.type()], af_array=fa)
+    return ndarray(a.shape, dtype=pu.typemap(fa.type()), af_array=fa)
 
 
 def fftshift(x, axes=None):
