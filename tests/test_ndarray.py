@@ -452,6 +452,14 @@ def test_views():
     d[:] = 0
     iassert(a,b)
 
+    b = numpy.random.random((3))
+    a = afnumpy.array(b)
+    c = a[...,0]
+    d = b[...,0]
+    c[()] = 0
+    d[()] = 0
+    iassert(a,b)
+
 def test_ndarray_astype():
     b = numpy.random.random(3)
     a = afnumpy.array(b)
