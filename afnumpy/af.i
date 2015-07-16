@@ -308,8 +308,41 @@ catch (const std::exception & e) {
     if (err != AF_SUCCESS){
       throw af::exception("Failed to copy", __FILE__, __LINE__  - 1, err);
     }    
-    //    ((*self)(s0)) = value;
   }
+  void setValue(const af::index &s0, const af::index &s1, double value){
+    af::array value_a = (*self)(s0, s1);
+    value_a = value;
+    af_array lhs = self->get();
+    af_array rhs = value_a.get();
+    af_index_t indices[] = {s0.get(), s1.get()};
+    af_err err = af_assign_gen(&lhs, lhs, 2, indices, rhs);
+    if (err != AF_SUCCESS){
+      throw af::exception("Failed to copy", __FILE__, __LINE__  - 1, err);
+    }    
+  }
+  void setValue(const af::index &s0, const af::index &s1, const af::index &s2, double value){
+    af::array value_a = (*self)(s0, s1, s2);
+    value_a = value;
+    af_array lhs = self->get();
+    af_array rhs = value_a.get();
+    af_index_t indices[] = {s0.get(), s1.get(), s2.get()};
+    af_err err = af_assign_gen(&lhs, lhs, 3, indices, rhs);
+    if (err != AF_SUCCESS){
+      throw af::exception("Failed to copy", __FILE__, __LINE__  - 1, err);
+    }    
+  }
+  void setValue(const af::index &s0, const af::index &s1, const af::index &s2, const af::index &s3, double value){
+    af::array value_a = (*self)(s0, s1, s2, s3);
+    value_a = value;
+    af_array lhs = self->get();
+    af_array rhs = value_a.get();
+    af_index_t indices[] = {s0.get(), s1.get(), s2.get(), s3.get()};
+    af_err err = af_assign_gen(&lhs, lhs, 4, indices, rhs);
+    if (err != AF_SUCCESS){
+      throw af::exception("Failed to copy", __FILE__, __LINE__  - 1, err);
+    }    
+  }
+
   void setValue(const af::index &s0, std::complex<double> value){
     af::array value_a = (*self)(s0);
     value_a = af::af_cdouble(value.real(),value.imag());
@@ -319,10 +352,55 @@ catch (const std::exception & e) {
     af_err err = af_assign_gen(&lhs, lhs, 1, indices, rhs);
     if (err != AF_SUCCESS){
       throw af::exception("Failed to copy", __FILE__, __LINE__  - 1, err);
-    }
+    }    
+  }
+  void setValue(const af::index &s0, const af::index &s1, std::complex<double> value){
+    af::array value_a = (*self)(s0, s1);
+    value_a = af::af_cdouble(value.real(),value.imag());
+    af_array lhs = self->get();
+    af_array rhs = value_a.get();
+    af_index_t indices[] = {s0.get(), s1.get()};
+    af_err err = af_assign_gen(&lhs, lhs, 2, indices, rhs);
+    if (err != AF_SUCCESS){
+      throw af::exception("Failed to copy", __FILE__, __LINE__  - 1, err);
+    }    
+  }
+  void setValue(const af::index &s0, const af::index &s1, const af::index &s2, std::complex<double> value){
+    af::array value_a = (*self)(s0, s1, s2);
+    value_a = af::af_cdouble(value.real(),value.imag());
+    af_array lhs = self->get();
+    af_array rhs = value_a.get();
+    af_index_t indices[] = {s0.get(), s1.get(), s2.get()};
+    af_err err = af_assign_gen(&lhs, lhs, 3, indices, rhs);
+    if (err != AF_SUCCESS){
+      throw af::exception("Failed to copy", __FILE__, __LINE__  - 1, err);
+    }    
+  }
+  void setValue(const af::index &s0, const af::index &s1, const af::index &s2, const af::index &s3, std::complex<double> value){
+    af::array value_a = (*self)(s0, s1, s2, s3);
+    value_a = af::af_cdouble(value.real(),value.imag());
+    af_array lhs = self->get();
+    af_array rhs = value_a.get();
+    af_index_t indices[] = {s0.get(), s1.get(), s2.get(), s3.get()};
+    af_err err = af_assign_gen(&lhs, lhs, 4, indices, rhs);
+    if (err != AF_SUCCESS){
+      throw af::exception("Failed to copy", __FILE__, __LINE__  - 1, err);
+    }    
+  }
+
+  /* void setValue(const af::index &s0, std::complex<double> value){ */
+  /*   af::array value_a = (*self)(s0); */
+  /*   value_a = af::af_cdouble(value.real(),value.imag()); */
+  /*   af_array lhs = self->get(); */
+  /*   af_array rhs = value_a.get(); */
+  /*   af_index_t indices[] = {s0.get()}; */
+  /*   af_err err = af_assign_gen(&lhs, lhs, 1, indices, rhs); */
+  /*   if (err != AF_SUCCESS){ */
+  /*     throw af::exception("Failed to copy", __FILE__, __LINE__  - 1, err); */
+  /*   } */
     
     //    ((*self)(s0)) = af::af_cdouble(value.real(),value.imag());
-  }
+  //  }
 
   %template(device_f32) device<float>;
   %template(device_f64) device<double>;

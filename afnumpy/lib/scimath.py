@@ -116,6 +116,11 @@ def log(x):
     else:
         return numpy.log(x)
 
+
+@outufunc
+def multiply(x1, x2):
+    return x1*x2
+
         
         
 inf = numpy.inf

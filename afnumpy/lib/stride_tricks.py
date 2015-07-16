@@ -64,3 +64,4 @@ def broadcast_arrays(*args, **kwargs):
             broadcasted.append(x)
 
     return broadcasted
+

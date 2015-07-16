@@ -3,6 +3,8 @@ from .. import private_utils as pu
 import afnumpy
 from numpy import newaxis
 import numbers
+from numpy import broadcast
+
 
 def concatenate(arrays, axis=0):
     if(len(arrays) < 1):
@@ -108,8 +110,8 @@ def cross(a, b, axisa=-1, axisb=-1, axisc=-1, axis=None):
     shape = broadcast(a[..., 0], b[..., 0]).shape
     if a.shape[-1] == 3 or b.shape[-1] == 3:
         shape += (3,)
-    dtype = promote_types(a.dtype, b.dtype)
-    cp = empty(shape, dtype)
+    dtype = afnumpy.promote_types(a.dtype, b.dtype)
+    cp = afnumpy.empty(shape, dtype)
 
     # create local aliases for readability
     a0 = a[..., 0]

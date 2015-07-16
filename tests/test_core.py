@@ -161,3 +161,8 @@ def test_rollaxis():
     iassert(afnumpy.rollaxis(a, 3, 1),numpy.rollaxis(b, 3, 1))
     iassert(afnumpy.rollaxis(a, 2),numpy.rollaxis(b, 2))
     iassert(afnumpy.rollaxis(a, 1, 4),numpy.rollaxis(b, 1, 4))
+
+def test_cross():
+    x = [1, 2, 3]
+    y = [4, 5, 6]
+    iassert(afnumpy.cross(x, y), numpy.cross(x, y))

@@ -387,6 +387,10 @@ def test_setitem():
     a1 = afnumpy.array(b1)
     a2 = afnumpy.array(b2)
     mem_before = a1.d_array.device_f32()
+    a1[:] = 1
+    b1[:] = 1
+    iassert(a1,b1)
+    assert mem_before == a1.d_array.device_f32()
     a1[:,0] = a2[:]
     b1[:,0] = b2[:]
     iassert(a1,b1)
@@ -555,3 +559,10 @@ def test_ndarray_conj():
     a =afnumpy.random.random((2,3)).astype(numpy.complex64)+1.0j
     b = numpy.array(a)
     fassert(a.conj(), b.conj())
+
+def test_empty():
+    a = afnumpy.empty((2,3))
+    b = numpy.array(a)
+    a[:] = 1
+    b[:] = 1
+    fassert(a,b)

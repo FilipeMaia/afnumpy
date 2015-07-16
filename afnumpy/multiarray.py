@@ -10,6 +10,9 @@ import collections
 def fromstring(string, dtype=float, count=-1, sep=''):
     return array(numpy.fromstring(string, dtype, count, sep))
 
+def empty(shape, dtype=float, order='C'):
+    return ndarray(shape, dtype=dtype, order=order)
+
 def zeros(shape, dtype=float, order='C'):
     b = numpy.zeros(shape, dtype, order)
     return ndarray(b.shape, b.dtype, buffer=b,order=order)
@@ -38,7 +41,7 @@ def array(object, dtype=None, copy=True, order=None, subok=False, ndmin=0):
             s = object.d_array.astype(pu.typemap(dtype))
         return ndarray(shape, dtype=dtype, af_array=s)
     elif(isinstance(object, numpy.ndarray)):
-        return ndarray(shape, dtype=dtype, buffer=object.astype(dtype, copy=False))
+        return ndarray(shape, dtype=dtype, buffer=object.astype(dtype, copy=copy))
     else:
         raise AssertionError
         
@@ -420,7 +423,15 @@ class ndarray(object):
             else:
                 self.d_array.setValue(idx, value.d_array)
         elif(isinstance(value, numbers.Number)):
-            self.d_array.setValue(idx[0], value)
+            if(len(idx) == 1):
+                self.d_array.setValue(idx[0], value)
+            if(len(idx) == 2):
+                self.d_array.setValue(idx[0], idx[1], value)
+            if(len(idx) == 3):
+                self.d_array.setValue(idx[0], idx[1], idx[2], value)
+            if(len(idx) == 4):
+                self.d_array.setValue(idx[0], idx[1], idx[2], idx[3], value)
+#            self.d_array.setValue(idx[0], value)
         else:
             raise NotImplementedError('values must be a afnumpy.ndarray')
 

@@ -156,3 +156,8 @@ def test_log():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
     fassert(afnumpy.log(a), numpy.log(b))
+
+def test_multiply():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.multiply(a,a), numpy.multiply(b,b))

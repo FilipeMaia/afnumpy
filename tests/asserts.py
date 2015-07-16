@@ -20,9 +20,9 @@ def iassert(af_a, np_a):
     if not isinstance(af_a, tuple) and not isinstance(af_a, list):
         af_a = (af_a,)
         np_a = (np_a,)
-    for af,np in zip(af_a,np_a):
-        assert numpy.all(numpy.array(af) == np)
-        massert(af, np)
+    for a,b in zip(af_a,np_a):
+        assert numpy.all(numpy.array(a) == b)
+        massert(a, b)
 
 def fassert(af_a, np_a):
     numpy.testing.assert_allclose(numpy.array(af_a), np_a)
