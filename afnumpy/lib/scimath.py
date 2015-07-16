@@ -118,4 +118,9 @@ def log(x):
 
         
         
-    
+inf = numpy.inf
+Inf = numpy.Inf
+Infinity = numpy.Infinity
+pi = numpy.pi
+e = numpy.e
+
