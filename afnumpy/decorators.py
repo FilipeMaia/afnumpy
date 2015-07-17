@@ -38,27 +38,33 @@ def reductufunc(func):
     def wrapper(a, axis=None, dtype=None, keepdims=False):        
         if not isinstance(axis, tuple):
             axis = (axis,)
-        if(a.d_array):
-            if axis[0] is None:
-                a = a.flat
-                axis = (0,)
+        if axis[0] is None:
+            # Special case for speed
+            a_flat = a.flat
+            s = func(a_flat, a_flat.d_array, pu.c2f(a_flat.shape, 0))
+            if keepdims:
+                shape = (1,)*a.ndim
+            else:
+                shape = ()
+            ret = afnumpy.ndarray(tuple(shape), dtype=pu.typemap(s.type()), 
+                                  af_array=s)
+        else:
             shape = list(a.shape)
             s = a.d_array
             # Do in decreasing axis order to avoid problems with the pop
             for ax in sorted(axis)[::-1]:
-                s = func(a, s, pu.c2f(a.shape, ax))
+                # Optimization
+                if(a.shape[ax] > 1):
+                    s = func(a, s, pu.c2f(a.shape, ax))
                 if keepdims:
                     shape[ax] = 1
                 else:
                     shape.pop(ax)
             ret = afnumpy.ndarray(tuple(shape), dtype=pu.typemap(s.type()), 
                                   af_array=s)
-            if(dtype is not None):
-                ret = ret.astype(dtype)
-            if(len(shape) == 0):
-                ret = ret[()]
-            return ret
-        else:
-            # Call the host array function instead
-            return getattr(a.h_array,func.__name__)(axis=None, dtype=dtype, keepdims=keepdims)
+        if(dtype is not None):
+            ret = ret.astype(dtype)
+        if(len(shape) == 0):
+            ret = ret[()]
+        return ret
     return wrapper
