@@ -166,5 +166,4 @@ def test_rollaxis():
 def test_cross():
     x = [1, 2, 3]
     y = [4, 5, 6]
-    Tracer()()
     iassert(afnumpy.cross(x, y), numpy.cross(x, y))

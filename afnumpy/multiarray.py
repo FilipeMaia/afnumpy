@@ -141,7 +141,7 @@ class ndarray(object):
 
     @iufunc
     def __isub__(self, other):
-        self[:] = self[:] - pu.raw(other)
+        afnumpy.subtract(self, pu.raw(other), out=self)
         return self
 
     def __rsub__(self, other):
@@ -155,119 +155,77 @@ class ndarray(object):
 
     @iufunc
     def __imul__(self, other):
-        if(self.d_array):
-            self[:] = self[:] * pu.raw(other)
-        else:
-            self.h_array *= other
+        afnumpy.multiply(self, pu.raw(other), out=self)
         return self
 
     def __rmul__(self, other):
-        if(self.d_array):
-            s = afnumpy.arrayfire.__mul__(pu.raw(other), self.d_array)
-            return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
-        else:
-            return array(other * self.h_array, dtype=self.dtype)
+        s = afnumpy.arrayfire.__mul__(pu.raw(other), self.d_array)
+        return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
 
     @ufunc
     def __div__(self, other):
-        if(self.d_array):
-            s = afnumpy.arrayfire.__div__(self.d_array, pu.raw(other))
-            return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
-        else:
-            return array(self.h_array / other, dtype=self.dtype)
+        s = afnumpy.arrayfire.__div__(self.d_array, pu.raw(other))
+        return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
 
     @iufunc
     def __idiv__(self, other):
-        if(self.d_array):
-            self[:] = self[:] / pu.raw(other)
-        else:
-            self.h_array /= other
+        afnumpy.divide(self, pu.raw(other), out=self)
         return self
 
     def __rdiv__(self, other):
-        if(self.d_array):
-            s = afnumpy.arrayfire.__div__(pu.raw(other), self.d_array)
-            return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
-        else:
-            return array(other / self.h_array, dtype=self.dtype)
+        s = afnumpy.arrayfire.__div__(pu.raw(other), self.d_array)
+        return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
         
     def __pow__(self, other):
-        if(self.d_array):
-            if(isinstance(other, numbers.Number) and numpy.issubdtype(type(other), numpy.float) and
-               numpy.issubdtype(self.dtype, numpy.integer)):
-                # AF does not automatically upconvert A**0.5 to float for integer arrays
-                s = afnumpy.arrayfire.pow(self.astype(type(other)).d_array, pu.raw(other))
-            else:
-                s = afnumpy.arrayfire.pow(self.d_array, pu.raw(other))
-            return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
+        if(isinstance(other, numbers.Number) and numpy.issubdtype(type(other), numpy.float) and
+           numpy.issubdtype(self.dtype, numpy.integer)):
+            # AF does not automatically upconvert A**0.5 to float for integer arrays
+            s = afnumpy.arrayfire.pow(self.astype(type(other)).d_array, pu.raw(other))
         else:
-            return array(self.h_array ** other, dtype=self.dtype)
+            s = afnumpy.arrayfire.pow(self.d_array, pu.raw(other))
+        return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
 
     def __rpow__(self, other):
-        if(self.d_array):
-            if(isinstance(other, numbers.Number) and numpy.issubdtype(type(other), numpy.float) and
-               numpy.issubdtype(self.dtype, numpy.integer)):
-                # AF does not automatically upconvert A**0.5 to float for integer arrays
-                s = afnumpy.arrayfire.pow(pu.raw(other), self.astype(type(other)).d_array)
-            else:
-                s = afnumpy.arrayfire.pow(pu.raw(other), self.d_array)
-            return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
+        if(isinstance(other, numbers.Number) and numpy.issubdtype(type(other), numpy.float) and
+           numpy.issubdtype(self.dtype, numpy.integer)):
+            # AF does not automatically upconvert A**0.5 to float for integer arrays
+            s = afnumpy.arrayfire.pow(pu.raw(other), self.astype(type(other)).d_array)
         else:
-            return array(other ** self.h_array, dtype=self.dtype)
+            s = afnumpy.arrayfire.pow(pu.raw(other), self.d_array)
+        return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
 
     def __lt__(self, other):
-        if(self.d_array):
-            s = afnumpy.arrayfire.__lt__(self.d_array, pu.raw(other))
-            return ndarray(self.shape, dtype=numpy.bool, af_array=s)
-        else:
-            return array(self.h_array < other, dtype=self.dtype)
+        s = afnumpy.arrayfire.__lt__(self.d_array, pu.raw(other))
+        return ndarray(self.shape, dtype=numpy.bool, af_array=s)
 
     def __le__(self, other):
-        if(self.d_array):
-            s = afnumpy.arrayfire.__le__(self.d_array, pu.raw(other))
-            return ndarray(self.shape, dtype=numpy.bool, af_array=s)
-        else:
-            return array(self.h_array <= other, dtype=self.dtype)
+        s = afnumpy.arrayfire.__le__(self.d_array, pu.raw(other))
+        return ndarray(self.shape, dtype=numpy.bool, af_array=s)
 
     def __gt__(self, other):
-        if(self.d_array):
-            s = afnumpy.arrayfire.__gt__(self.d_array, pu.raw(other))
-            return ndarray(self.shape, dtype=numpy.bool, af_array=s)
-        else:
-            return array(self.h_array > other, dtype=self.dtype)
+        s = afnumpy.arrayfire.__gt__(self.d_array, pu.raw(other))
+        return ndarray(self.shape, dtype=numpy.bool, af_array=s)
 
     def __ge__(self, other):
-        if(self.d_array):
-            s = afnumpy.arrayfire.__ge__(self.d_array, pu.raw(other))
-            return ndarray(self.shape, dtype=numpy.bool, af_array=s)
-        else:
-            return array(self.h_array >= other, dtype=self.dtype)
+        s = afnumpy.arrayfire.__ge__(self.d_array, pu.raw(other))
+        return ndarray(self.shape, dtype=numpy.bool, af_array=s)
 
     def __eq__(self, other):
         if(other is None):
             return False
-        if(self.d_array):
-            s = afnumpy.arrayfire.__eq__(self.d_array, pu.raw(other))
-            return ndarray(self.shape, dtype=numpy.bool, af_array=s)
-        else:
-            return array(self.h_array == other, dtype=self.dtype)
+        s = afnumpy.arrayfire.__eq__(self.d_array, pu.raw(other))
+        return ndarray(self.shape, dtype=numpy.bool, af_array=s)
 
     def __ne__(self, other):
         if(other is None):
             return True
-        if(self.d_array):
-            s = afnumpy.arrayfire.__ne__(self.d_array, pu.raw(other))
-            return ndarray(self.shape, dtype=numpy.bool, af_array=s)
-        else:
-            return array(self.h_array != other, dtype=self.dtype)
+        s = afnumpy.arrayfire.__ne__(self.d_array, pu.raw(other))
+        return ndarray(self.shape, dtype=numpy.bool, af_array=s)
 
     def __abs__(self):
-        if(self.d_array):
-            s = afnumpy.arrayfire.abs(self.d_array)
-            # dtype is wrong for complex types
-            return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
-        else:
-            return array(abs(self.h_array), dtype=self.dtype)
+        s = afnumpy.arrayfire.abs(self.d_array)
+        # dtype is wrong for complex types
+        return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
 
     def __neg__(self):
         return 0 - self;

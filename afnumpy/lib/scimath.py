@@ -121,6 +121,18 @@ def log(x):
 def multiply(x1, x2):
     return x1*x2
 
+@outufunc
+def subtract(x1, x2):
+    return x1-x2
+
+@outufunc
+def add(x1, x2):
+    return x1+x2
+
+@outufunc
+def divide(x1, x2):
+    return x1/x2
+
         
         
 inf = numpy.inf

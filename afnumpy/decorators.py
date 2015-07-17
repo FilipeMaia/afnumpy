@@ -3,6 +3,7 @@ import afnumpy
 import private_utils as pu
 
 def outufunc(func):
+    # This could use some optimization
     def wrapper(*args, **kws):
         out = kws.pop('out', None)
         ret = func(*args, **kws)
@@ -11,6 +12,7 @@ def outufunc(func):
                 out[:] = ret
             else:
                 out[()] = ret
+            return out
         return ret
     return wrapper
 
@@ -24,14 +26,20 @@ def iufunc(func):
                                  " shape %s" % (args[0].shape, bcast_args[0].shape))
             args = bcast_args
             
-        return func(*args, **kws)
+        ret = func(*args, **kws)
+        if len(ret.shape) == 0:
+            return ret[()]
+        return ret
     return wrapper
 
 def ufunc(func):
     def wrapper(*args, **kws):
         if all(isinstance(A, afnumpy.ndarray) for A in args):
             args = afnumpy.broadcast_arrays(*args)            
-        return func(*args, **kws)
+        ret = func(*args, **kws)
+        if len(ret.shape) == 0:
+            return ret[()]
+        return ret
     return wrapper
 
 def reductufunc(func):
