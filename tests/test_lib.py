@@ -1,5 +1,6 @@
 import afnumpy
 import numpy
+from IPython.core.debugger import Tracer
 from asserts import *
 
 def test_copy():
@@ -27,6 +28,11 @@ def test_broadcast_arrays():
     y2 = numpy.array([[1],[2],[3]], dtype=numpy.float32)
     x1 = afnumpy.array(x2)
     y1 = afnumpy.array(y2)
+    iassert(afnumpy.broadcast_arrays(x1, y1), numpy.broadcast_arrays(x2, y2))
+    x1 = afnumpy.array([2])
+    y1 = afnumpy.array(2)
+    x2 = numpy.array([2])
+    y2 = numpy.array(2)
     iassert(afnumpy.broadcast_arrays(x1, y1), numpy.broadcast_arrays(x2, y2))
 
 def test_tile():
