@@ -8,7 +8,4 @@ def rand(*args):
 
 def random(size = None):
     a = numpy.random.random(size)
-    if(size):
-        return ndarray(a.shape, a.dtype, buffer=a)
-    else:
-        return a
+    return ndarray(a.shape, a.dtype, buffer=a)
