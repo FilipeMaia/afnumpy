@@ -8,13 +8,16 @@ def massert(af_a, np_a):
 
     if isinstance(af_a, tuple):
         assert(af_a == np_a)
-    elif not isinstance(af_a, numbers.Number):
-        assert (af_a.shape == np_a.shape)
+    elif isinstance(af_a, afnumpy.ndarray):
+        assert isinstance(np_a, numpy.ndarray)
         # I will not strictly enforce float32 vs float64
         assert af_a.dtype == np_a.dtype or (af_a.dtype == numpy.float32 and np_a.dtype == numpy.float64)
-    else:
+        assert (af_a.shape == np_a.shape)
+    elif isinstance(af_a, numbers.Number):
         assert isinstance(af_a, numbers.Number)
         assert isinstance(np_a, numbers.Number)
+    else:
+        assert type(af_a) == type(np_a)
 
 def iassert(af_a, np_a):
     if not isinstance(af_a, tuple) and not isinstance(af_a, list):
