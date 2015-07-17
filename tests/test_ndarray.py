@@ -244,23 +244,21 @@ def test_comparisons():
 def test_all():    
     b = numpy.random.randint(0,2,3).astype('bool')
     a = afnumpy.array(b)
-    iassert(afnumpy.all(a), numpy.all(b))
-    iassert(afnumpy.all(a,axis=0), numpy.all(b,axis=0))
+    iassert(a.all(), b.all())
+    iassert(a.all(axis=0), b.all(axis=0))
 
     b = numpy.random.randint(0,2,(3,2)).astype('bool')
     a = afnumpy.array(b)
-    iassert(afnumpy.all(a), numpy.all(b))
-    iassert(afnumpy.all(a,axis=0), numpy.all(b,axis=0))
-    # Not implemented
-    # iassert(afnumpy.all(a,keepdims=True), numpy.all(b,keepdims=True))
+    iassert(a.all(), b.all())
+    iassert(a.all(axis=0), b.all(axis=0))
+    iassert(a.all(keepdims=True), b.all(keepdims=True))
 
 def test_sum():    
     b = numpy.random.random(3)
     a = afnumpy.array(b)
     fassert(afnumpy.sum(a), numpy.sum(b))
     fassert(afnumpy.sum(a,axis=0), numpy.sum(b,axis=0))
-    # Not implemented
-    # fassert(afnumpy.sum(a,keepdims=True), numpy.all(b,keepdims=True))
+    fassert(afnumpy.sum(a,keepdims=True), numpy.sum(b,keepdims=True))
 
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
@@ -455,6 +453,7 @@ def test_views():
     b = numpy.random.random((3))
     a = afnumpy.array(b)
     c = a[...,0]
+    assert a.d_array.device_f32() == c.d_array.device_f32()
     d = b[...,0]
     c[()] = 0
     d[()] = 0
@@ -463,8 +462,8 @@ def test_views():
 def test_ndarray_astype():
     b = numpy.random.random(3)
     a = afnumpy.array(b)
-    iassert(b.astype(numpy.uint8),a.astype(numpy.uint8))
-    iassert(b.astype(numpy.complex128),a.astype(numpy.complex128))
+    iassert(a.astype(numpy.uint8),b.astype(numpy.uint8))
+    iassert(a.astype(numpy.complex128),b.astype(numpy.complex128))
 
 def test_ndarray_len():
     b = numpy.random.random(3)
