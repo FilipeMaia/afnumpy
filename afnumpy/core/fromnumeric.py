@@ -4,6 +4,11 @@ from afnumpy import private_utils as pu
 from afnumpy.decorators import *
 
 def all(a, axis=None, out=None, keepdims=False):
+    try:
+        return a.all(axis, out, keepdims)
+    except AttributeError:
+        return numpy.all(a, axis, out, keepdims)
+
     if(out is not None):
         raise NotImplementedError
     if(keepdims is not False):
