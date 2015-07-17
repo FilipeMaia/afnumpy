@@ -48,6 +48,7 @@ def typemap(dtype):
                   afnumpy.arrayfire.s64: numpy.int64,
                   afnumpy.arrayfire.u32: numpy.uint32,
                   afnumpy.arrayfire.u64: numpy.uint64,
+                  afnumpy.arrayfire.b8: numpy.bool,
               }
     TypeMap = {numpy.dtype('float32'): afnumpy.arrayfire.f32,
                numpy.dtype('float64'): afnumpy.arrayfire.f64,
