@@ -167,3 +167,6 @@ def test_cross():
     x = [1, 2, 3]
     y = [4, 5, 6]
     iassert(afnumpy.cross(x, y), numpy.cross(x, y))
+
+def test_linspace():
+    iassert(afnumpy.linspace(0,10), numpy.linspace(0,10))
