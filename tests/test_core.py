@@ -177,3 +177,18 @@ def test_squeeze():
     iassert(afnumpy.squeeze(y), numpy.squeeze(x))
     iassert(afnumpy.squeeze(y, axis=(2,)), numpy.squeeze(x, axis=(2,)))
     
+def test_all():
+    iassert(afnumpy.all([[True, False], [True, True]]),
+            numpy.all([[True, False], [True, True]]))
+    x = numpy.array([[True, False], [True, True]])
+    y = afnumpy.array(x)
+    iassert(y.all(axis=0),x.all(axis=0))
+
+
+def test_any():
+    iassert(afnumpy.any([[True, False], [True, True]]),
+            numpy.any([[True, False], [True, True]]))
+    x = numpy.array([[True, False], [True, True]])
+    y = afnumpy.array(x)
+    iassert(y.any(axis=0),x.any(axis=0))
+    

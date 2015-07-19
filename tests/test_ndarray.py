@@ -241,7 +241,7 @@ def test_comparisons():
     iassert(a1 != 0.5, b1 != 0.5)
     iassert(0.5 != a1, 0.5 != b1)
 
-def test_all():    
+def test_ndarray_all():    
     b = numpy.random.randint(0,2,3).astype('bool')
     a = afnumpy.array(b)
     iassert(a.all(), b.all())
@@ -582,3 +582,9 @@ def test_ndarray_T():
     x = numpy.array([1.,2.,3.,4.])
     y = afnumpy.array(x)
     fassert(y.T,x.T)
+
+def test_ndarray_any():
+    x = numpy.array([[True, False], [True, True]])
+    y = afnumpy.array(x)
+    iassert(y.any(),x.any())
+    iassert(y.any(axis=0),x.any(axis=0))

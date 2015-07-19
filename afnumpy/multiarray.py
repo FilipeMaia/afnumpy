@@ -497,6 +497,11 @@ class ndarray(object):
     def all(self, s, axis):
         return afnumpy.arrayfire.allTrue(s, axis)
 
+    @outufunc
+    @reductufunc
+    def any(self, s, axis):
+        return afnumpy.arrayfire.anyTrue(s, axis)
+
 
     def conj(self):
         if not numpy.issubdtype(self.dtype, numpy.complex):

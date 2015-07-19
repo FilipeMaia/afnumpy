@@ -9,21 +9,11 @@ def all(a, axis=None, out=None, keepdims=False):
     except AttributeError:
         return numpy.all(a, axis, out, keepdims)
 
-    if(out is not None):
-        raise NotImplementedError
-    if(keepdims is not False):
-        raise NotImplementedError
-    if(axis is None):
-        for i in range(len(a.shape)-1,-1,-1):
-            s = afnumpy.arrayfire.allTrue(a.d_array, pu.c2f(a.shape, i)) 
-            a = afnumpy.ndarray(pu.af_shape(s), dtype=bool, af_array=s)
-    else:
-        s = afnumpy.arrayfire.allTrue(a.d_array, pu.c2f(a.shape, axis))
-    shape = pu.af_shape(s)
-    if(shape == (1,) and keepdims is False):
-        shape = tuple()
-    return afnumpy.ndarray(shape, dtype=bool, af_array=s)
-
+def any(a, axis=None, out=None, keepdims=False):
+    try:
+        return a.any(axis, out, keepdims)
+    except AttributeError:
+        return numpy.any(a, axis, out, keepdims)
 
 def round(a, decimals=0, out=None):
     try:
