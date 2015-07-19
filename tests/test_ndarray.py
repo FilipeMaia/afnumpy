@@ -1,5 +1,7 @@
 import afnumpy
 import numpy
+import afnumpy as af
+import numpy as np
 from IPython.core.debugger import Tracer
 from asserts import *
 
@@ -589,3 +591,18 @@ def test_ndarray_any():
     iassert(y.any(),x.any())
     iassert(y.any(axis=0),x.any(axis=0))
 
+def test_ndarray_real():
+    x = np.sqrt([1+0j, 0+1j])
+    y = af.sqrt([1+0j, 0+1j])
+    fassert(y.real, x.real)
+    y.real[:] = 0
+    x.real[:] = 0
+    fassert(y, x)
+
+def test_ndarray_imag():
+    x = np.sqrt([1+0j, 0+1j])
+    y = af.sqrt([1+0j, 0+1j])
+    fassert(y.imag, x.imag)
+    y.imag[:] = 0
+    x.imag[:] = 0
+    fassert(y, x)

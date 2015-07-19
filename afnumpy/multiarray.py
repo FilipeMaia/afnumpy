@@ -82,6 +82,7 @@ def where(condition, x=pu.dummy, y=pu.dummy):
 
 class ndarray(object):
     def __init__(self, shape, dtype=float, buffer=None, offset=0, strides=None, order=None, af_array=None):
+        self._base = None
         if(offset != 0):
             raise NotImplementedError('offset must be 0')
         if(strides is not None):
@@ -276,17 +277,39 @@ class ndarray(object):
 
     @property
     def flat(self):        
-        return ndarray(self.size, dtype=self.dtype, af_array=afnumpy.arrayfire.flat(self.d_array))
+        ret = ndarray(self.size, dtype=self.dtype, af_array=afnumpy.arrayfire.flat(self.d_array))
+        ret._base = self
+        return ret
 
     @property
     def real(self):
-        s = afnumpy.arrayfire.real(self.d_array)
-        return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
+        ret_type = numpy.real(numpy.zeros((),dtype=self.dtype)).dtype
+        shape = list(self.shape)
+        shape[0] *= 2
+        dims = numpy.array(pu.c2f(shape),dtype=pu.dim_t)
+        ret, handle = afnumpy.arrayfire.af_device_array(self.device_f32(),self.ndim,
+                                                        dims.ctypes.data,
+                                                        pu.typemap(ret_type))
+        afnumpy.arrayfire.af_retain_array(handle)
+        s = afnumpy.arrayfire.array_from_handle(handle)
+        a = ndarray(shape, dtype=ret_type, af_array=s)
+        a._base = self
+        return a[::2,]
 
     @property
     def imag(self):
-        s = afnumpy.arrayfire.real(self.d_array)
-        return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
+        ret_type = numpy.real(numpy.zeros((),dtype=self.dtype)).dtype
+        shape = list(self.shape)
+        shape[0] *= 2
+        dims = numpy.array(pu.c2f(shape),dtype=pu.dim_t)
+        ret, handle = afnumpy.arrayfire.af_device_array(self.device_f32(),self.ndim,
+                                                        dims.ctypes.data,
+                                                        pu.typemap(ret_type))
+        afnumpy.arrayfire.af_retain_array(handle)
+        s = afnumpy.arrayfire.array_from_handle(handle)
+        a = ndarray(shape, dtype=ret_type, af_array=s)
+        a._base = self
+        return a[1::2,]
 
     def ravel(self, order=None):
         if(order != None and order != 'K' and order != 'C'):
@@ -577,3 +600,7 @@ class ndarray(object):
         idx = afnumpy.arrayfire.array()
         afnumpy.arrayfire.sort(val, idx, self.d_array, pu.c2f(self.shape, axis))
         return ndarray(self.shape, dtype=pu.typemap(idx.type()), af_array=idx)
+
+    @property            
+    def base(self):
+        return self._base
