@@ -574,3 +574,11 @@ def test_empty():
     a[:] = 1
     b[:] = 1
     fassert(a,b)
+
+def test_ndarray_T():
+    x = numpy.array([[1.,2.],[3.,4.]])
+    y = afnumpy.array(x)
+    fassert(y.T,x.T)
+    x = numpy.array([1.,2.,3.,4.])
+    y = afnumpy.array(x)
+    fassert(y.T,x.T)

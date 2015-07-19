@@ -523,4 +523,9 @@ class ndarray(object):
         for a in sorted(axis)[::-1]:
             newshape.pop(a)
         return self.reshape(newshape)
-            
+
+    @property            
+    def T(self):
+        if self.ndim < 2:
+            return self
+        return self.transpose()
