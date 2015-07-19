@@ -566,3 +566,14 @@ class ndarray(object):
             return ndarray(shape, dtype=pu.typemap(idx.type()), af_array=idx)[()]
             
         
+    def argsort(self, axis=-1, kind='quicksort', order=None):
+        if kind != 'quicksort':
+            print "argsort 'kind' argument ignored"
+        if order is not None:
+            raise ValueError('order argument is not supported')
+        if(axis < 0):
+            axis = self.ndim+axis
+        val = afnumpy.arrayfire.array()
+        idx = afnumpy.arrayfire.array()
+        afnumpy.arrayfire.sort(val, idx, self.d_array, pu.c2f(self.shape, axis))
+        return ndarray(self.shape, dtype=pu.typemap(idx.type()), af_array=idx)

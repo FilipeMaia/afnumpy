@@ -92,3 +92,9 @@ def argmin(a, axis=None):
         return a.argmin(axis)
     except AttributeError:
         return numpy.argmin(a, axis)
+
+def argsort(a, axis=-1, kind='quicksort', order=None):
+    try:
+        return a.argsort(axis, kind, order)
+    except AttributeError:
+        return numpy.argsort(a, axis, kind, order)

@@ -1,5 +1,7 @@
 import afnumpy
+import afnumpy as af
 import numpy
+import numpy as np
 from asserts import *
 from IPython.core.debugger import Tracer
 
@@ -201,7 +203,7 @@ def test_argmax():
     a[0,1] = 5
     iassert(afnumpy.argmax(a),numpy.argmax(b))
 
-def test_argmax():
+def test_argmin():
     a = afnumpy.arange(6).reshape((2,3))
     b = numpy.array(a)
     iassert(afnumpy.argmin(a),numpy.argmin(b))
@@ -209,3 +211,16 @@ def test_argmax():
     b[0,1] = 5
     a[0,1] = 5
     iassert(afnumpy.argmin(a),numpy.argmin(b))
+
+def test_argsort():
+    # Sort does not support 64bit int yet
+    x = np.array([3, 1, 2], dtype=float)
+    y = af.array(x)
+    iassert(af.argsort(y), np.argsort(x))
+    x = np.array([[0, 3], [2, 2]], dtype=float)    
+    y = af.array(x)
+    iassert(af.argsort(y), np.argsort(x))
+    iassert(af.argsort(y, axis=1), np.argsort(x, axis=1))
+    # Arrayfire at the moment can only sort along the last dimension
+    # iassert(af.argsort(y, axis=0), np.argsort(x, axis=0))
+    
