@@ -192,3 +192,11 @@ def test_any():
     y = afnumpy.array(x)
     iassert(y.any(axis=0),x.any(axis=0))
     
+def test_argmax():
+    a = afnumpy.arange(6).reshape((2,3))
+    b = numpy.array(a)
+    iassert(afnumpy.argmax(a),numpy.argmax(b))
+    iassert(afnumpy.argmax(a, axis=0),numpy.argmax(b, axis=0))
+    b[0,1] = 5
+    a[0,1] = 5
+    iassert(afnumpy.argmax(a),numpy.argmax(b))

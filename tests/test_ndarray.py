@@ -588,3 +588,4 @@ def test_ndarray_any():
     y = afnumpy.array(x)
     iassert(y.any(),x.any())
     iassert(y.any(axis=0),x.any(axis=0))
+

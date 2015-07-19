@@ -80,3 +80,9 @@ def squeeze(a, axis=None):
         return a.squeeze(axis)
     except AttributeError:
         return numpy.squeeze(a, axis)
+
+def argmax(a, axis=None):
+    try:
+        return a.argmax(axis)
+    except AttributeError:
+        return numpy.argmax(a, axis)
