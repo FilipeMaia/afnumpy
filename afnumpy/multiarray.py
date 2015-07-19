@@ -513,3 +513,14 @@ class ndarray(object):
             raise TypeError('only length-1 arrays can be converted to Python scalars')
         ret = self[(0,)*self.ndim]
         return ret
+
+    def squeeze(self, axis=None):
+        if axis is None:
+            axis = tuple(i for i, x in enumerate(self.shape) if x == 1)
+        if not isinstance(axis, tuple):
+            axis = (axis,)
+        newshape = list(self.shape)
+        for a in sorted(axis)[::-1]:
+            newshape.pop(a)
+        return self.reshape(newshape)
+            

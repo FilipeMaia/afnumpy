@@ -170,3 +170,10 @@ def test_cross():
 
 def test_linspace():
     iassert(afnumpy.linspace(0,10), numpy.linspace(0,10))
+
+def test_squeeze():
+    x = numpy.array([[[0], [1], [2]]])
+    y = afnumpy.array(x)
+    iassert(afnumpy.squeeze(y), numpy.squeeze(x))
+    iassert(afnumpy.squeeze(y, axis=(2,)), numpy.squeeze(x, axis=(2,)))
+    

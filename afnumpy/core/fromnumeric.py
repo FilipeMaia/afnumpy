@@ -84,3 +84,9 @@ def transpose(a, axes=None):
         return a.transpose(axes)
     except AttributeError:
         return numpy.tranpose(a, axes)
+
+def squeeze(a, axis=None):
+    try:
+        return a.squeeze(axis)
+    except AttributeError:
+        return numpy.squeeze(a, axis)
