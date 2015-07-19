@@ -200,3 +200,12 @@ def test_argmax():
     b[0,1] = 5
     a[0,1] = 5
     iassert(afnumpy.argmax(a),numpy.argmax(b))
+
+def test_argmax():
+    a = afnumpy.arange(6).reshape((2,3))
+    b = numpy.array(a)
+    iassert(afnumpy.argmin(a),numpy.argmin(b))
+    iassert(afnumpy.argmin(a, axis=0),numpy.argmin(b, axis=0))
+    b[0,1] = 5
+    a[0,1] = 5
+    iassert(afnumpy.argmin(a),numpy.argmin(b))

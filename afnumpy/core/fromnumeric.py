@@ -86,3 +86,9 @@ def argmax(a, axis=None):
         return a.argmax(axis)
     except AttributeError:
         return numpy.argmax(a, axis)
+
+def argmin(a, axis=None):
+    try:
+        return a.argmin(axis)
+    except AttributeError:
+        return numpy.argmin(a, axis)

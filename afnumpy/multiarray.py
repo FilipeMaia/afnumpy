@@ -549,5 +549,20 @@ class ndarray(object):
             return ndarray(shape, dtype=pu.typemap(idx.type()), af_array=idx)
         else:
             return ndarray(shape, dtype=pu.typemap(idx.type()), af_array=idx)[()]
+
+    def argmin(self, axis=None):
+        if axis is None:
+            return self.flat.argmin(axis=0)
+        if not isinstance(axis, numbers.Number):
+            raise TypeError('an integer is required for the axis')
+        val = afnumpy.arrayfire.array()
+        idx = afnumpy.arrayfire.array()
+        afnumpy.arrayfire.min(val, idx, self.d_array, pu.c2f(self.shape, axis))
+        shape = list(self.shape)
+        shape.pop(axis)
+        if(len(shape)):
+            return ndarray(shape, dtype=pu.typemap(idx.type()), af_array=idx)
+        else:
+            return ndarray(shape, dtype=pu.typemap(idx.type()), af_array=idx)[()]
             
         
