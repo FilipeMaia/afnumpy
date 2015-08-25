@@ -1,3 +1,4 @@
+import arrayfire
 import numpy
 import numbers
 from IPython.core.debugger import Tracer
