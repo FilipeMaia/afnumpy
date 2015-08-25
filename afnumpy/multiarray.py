@@ -287,7 +287,8 @@ class ndarray(object):
         shape = list(self.shape)
         shape[0] *= 2
         dims = numpy.array(pu.c2f(shape),dtype=pu.dim_t)
-        ret, handle = afnumpy.arrayfire.af_device_array(self.device_f32(),self.ndim,
+        ret, handle = afnumpy.arrayfire.af_device_array(self.d_array.device_f32(),
+                                                        self.ndim,
                                                         dims.ctypes.data,
                                                         pu.typemap(ret_type))
         afnumpy.arrayfire.af_retain_array(handle)
@@ -302,7 +303,8 @@ class ndarray(object):
         shape = list(self.shape)
         shape[0] *= 2
         dims = numpy.array(pu.c2f(shape),dtype=pu.dim_t)
-        ret, handle = afnumpy.arrayfire.af_device_array(self.device_f32(),self.ndim,
+        ret, handle = afnumpy.arrayfire.af_device_array(self.d_array.device_f32(),
+                                                        self.ndim,
                                                         dims.ctypes.data,
                                                         pu.typemap(ret_type))
         afnumpy.arrayfire.af_retain_array(handle)
