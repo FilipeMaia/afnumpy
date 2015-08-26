@@ -1,4 +1,5 @@
-import arrayfire
+import ctypes
+import arrayfire_python
 import numpy
 import numbers
 from IPython.core.debugger import Tracer
@@ -106,9 +107,14 @@ class ndarray(object):
                 self.d_array = af_array
             else:
                 if(buffer is not None):
-                    ret, self.handle = afnumpy.arrayfire.af_create_array(buffer.ctypes.data, s_a.size, s_a.ctypes.data, pu.typemap(dtype))
+                    out_arr = ctypes.c_longlong(0)
+                    arrayfire_python.clib.af_create_array(ctypes.pointer(out_arr), ctypes.c_longlong(buffer.ctypes.data),
+                                                          s_a.size, ctypes.c_longlong(s_a.ctypes.data), pu.typemap(dtype))
+                    self.handle = out_arr.value
                 else:
-                    ret, self.handle = afnumpy.arrayfire.af_create_handle(s_a.size, s_a.ctypes.data, pu.typemap(dtype))
+                    out_arr = ctypes.c_longlong(0)
+                    arrayfire_python.clib.af_create_handle(ctypes.pointer(out_arr), s_a.size, ctypes.c_longlong(s_a.ctypes.data), pu.typemap(dtype))
+                    self.handle = out_arr.value
                 self.d_array = afnumpy.arrayfire.array_from_handle(self.handle)
         else:
             raise NotImplementedError('Only up to 4 dimensions are supported')
