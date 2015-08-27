@@ -1,3 +1,4 @@
+import arrayfire_python
 import numpy
 from .. import private_utils as pu
 import afnumpy
@@ -15,7 +16,7 @@ def concatenate(arrays, axis=0):
     arr = arrays[0].d_array.copy()
     axis = pu.c2f(arrays[0].shape, axis)
     for a in arrays[1:]:
-        arr = afnumpy.arrayfire.join(axis, arr, a.d_array)
+        arr = arrayfire_python.join(axis, arr, a.d_array)
     return afnumpy.ndarray(pu.af_shape(arr), dtype=arrays[0].dtype, af_array=arr)
 
 def roll(a, shift, axis=None):
@@ -25,13 +26,13 @@ def roll(a, shift, axis=None):
         a = a.flatten()
     axis = pu.c2f(a.shape, axis)
     if axis == 0:
-        s = afnumpy.arrayfire.shift(a.d_array, shift, 0, 0, 0)
+        s = arrayfire_python.shift(a.d_array, shift, 0, 0, 0)
     elif axis == 1:
-        s = afnumpy.arrayfire.shift(a.d_array, 0, shift, 0, 0)
+        s = arrayfire_python.shift(a.d_array, 0, shift, 0, 0)
     elif axis == 2:
-        s = afnumpy.arrayfire.shift(a.d_array, 0, 0, shift, 0)
+        s = arrayfire_python.shift(a.d_array, 0, 0, shift, 0)
     elif axis == 3:
-        s = afnumpy.arrayfire.shift(a.d_array, 0, 0, 0, shift)
+        s = arrayfire_python.shift(a.d_array, 0, 0, 0, shift)
     else:
         raise NotImplementedError
     return afnumpy.ndarray(shape, dtype=a.dtype, af_array=s)        
@@ -67,14 +68,14 @@ def asanyarray(a, dtype=None, order=None):
     return afnumpy.array(a, dtype, copy=False, order=order, subok=True)
 
 def floor(x, out=None):
-    s = afnumpy.arrayfire.floor(x.d_array)
+    s = arrayfire_python.floor(x.d_array)
     a = afnumpy.ndarray(x.shape, dtype=pu.typemap(s.type()), af_array=s)
     if out is not None:
         out[:] = a[:]
     return a
 
 def ceil(x, out=None):
-    s = afnumpy.arrayfire.ceil(x.d_array)
+    s = arrayfire_python.ceil(x.d_array)
     a = afnumpy.ndarray(x.shape, dtype=pu.typemap(s.type()), af_array=s)
     if out is not None:
         out[:] = a[:]
