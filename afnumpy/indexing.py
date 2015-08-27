@@ -1,7 +1,43 @@
+import arrayfire_python
+import sys
+arrayfire_python.index = sys.modules['arrayfire_python.index']
+from IPython.core.debugger import Tracer
 import afnumpy
 import private_utils as pu
 import numbers
 import numpy
+
+def __slice_len__(idx, shape, axis):
+    maxlen = shape[axis]
+    if idx.step is None:
+        step = 1
+    else:
+        step = idx.step
+    if idx.start is None:
+        if step < 0:
+            start = maxlen
+        else:
+            start = 0
+    else:
+        start = idx.start
+        if(start < 0):
+            start += maxlen
+    if idx.stop is None:
+        if step < 0:
+            end = 0
+        else:
+            end = maxlen
+    else:
+        end = idx.stop
+        if(end < 0):
+            end += maxlen
+    if(start == end):
+        return 0
+
+    if((start-end > 0 and step > 0) or
+       (start-end < 0 and step < 0)):
+        return 0
+    return (end-start)/step
 
 def __slice_to_seq__(shape, idx, axis):
     maxlen = shape[axis]
@@ -55,6 +91,16 @@ def __slice_to_seq__(shape, idx, axis):
                                   float(end),
                                   float(step))
     
+def __npidx_to_afidx__(idx):
+    if(isinstance(idx, numbers.Number)):
+        return idx
+    if(isinstance(idx, slice)):
+        return idx
+    if(isinstance(idx, afnumpy.ndarray)):
+        return idx.d_array
+    return afnumpy.array(idx).d_array
+        
+
 def __convert_dim__(shape, idx):
     # Convert numpy style indexing arguments to arrayfire style
     # Always returns a list
@@ -62,7 +108,7 @@ def __convert_dim__(shape, idx):
 
     # If it's an array just return the array
     if(isinstance(idx, afnumpy.ndarray)):
-        return [afnumpy.arrayfire.index(idx.d_array)], idx.shape
+        return [idx.d_array], idx.shape
     # Otherwise turns thing into a tuple
     if not isinstance(idx, tuple):
         idx = (idx,)
@@ -97,16 +143,10 @@ def __convert_dim__(shape, idx):
 
     ret = [0]*len(shape)
     for axis in range(0,len(shape)):
-        seq = __slice_to_seq__(shape, idx[axis],axis)
-        ret[pu.c2f(shape,axis)] = seq
+        af_idx = __npidx_to_afidx__(idx[axis])
+        ret[pu.c2f(shape,axis)] = af_idx
 
     ret_shape = __index_shape__(shape, ret)
-
-    for axis in range(0,len(ret)):
-        if(ret[axis] is not None):
-            ret[axis] = afnumpy.arrayfire.index(ret[axis])
-        else:
-            ret[axis] = None
 
     # Insert new dimensions start from the end so we don't perturb other insertions
     for n in newaxes[::-1]:
@@ -126,7 +166,10 @@ def __index_shape__(A_shape, idx):
                 shape.append(A_shape[i])
             else:
                 shape.append(idx[i].size)
-        elif(isinstance(idx[i],afnumpy.arrayfire.array)):
+        elif(isinstance(idx[i],slice)):
+            shape.append(__slice_len__(idx[i],A_shape,i))
+#        elif(isinstance(idx[i], afnumpy.arrayfire.array)):
+        elif(isinstance(idx[i], arrayfire_python.array)):
             shape.append(idx[i].elements())
         elif(isinstance(idx[i],afnumpy.arrayfire.index)):
             if(idx[i].isspan()):

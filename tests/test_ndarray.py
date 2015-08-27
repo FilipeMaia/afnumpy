@@ -36,7 +36,7 @@ def test_where():
 
     a2 = afnumpy.array([0,2,1])
     b2 = numpy.array(a2)
-
+    
     # Test where with input as indices
     iassert(afnumpy.where(a2, a1, a2), numpy.where(b2, b1, b2))
     # Test where with input as indices
@@ -455,7 +455,7 @@ def test_views():
     b = numpy.random.random((3))
     a = afnumpy.array(b)
     c = a[...,0]
-    assert a.d_array.device_f32() == c.d_array.device_f32()
+    assert a.d_array.device() == c.d_array.device()
     d = b[...,0]
     c[()] = 0
     d[()] = 0

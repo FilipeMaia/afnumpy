@@ -19,7 +19,7 @@ dummy = object()
 def af_shape(af_array):
     shape = ()
     for i in range(0,af_array.numdims()):
-        shape = (af_array.dims(i),)+shape
+        shape = (af_array.dims()[i],)+shape
     return shape
 
 def raw(x):
