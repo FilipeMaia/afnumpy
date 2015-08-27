@@ -161,47 +161,47 @@ def test_augmented_assignment():
     a = afnumpy.random.rand(3)
     b = numpy.array(a)
 
-    mem_before = a.d_array.device_f32()
+    mem_before = a.d_array.device_ptr()
     a += a
-    assert mem_before == a.d_array.device_f32()
+    assert mem_before == a.d_array.device_ptr()
     b += b
     fassert(a, b)
-    mem_before = a.d_array.device_f32()
+    mem_before = a.d_array.device_ptr()
     a += 3
-    assert mem_before == a.d_array.device_f32()
+    assert mem_before == a.d_array.device_ptr()
     b += 3
     fassert(a, b)
 
-    mem_before = a.d_array.device_f32()
+    mem_before = a.d_array.device_ptr()
     a -= a
-    assert mem_before == a.d_array.device_f32()
+    assert mem_before == a.d_array.device_ptr()
     b -= b
     fassert(a, b)
-    mem_before = a.d_array.device_f32()
+    mem_before = a.d_array.device_ptr()
     a -= 3
-    assert mem_before == a.d_array.device_f32()
+    assert mem_before == a.d_array.device_ptr()
     b -= 3
     fassert(a, b)
 
-    mem_before = a.d_array.device_f32()
+    mem_before = a.d_array.device_ptr()
     a *= a
-    assert mem_before == a.d_array.device_f32()
+    assert mem_before == a.d_array.device_ptr()
     b *= b
     fassert(a, b)
-    mem_before = a.d_array.device_f32()
+    mem_before = a.d_array.device_ptr()
     a *= 3
-    assert mem_before == a.d_array.device_f32()
+    assert mem_before == a.d_array.device_ptr()
     b *= 3
     fassert(a, b)
 
-    mem_before = a.d_array.device_f32()
+    mem_before = a.d_array.device_ptr()
     a /= a
-    assert mem_before == a.d_array.device_f32()
+    assert mem_before == a.d_array.device_ptr()
     b /= b
     fassert(a, b)
-    mem_before = a.d_array.device_f32()
+    mem_before = a.d_array.device_ptr()
     a /= 3
-    assert mem_before == a.d_array.device_f32()
+    assert mem_before == a.d_array.device_ptr()
     b /= 3
     fassert(a, b)
 

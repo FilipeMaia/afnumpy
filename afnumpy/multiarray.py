@@ -265,27 +265,32 @@ class ndarray(object):
         return ndarray(self.shape, dtype=numpy.bool, af_array=s)
 
     def __le__(self, other):
-        s = afnumpy.arrayfire.__le__(self.d_array, pu.raw(other))
+        #s = afnumpy.arrayfire.__le__(self.d_array, pu.raw(other))
+        s = self.d_array <= pu.raw(other)
         return ndarray(self.shape, dtype=numpy.bool, af_array=s)
 
     def __gt__(self, other):
-        s = afnumpy.arrayfire.__gt__(self.d_array, pu.raw(other))
+        # s = afnumpy.arrayfire.__gt__(self.d_array, pu.raw(other))
+        s = self.d_array > pu.raw(other)
         return ndarray(self.shape, dtype=numpy.bool, af_array=s)
 
     def __ge__(self, other):
-        s = afnumpy.arrayfire.__ge__(self.d_array, pu.raw(other))
+        #s = afnumpy.arrayfire.__ge__(self.d_array, pu.raw(other))
+        s = self.d_array >= pu.raw(other)
         return ndarray(self.shape, dtype=numpy.bool, af_array=s)
 
     def __eq__(self, other):
         if(other is None):
             return False
-        s = afnumpy.arrayfire.__eq__(self.d_array, pu.raw(other))
+        s = self.d_array == pu.raw(other)
+        # s = afnumpy.arrayfire.__eq__(self.d_array, pu.raw(other))
         return ndarray(self.shape, dtype=numpy.bool, af_array=s)
 
     def __ne__(self, other):
         if(other is None):
             return True
-        s = afnumpy.arrayfire.__ne__(self.d_array, pu.raw(other))
+        s = self.d_array != pu.raw(other)
+        #s = afnumpy.arrayfire.__ne__(self.d_array, pu.raw(other))
         return ndarray(self.shape, dtype=numpy.bool, af_array=s)
 
     def __abs__(self):
