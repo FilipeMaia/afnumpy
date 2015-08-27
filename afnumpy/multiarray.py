@@ -391,22 +391,10 @@ class ndarray(object):
         if any(x is None for x in idx):
             # one of the indices is empty
             return ndarray(indexing.__index_shape__(self.shape, idx), dtype=self.dtype)
-        if(isinstance(idx,list)):
-            # There must be a better way to do this!
-            if(len(idx) == 0):
-                s = self.d_array.__getitem__(afnumpy.arrayfire.index(0))
-            elif(len(idx) == 1):
-                s = self.d_array.__getitem__(idx[0])
-            elif(len(idx) == 2):
-                s = self.d_array[tuple(idx)]
-#                s = self.d_array.__getitem__(idx[0],idx[1])
-            elif(len(idx) == 3):
-                s = self.d_array.__getitem__(idx[0],idx[1],idx[2])
-            elif(len(idx) == 4):
-                s = self.d_array.__getitem__(idx[0],idx[1],idx[2],idx[3])
-        else:
-            raise ValueError
-            s = self.d_array.__getitem__(idx)
+        idx = tuple(idx)
+        if len(idx) == 0:
+            idx = 0
+        s = self.d_array[idx]
         shape = pu.af_shape(s)
         array = ndarray(shape, dtype=self.dtype, af_array=s)
         if(shape != new_shape):
@@ -423,33 +411,18 @@ class ndarray(object):
         if any(x is None for x in idx):
             # one of the indices is empty
             return            
+        idx = tuple(idx)
+        if len(idx) == 0:
+            idx = 0
         if(isinstance(value, ndarray)):
             if(value.dtype != self.dtype):
                 raise TypeError('left hand side must have same dtype as right hand side')
-            if(isinstance(idx,list)):
-                value = indexing.__expand_dim__(self.shape, value, idx)                
-                if(len(idx) == 0):
-                    self.d_array[0] = value.d_array
-                else:
-                    self.d_array[tuple(idx)] = value.d_array
-            else:
-                self.d_array.setValue(idx, value.d_array)
+            value = indexing.__expand_dim__(self.shape, value, idx).d_array
         elif(isinstance(value, numbers.Number)):
-            if(len(idx) == 0):
-                self.d_array[0] = value
-#                self.d_array.setValue(afnumpy.arrayfire.index(0), value)
-            elif(len(idx) == 1):
-                self.d_array[idx[0]] = value
-#                self.d_array.setValue(idx[0], value)
-            elif(len(idx) == 2):
-                self.d_array.setValue(idx[0], idx[1], value)
-            elif(len(idx) == 3):
-                self.d_array.setValue(idx[0], idx[1], idx[2], value)
-            elif(len(idx) == 4):
-                self.d_array.setValue(idx[0], idx[1], idx[2], idx[3], value)
-#            self.d_array.setValue(idx[0], value)
+            pass
         else:
             raise NotImplementedError('values must be a afnumpy.ndarray')
+        self.d_array[idx] = value
 
     def __array__(self):
         arrayfire_python.clib.af_get_data_ptr(ctypes.c_void_p(self.h_array.ctypes.data), self.d_array.arr)
