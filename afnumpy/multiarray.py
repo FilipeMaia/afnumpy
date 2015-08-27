@@ -462,7 +462,8 @@ class ndarray(object):
         if(self.ndim == 1):
             return self
         if len(axes) == 0 and self.ndim == 2:
-            s = afnumpy.arrayfire.transpose(self.d_array)
+            # s = afnumpy.arrayfire.transpose(self.d_array)
+            s = arrayfire_python.transpose(self.d_array)
         else:
             order = [0,1,2,3]
             if len(axes) == 0 or axes[0] is None:
@@ -477,7 +478,8 @@ class ndarray(object):
                 order[:len(axes)] = order[:len(axes)][::-1]
 
             #print order
-            s = afnumpy.arrayfire.reorder(self.d_array, order[0],order[1],order[2],order[3])
+            # s = afnumpy.arrayfire.reorder(self.d_array, order[0],order[1],order[2],order[3])
+            s = arrayfire_python.reorder(self.d_array, order[0],order[1],order[2],order[3])
         return ndarray(pu.af_shape(s), dtype=self.dtype, af_array=s)
 
     def reshape(self, shape, order = 'C'):
