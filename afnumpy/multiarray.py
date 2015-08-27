@@ -427,23 +427,11 @@ class ndarray(object):
             if(value.dtype != self.dtype):
                 raise TypeError('left hand side must have same dtype as right hand side')
             if(isinstance(idx,list)):
-                # There must be a better way to do this!
-#                if(idx_shape != value.shape):
-#                    value = value.reshape(idx_shape)
                 value = indexing.__expand_dim__(self.shape, value, idx)                
                 if(len(idx) == 0):
                     self.d_array[0] = value.d_array
-#                    self.d_array.setValue(afnumpy.arrayfire.index(0), value.d_array)
-                elif(len(idx) == 1):
-                    # TODO this is not an inplace change!
-                    self.d_array[idx[0]] = value.d_array
-#                    self.d_array.setValue(idx[0], value.d_array)
-                elif(len(idx) == 2):
-                    self.d_array.setValue(idx[0], idx[1], value.d_array)
-                elif(len(idx) == 3):
-                    self.d_array.setValue(idx[0], idx[1], idx[2], value.d_array)
-                elif(len(idx) == 4):
-                    self.d_array.setValue(idx[0], idx[1], idx[2], idx[3], value.d_array)
+                else:
+                    self.d_array[tuple(idx)] = value.d_array
             else:
                 self.d_array.setValue(idx, value.d_array)
         elif(isinstance(value, numbers.Number)):

@@ -184,10 +184,12 @@ def __index_shape__(A_shape, idx):
                     shape.append(af_idx.arr_elements())
         else:
             raise ValueError
-    return pu.c2f(shape)
+    return shape
+#    return pu.c2f(shape)
 
 def __expand_dim__(shape, value, idx):
     # reshape value, adding size 1 dimensions, such that the dimensions of value match idx
+#    Tracer()()
     idx_shape = __index_shape__(shape, idx)
     value_shape = list(value.shape)        
     past_one_dims = False
