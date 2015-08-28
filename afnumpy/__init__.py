@@ -30,20 +30,5 @@ def inplace_setitem(self, key, val):
     except RuntimeError as e:
         raise IndexError(str(e))  
 
-arrayfire_python.array.__setitem__ = inplace_setitem
-
-def device(self):
-    ptr = ctypes.c_void_p(0)
-    arrayfire_python.clib.af_get_device_ptr(ctypes.pointer(ptr), self.arr)
-    return ptr.value
-
-
-arrayfire_python.array.device = device
-
-def deep_copy(self):
-    out = arrayfire_python.array()
-    arrayfire_python.util.safe_call(arrayfire_python.clib.af_copy_array(ctypes.pointer(out.arr), self.arr))
-    return out
-
-arrayfire_python.array.copy = deep_copy
+arrayfire_python.Array.__setitem__ = inplace_setitem
 
