@@ -377,7 +377,6 @@ def test_setitem():
     iassert(a, b)
     d = numpy.array([0,1],dtype=numpy.int32)
     c = afnumpy.array(d)
-    Tracer()()
     a[c] = 3;
     b[d] = 3;
     assert mem_before == a.d_array.device_ptr()
@@ -434,6 +433,7 @@ def test_setitem():
     d = numpy.array([0,1],dtype=numpy.int32)
     c = afnumpy.array(d)
     mem_before = a1.d_array.device_ptr()
+    Tracer()()
     a1[:,0,0,c] = a2
     b1[:,0,0,d] = b2
     iassert(a1,b1)
