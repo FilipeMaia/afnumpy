@@ -455,7 +455,7 @@ def test_views():
     b = numpy.random.random((3))
     a = afnumpy.array(b)
     c = a[...,0]
-    assert a.d_array.device() == c.d_array.device()
+    assert a.d_array.device_ptr() == c.d_array.device_ptr()
     d = b[...,0]
     c[()] = 0
     d[()] = 0
@@ -479,6 +479,7 @@ def test_ndarray_len():
 def test_vstack():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
+    Tracer()()
     iassert(afnumpy.vstack(a), numpy.vstack(b))
     iassert(afnumpy.vstack((a,a)), numpy.vstack((b,b)))
 

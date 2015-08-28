@@ -98,6 +98,7 @@ def __npidx_to_afidx__(idx, dim_len):
     if(isinstance(idx, slice)):
         start = idx.start
         stop = idx.stop
+        step = idx.step
         if(start is not None and start < 0):
             start += dim_len
         if(stop is not None and stop < 0):
@@ -106,8 +107,11 @@ def __npidx_to_afidx__(idx, dim_len):
             if idx.start is None:
                 start = dim_len-1
             if idx.stop is None:
-                stop = -1                
-        return slice(start,stop,idx.step)
+                stop = -1
+        ret = slice(start,stop,step)
+        if  __slice_len__(ret, [dim_len], 0) <= 0:
+            return None
+        return ret
     if(isinstance(idx, afnumpy.ndarray)):
         return idx.d_array
     return afnumpy.array(idx).d_array
