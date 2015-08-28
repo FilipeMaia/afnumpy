@@ -16,7 +16,7 @@ def inplace_setitem(self, key, val):
 
         if (arrayfire_python.util.is_number(val)):
             tdims = arrayfire_python.index.get_assign_dims(key, self.dims())
-            other_arr = arrayfire_python.array_module.constant_array(val, tdims[0], tdims[1], tdims[2], tdims[3])
+            other_arr = arrayfire_python.array.constant_array(val, tdims[0], tdims[1], tdims[2], tdims[3], self.type())
         else:
             other_arr = val.arr
 

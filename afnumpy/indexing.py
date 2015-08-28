@@ -38,7 +38,7 @@ def __slice_len__(idx, shape, axis):
     if((start-end > 0 and step > 0) or
        (start-end < 0 and step < 0)):
         return 0
-    return math.ceil(float(end-start)/step)
+    return int(math.ceil(float(end-start)/step))
 
 def __slice_to_seq__(shape, idx, axis):
     maxlen = shape[axis]
@@ -179,7 +179,7 @@ def __index_shape__(A_shape, idx):
             else:
                 shape.append(idx[i].size)
         elif(isinstance(idx[i],slice)):
-            shape.append(__slice_len__(idx[i],A_shape,i))
+            shape.append(__slice_len__(idx[i], pu.c2f(A_shape), i))
         elif(isinstance(idx[i], arrayfire_python.Array)):
             shape.append(idx[i].elements())
         elif(isinstance(idx[i],afnumpy.arrayfire.index)):
@@ -195,8 +195,7 @@ def __index_shape__(A_shape, idx):
                     shape.append(af_idx.arr_elements())
         else:
             raise ValueError
-    return shape
-#    return pu.c2f(shape)
+    return pu.c2f(shape)
 
 def __expand_dim__(shape, value, idx):
     # reshape value, adding size 1 dimensions, such that the dimensions of value match idx

@@ -316,7 +316,6 @@ def test_getitem():
     iassert(a[1:-1:2], b[1:-1:2])
     iassert(a[::2], b[::2])
     iassert(a[::3], b[::3])
-    Tracer()()
     iassert(a[::-1], b[::-1])
     iassert(a[::-2], b[::-2])
     iassert(a[-1::-1], b[-1::-1])
@@ -367,20 +366,21 @@ def test_newaxis():
 def test_setitem():
     b = numpy.random.random((3))
     a = afnumpy.array(b)
-    mem_before = a.d_array.device_f32()
+    mem_before = a.d_array.device_ptr()
     a[0] = 1;
     b[0] = 1;
     iassert(a, b)
-    assert mem_before == a.d_array.device_f32()
+    assert mem_before == a.d_array.device_ptr()
     a[:] = 2;
     b[:] = 2;
-    assert mem_before == a.d_array.device_f32()
+    assert mem_before == a.d_array.device_ptr()
     iassert(a, b)
     d = numpy.array([0,1],dtype=numpy.int32)
     c = afnumpy.array(d)
+    Tracer()()
     a[c] = 3;
     b[d] = 3;
-    assert mem_before == a.d_array.device_f32()
+    assert mem_before == a.d_array.device_ptr()
 
     # Multidimensional
     # 2D
@@ -388,43 +388,43 @@ def test_setitem():
     b2 = numpy.random.random(2)
     a1 = afnumpy.array(b1)
     a2 = afnumpy.array(b2)
-    mem_before = a1.d_array.device_f32()
+    mem_before = a1.d_array.device_ptr()
     a1[:] = 1
     b1[:] = 1
     iassert(a1,b1)
-    assert mem_before == a1.d_array.device_f32()
+    assert mem_before == a1.d_array.device_ptr()
     a1[:,0] = a2[:]
     b1[:,0] = b2[:]
     iassert(a1,b1)
-    assert mem_before == a1.d_array.device_f32()
+    assert mem_before == a1.d_array.device_ptr()
     a1[c,0] = -a2[:]
     b1[d,0] = -b2[:]
     iassert(a1,b1)
-    assert mem_before == a1.d_array.device_f32()
+    assert mem_before == a1.d_array.device_ptr()
     a1[0,c] = a2[:]
     b1[0,d] = b2[:]
     iassert(a1,b1)
-    assert mem_before == a1.d_array.device_f32()
+    assert mem_before == a1.d_array.device_ptr()
     a1[0] = a2[:]
     b1[0] = b2[:]
     iassert(a1,b1)
-    assert mem_before == a1.d_array.device_f32()
+    assert mem_before == a1.d_array.device_ptr()
 
     # 3D
     b1 = numpy.random.random((2,3,1))
     b2 = numpy.random.random((3,1))
     a1 = afnumpy.array(b1)
     a2 = afnumpy.array(b2)
-    mem_before = a1.d_array.device_f32()
+    mem_before = a1.d_array.device_ptr()
     a1[0,:,:] = a2[:]
     b1[0,:,:] = b2[:]
     iassert(a1,b1)
-    assert mem_before == a1.d_array.device_f32()
+    assert mem_before == a1.d_array.device_ptr()
 
     a1[0] = a2[:]
     b1[0] = b2[:]
     iassert(a1,b1)
-    assert mem_before == a1.d_array.device_f32()
+    assert mem_before == a1.d_array.device_ptr()
 
     # 4D
     b1 = numpy.random.random((2,3,2,2))
@@ -433,16 +433,16 @@ def test_setitem():
     a2 = afnumpy.array(b2)
     d = numpy.array([0,1],dtype=numpy.int32)
     c = afnumpy.array(d)
-    mem_before = a1.d_array.device_f32()
+    mem_before = a1.d_array.device_ptr()
     a1[:,0,0,c] = a2
     b1[:,0,0,d] = b2
     iassert(a1,b1)
-    assert mem_before == a1.d_array.device_f32()
+    assert mem_before == a1.d_array.device_ptr()
 
     a1[1,2] = a2
     b1[1,2] = b2
     iassert(a1,b1)
-    assert mem_before == a1.d_array.device_f32()
+    assert mem_before == a1.d_array.device_ptr()
     
 def test_views():
     b = numpy.random.random((3,3))
