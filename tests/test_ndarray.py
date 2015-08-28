@@ -316,6 +316,7 @@ def test_getitem():
     iassert(a[1:-1:2], b[1:-1:2])
     iassert(a[::2], b[::2])
     iassert(a[::3], b[::3])
+    Tracer()()
     iassert(a[::-1], b[::-1])
     iassert(a[::-2], b[::-2])
     iassert(a[-1::-1], b[-1::-1])

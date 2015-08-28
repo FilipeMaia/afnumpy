@@ -30,7 +30,7 @@ def __slice_len__(idx, shape, axis):
             end = maxlen
     else:
         end = idx.stop
-        if(end < 0):
+        if(end < 0 and step > 0):
             end += maxlen
     if(start == end):
         return 0
@@ -92,11 +92,22 @@ def __slice_to_seq__(shape, idx, axis):
                                   float(end),
                                   float(step))
     
-def __npidx_to_afidx__(idx):
+def __npidx_to_afidx__(idx, dim_len):
     if(isinstance(idx, numbers.Number)):
         return idx
     if(isinstance(idx, slice)):
-        return idx
+        start = idx.start
+        stop = idx.stop
+        if(start is not None and start < 0):
+            start += dim_len
+        if(stop is not None and stop < 0):
+            stop += dim_len
+        if idx.step is not None and idx.step < 0:
+            if idx.start is None:
+                start = dim_len-1
+            if idx.stop is None:
+                stop = -1                
+        return slice(start,stop,idx.step)
     if(isinstance(idx, afnumpy.ndarray)):
         return idx.d_array
     return afnumpy.array(idx).d_array
@@ -144,7 +155,7 @@ def __convert_dim__(shape, idx):
 
     ret = [0]*len(shape)
     for axis in range(0,len(shape)):
-        af_idx = __npidx_to_afidx__(idx[axis])
+        af_idx = __npidx_to_afidx__(idx[axis], shape[axis])
         ret[pu.c2f(shape,axis)] = af_idx
 
     ret_shape = __index_shape__(shape, ret)

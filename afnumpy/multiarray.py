@@ -106,12 +106,12 @@ class ndarray(object):
                 # Otherwise python will free it and havoc ensues
                 self.d_array = af_array
             else:
-                out_arr = ctypes.c_longlong(0)
+                out_arr = ctypes.c_void_p(0)
                 if(buffer is not None):
-                    arrayfire_python.clib.af_create_array(ctypes.pointer(out_arr), ctypes.c_longlong(buffer.ctypes.data),
-                                                          s_a.size, ctypes.c_longlong(s_a.ctypes.data), pu.typemap(dtype))
+                    arrayfire_python.clib.af_create_array(ctypes.pointer(out_arr), ctypes.c_void_p(buffer.ctypes.data),
+                                                          s_a.size, ctypes.c_void_p(s_a.ctypes.data), pu.typemap(dtype))
                 else:
-                    arrayfire_python.clib.af_create_handle(ctypes.pointer(out_arr), s_a.size, ctypes.c_longlong(s_a.ctypes.data), pu.typemap(dtype))
+                    arrayfire_python.clib.af_create_handle(ctypes.pointer(out_arr), s_a.size, ctypes.c_void_p(s_a.ctypes.data), pu.typemap(dtype))
                 self.d_array = arrayfire_python.Array()
                 self.d_array.arr = out_arr
         else:
@@ -413,7 +413,7 @@ class ndarray(object):
         if len(newshape) != 0:
             # No need to modify the af_array for empty shapes
             af_shape = numpy.array(pu.c2f(newshape), dtype=pu.dim_t)
-            out_arr = ctypes.c_longlong(0)
+            out_arr = ctypes.c_void_p(0)
             arrayfire_python.clib.af_moddims(ctypes.pointer(out_arr), self.d_array.arr, af_shape.size, ctypes.c_void_p(af_shape.ctypes.data))
             s = arrayfire_python.Array()
             s.arr = out_arr
