@@ -165,14 +165,17 @@ def __convert_dim__(shape, idx):
         ret_shape.insert(n,1)
     return ret, tuple(ret_shape)
 
-def __index_shape__(A_shape, idx):
+def __index_shape__(A_shape, idx, del_singleton=True):
     shape = []
     for i in range(0,len(idx)):
         if(idx[i] is None):
             shape.append(0)
         elif(isinstance(idx[i],numbers.Number)):
-            # Remove dimensions indexed with a scalar
-             continue
+            if del_singleton:
+                # Remove dimensions indexed with a scalar
+                continue
+            else:
+                shape.append(1)
         elif(isinstance(idx[i],afnumpy.arrayfire.seq)):
             if(idx[i].s == afnumpy.arrayfire.af_span):
                 shape.append(A_shape[i])
@@ -200,7 +203,7 @@ def __index_shape__(A_shape, idx):
 def __expand_dim__(shape, value, idx):
     # reshape value, adding size 1 dimensions, such that the dimensions of value match idx
 #    Tracer()()
-    idx_shape = __index_shape__(shape, idx)
+    idx_shape = __index_shape__(shape, idx, False)
     value_shape = list(value.shape)        
     past_one_dims = False
     needs_reshape = False
