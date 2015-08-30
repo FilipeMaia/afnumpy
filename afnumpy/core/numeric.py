@@ -9,6 +9,7 @@ from IPython.core.debugger import Tracer
 
 
 def concatenate(arrays, axis=0):
+    Tracer()()
     if(len(arrays) < 1):
         raise ValueError('need at least one array to concatenate')
     if(axis > 3):

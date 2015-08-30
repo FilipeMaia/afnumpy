@@ -323,6 +323,12 @@ class ndarray(object):
             raise NotImplementedError('order %s not supported' % (order))
         return self.flat
 
+    def __iter__(self):
+        ret = []
+        for i in range(0,len(self)):
+            ret.append(self[i])
+        return iter(ret)
+
     def __getitem__(self, args):
         if not isinstance(args, tuple):
             args = (args,)
@@ -333,6 +339,7 @@ class ndarray(object):
         idx = tuple(idx)
         if len(idx) == 0:
             idx = 0
+        # This stuff needs to return IndexError!
         s = self.d_array[idx]
         shape = pu.af_shape(s)
         array = ndarray(shape, dtype=self.dtype, af_array=s)
