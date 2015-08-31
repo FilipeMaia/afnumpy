@@ -551,9 +551,7 @@ class ndarray(object):
             return self.flat.argmax(axis=0)
         if not isinstance(axis, numbers.Number):
             raise TypeError('an integer is required for the axis')
-        val = arrayfire_python.Array()
-        idx = arrayfire_python.Array()
-        arrayfire_python.max(val, idx, self.d_array, pu.c2f(self.shape, axis))
+        val, idx = arrayfire_python.imax(self.d_array, pu.c2f(self.shape, axis))
         shape = list(self.shape)
         shape.pop(axis)
         if(len(shape)):
@@ -566,9 +564,7 @@ class ndarray(object):
             return self.flat.argmin(axis=0)
         if not isinstance(axis, numbers.Number):
             raise TypeError('an integer is required for the axis')
-        val = arrayfire_python.Array()
-        idx = arrayfire_python.Array()
-        arrayfire_python.min(val, idx, self.d_array, pu.c2f(self.shape, axis))
+        val, idx = arrayfire_python.imin(self.d_array, pu.c2f(self.shape, axis))
         shape = list(self.shape)
         shape.pop(axis)
         if(len(shape)):
