@@ -479,7 +479,6 @@ def test_ndarray_len():
 def test_vstack():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
-    Tracer()()
     iassert(afnumpy.vstack(a), numpy.vstack(b))
     iassert(afnumpy.vstack((a,a)), numpy.vstack((b,b)))
 

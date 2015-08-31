@@ -25,8 +25,8 @@ def af_shape(af_array):
 def raw(x):
     if(isinstance(x,afnumpy.ndarray)):
         return x.d_array
-    elif(isinstance(x,complex)):
-        return afnumpy.arrayfire.af_cdouble(x.real, x.imag)
+#    elif(isinstance(x,complex)):
+#        return afnumpy.arrayfire.af_cdouble(x.real, x.imag)
     else:
         return x
 

@@ -339,7 +339,10 @@ class ndarray(object):
         idx = tuple(idx)
         if len(idx) == 0:
             idx = 0
-        # This stuff needs to return IndexError!
+        # Arrayfire python checks that len(idx) <= array.numdims, so drop any trailing
+        # 0 indices
+        if(len(idx) > self.d_array.numdims()):
+            idx = idx[0:self.d_array.numdims()]            
         s = self.d_array[idx]
         shape = pu.af_shape(s)
         array = ndarray(shape, dtype=self.dtype, af_array=s)
@@ -513,7 +516,7 @@ class ndarray(object):
     def conj(self):
         if not numpy.issubdtype(self.dtype, numpy.complex):
             return afnumpy.copy(self)
-        if(self.d_array):
+        if(self.d_array is not None):
             s = arrayfire_python.conjg(self.d_array)
             return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
         else:
