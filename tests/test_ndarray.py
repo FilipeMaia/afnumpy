@@ -601,7 +601,7 @@ def test_ndarray_real():
 
 def test_ndarray_imag():
     x = np.sqrt([1+0j, 0+1j])
-    y = af.sqrt([1+0j, 0+1j])
+    y = af.array(x)
     fassert(y.imag, x.imag)
     y.imag[:] = 0
     x.imag[:] = 0

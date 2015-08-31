@@ -1,6 +1,6 @@
 import numpy
 from afnumpy.multiarray import ndarray
-import arrayfire
+import arrayfire_python
 import private_utils as pu
 import afnumpy
 import numbers
@@ -42,18 +42,18 @@ def __fftn__(a, s, axes, direction='forward'):
         raise NotImplementedError
     if(direction == 'forward'):
         if len(s) == 3:
-            fa = arrayfire.fft3(a.d_array, s[2], s[1], s[0])
+            fa = arrayfire_python.fft3(a.d_array, s[2], s[1], s[0])
         elif len(s) == 2:
-            fa = arrayfire.fft2(a.d_array, s[1], s[0])
+            fa = arrayfire_python.fft2(a.d_array, s[1], s[0])
         elif len(s) == 1:
-            fa = arrayfire.fft(a.d_array, s[0])
+            fa = arrayfire_python.fft(a.d_array, s[0])
     elif direction == 'inverse':
         if len(s) == 3:
-            fa = arrayfire.ifft3(a.d_array, s[2], s[1], s[0])
+            fa = arrayfire_python.ifft3(a.d_array, s[2], s[1], s[0])
         elif len(s) == 2:
-            fa = arrayfire.ifft2(a.d_array, s[1], s[0])
+            fa = arrayfire_python.ifft2(a.d_array, s[1], s[0])
         elif len(s) == 1:
-            fa = arrayfire.ifft(a.d_array, s[0])
+            fa = arrayfire_python.ifft(a.d_array, s[0])
     else:
         raise ValueError('Wrong FFT direction')
     return ndarray(a.shape, dtype=pu.typemap(fa.type()), af_array=fa)

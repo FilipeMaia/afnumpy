@@ -1,4 +1,5 @@
 import afnumpy
+import arrayfire_python
 from numpy.core import complexfloating, Inf, longdouble
 from afnumpy import asarray, sqrt, abs
 from afnumpy.lib import asfarray
@@ -7,11 +8,11 @@ def isComplexType(t):
     return issubclass(t, complexfloating)
 
 def vdot(a, b):
-    s = afnumpy.arrayfire.dot(afnumpy.arrayfire.conjg(a.flat.d_array), b.flat.d_array)
+    s = arrayfire_python.dot(arrayfire_python.conjg(a.flat.d_array), b.flat.d_array)
     return afnumpy.ndarray((), dtype=a.dtype, af_array=s)[()]
 
 def dot(a, b):
-    s = afnumpy.arrayfire.dot((a.flat.d_array), b.flat.d_array)
+    s = arrayfire_python.dot((a.flat.d_array), b.flat.d_array)
     return afnumpy.ndarray((), dtype=a.dtype, af_array=s)[()]
 
 def norm(x, ord=None, axis=None, keepdims=False):

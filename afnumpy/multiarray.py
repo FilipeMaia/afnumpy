@@ -290,33 +290,35 @@ class ndarray(object):
     def real(self):
         ret_type = numpy.real(numpy.zeros((),dtype=self.dtype)).dtype
         shape = list(self.shape)
-        shape[0] *= 2
+        shape[-1] *= 2
         dims = numpy.array(pu.c2f(shape),dtype=pu.dim_t)
-        ret, handle = arrayfire_python.af_device_array(self.d_array.device_f32(),
-                                                        self.ndim,
-                                                        dims.ctypes.data,
-                                                        pu.typemap(ret_type))
-        arrayfire_python.af_retain_array(handle)
-        s = arrayfire_python.array_from_handle(handle)
+        s = arrayfire_python.Array()
+        arrayfire_python.clib.af_device_array(ctypes.pointer(s.arr),
+                                              ctypes.c_void_p(self.d_array.device_ptr()),
+                                              self.ndim,
+                                              ctypes.c_void_p(dims.ctypes.data),
+                                              pu.typemap(ret_type))
+        arrayfire_python.clib.af_retain_array(ctypes.pointer(s.arr),s.arr)
         a = ndarray(shape, dtype=ret_type, af_array=s)
         a._base = self
-        return a[::2,]
+        return a[...,::2]
 
     @property
     def imag(self):
         ret_type = numpy.real(numpy.zeros((),dtype=self.dtype)).dtype
         shape = list(self.shape)
-        shape[0] *= 2
+        shape[-1] *= 2
         dims = numpy.array(pu.c2f(shape),dtype=pu.dim_t)
-        ret, handle = arrayfire_python.af_device_array(self.d_array.device_f32(),
-                                                        self.ndim,
-                                                        dims.ctypes.data,
-                                                        pu.typemap(ret_type))
-        arrayfire_python.af_retain_array(handle)
-        s = arrayfire_python.array_from_handle(handle)
+        s = arrayfire_python.Array()
+        arrayfire_python.clib.af_device_array(ctypes.pointer(s.arr),
+                                              ctypes.c_void_p(self.d_array.device_ptr()),
+                                              self.ndim,
+                                              ctypes.c_void_p(dims.ctypes.data),
+                                              pu.typemap(ret_type))
+        arrayfire_python.clib.af_retain_array(ctypes.pointer(s.arr),s.arr)
         a = ndarray(shape, dtype=ret_type, af_array=s)
         a._base = self
-        return a[1::2,]
+        return a[...,1::2]
 
     def ravel(self, order=None):
         if(order != None and order != 'K' and order != 'C'):
@@ -479,7 +481,8 @@ class ndarray(object):
     @reductufunc
     def sum(self, s, axis):
         if self.dtype == numpy.bool:
-            s = s.astype(pu.typemap(numpy.int64))
+            s = arrayfire_python.cast(s, pu.typemap(numpy.int64))
+#            s = s.astype(pu.typemap(numpy.int64))
         return arrayfire_python.sum(s, axis)
 
     @outufunc
@@ -575,9 +578,7 @@ class ndarray(object):
             raise ValueError('order argument is not supported')
         if(axis < 0):
             axis = self.ndim+axis
-        val = arrayfire_python.Array()
-        idx = arrayfire_python.Array()
-        arrayfire_python.sort(val, idx, self.d_array, pu.c2f(self.shape, axis))
+        val, idx = arrayfire_python.sort_index(self.d_array, pu.c2f(self.shape, axis))
         return ndarray(self.shape, dtype=pu.typemap(idx.type()), af_array=idx)
 
     @property            
