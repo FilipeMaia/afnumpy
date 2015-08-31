@@ -337,12 +337,13 @@ class ndarray(object):
             # one of the indices is empty
             return ndarray(indexing.__index_shape__(self.shape, idx), dtype=self.dtype)
         idx = tuple(idx)
-        if len(idx) == 0:
-            idx = 0
         # Arrayfire python checks that len(idx) <= array.numdims, so drop any trailing
-        # 0 indices
+        # 0 indices. We're not checking if the index is zero as it's tricky to check
+        # so this could be a bit dangerous
         if(len(idx) > self.d_array.numdims()):
             idx = idx[0:self.d_array.numdims()]            
+        if len(idx) == 0:
+            idx = 0
         s = self.d_array[idx]
         shape = pu.af_shape(s)
         array = ndarray(shape, dtype=self.dtype, af_array=s)
@@ -550,8 +551,8 @@ class ndarray(object):
             return self.flat.argmax(axis=0)
         if not isinstance(axis, numbers.Number):
             raise TypeError('an integer is required for the axis')
-        val = arrayfire_python.array()
-        idx = arrayfire_python.array()
+        val = arrayfire_python.Array()
+        idx = arrayfire_python.Array()
         arrayfire_python.max(val, idx, self.d_array, pu.c2f(self.shape, axis))
         shape = list(self.shape)
         shape.pop(axis)
@@ -565,8 +566,8 @@ class ndarray(object):
             return self.flat.argmin(axis=0)
         if not isinstance(axis, numbers.Number):
             raise TypeError('an integer is required for the axis')
-        val = arrayfire_python.array()
-        idx = arrayfire_python.array()
+        val = arrayfire_python.Array()
+        idx = arrayfire_python.Array()
         arrayfire_python.min(val, idx, self.d_array, pu.c2f(self.shape, axis))
         shape = list(self.shape)
         shape.pop(axis)
@@ -583,8 +584,8 @@ class ndarray(object):
             raise ValueError('order argument is not supported')
         if(axis < 0):
             axis = self.ndim+axis
-        val = arrayfire_python.array()
-        idx = arrayfire_python.array()
+        val = arrayfire_python.Array()
+        idx = arrayfire_python.Array()
         arrayfire_python.sort(val, idx, self.d_array, pu.c2f(self.shape, axis))
         return ndarray(self.shape, dtype=pu.typemap(idx.type()), af_array=idx)
 

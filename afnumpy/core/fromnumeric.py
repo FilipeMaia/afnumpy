@@ -1,5 +1,6 @@
 import numpy
 import afnumpy
+import arrayfire_python
 from afnumpy import private_utils as pu
 from afnumpy.decorators import *
 
@@ -64,7 +65,7 @@ def sum(a, axis=None, dtype=None, out=None, keepdims=False):
 @outufunc
 def sqrt(x):
     if isinstance(x, afnumpy.ndarray):
-        s = afnumpy.arrayfire.sqrt(x.d_array)
+        s = arrayfire_python.sqrt(x.d_array)
         return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.type()), af_array=s)
     else:
         return numpy.sqrt(x)
