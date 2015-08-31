@@ -337,11 +337,6 @@ class ndarray(object):
             # one of the indices is empty
             return ndarray(indexing.__index_shape__(self.shape, idx), dtype=self.dtype)
         idx = tuple(idx)
-        # Arrayfire python checks that len(idx) <= array.numdims, so drop any trailing
-        # 0 indices. We're not checking if the index is zero as it's tricky to check
-        # so this could be a bit dangerous
-        if(len(idx) > self.d_array.numdims()):
-            idx = idx[0:self.d_array.numdims()]            
         if len(idx) == 0:
             idx = 0
         s = self.d_array[idx]

@@ -20,7 +20,7 @@ def inplace_setitem(self, key, val):
         else:
             other_arr = val.arr
 
-        inds  = arrayfire_python.index.get_indices(key, n_dims)
+        inds  = arrayfire_python.index.get_indices(key)
 
         # In place assignment. Notice passing a pointer to self.arr as output
         arrayfire_python.util.safe_call(arrayfire_python.clib.af_assign_gen(ctypes.pointer(self.arr),
