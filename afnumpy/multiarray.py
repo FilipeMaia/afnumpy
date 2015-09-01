@@ -108,10 +108,10 @@ class ndarray(object):
             else:
                 out_arr = ctypes.c_void_p(0)
                 if(buffer is not None):
-                    arrayfire_python.clib.af_create_array(ctypes.pointer(out_arr), ctypes.c_void_p(buffer.ctypes.data),
+                    arrayfire_python.backend.get().af_create_array(ctypes.pointer(out_arr), ctypes.c_void_p(buffer.ctypes.data),
                                                           s_a.size, ctypes.c_void_p(s_a.ctypes.data), pu.typemap(dtype))
                 else:
-                    arrayfire_python.clib.af_create_handle(ctypes.pointer(out_arr), s_a.size, ctypes.c_void_p(s_a.ctypes.data), pu.typemap(dtype))
+                    arrayfire_python.backend.get().af_create_handle(ctypes.pointer(out_arr), s_a.size, ctypes.c_void_p(s_a.ctypes.data), pu.typemap(dtype))
                 self.d_array = arrayfire_python.Array()
                 self.d_array.arr = out_arr
         else:
@@ -119,7 +119,7 @@ class ndarray(object):
         self.h_array = numpy.ndarray(shape,dtype,buffer,offset,strides,order)
         
     def __repr__(self):
-        arrayfire_python.clib.af_get_data_ptr(ctypes.c_void_p(self.h_array.ctypes.data), self.d_array.arr)
+        arrayfire_python.backend.get().af_get_data_ptr(ctypes.c_void_p(self.h_array.ctypes.data), self.d_array.arr)
         return self.h_array.__repr__()        
 
     def __str__(self):
@@ -254,7 +254,7 @@ class ndarray(object):
         else:
             out = self - a * other
 #        out.d_array.eval()
-        arrayfire_python.clib.af_eval(out.d_array.arr)
+        arrayfire_python.backend.get().af_eval(out.d_array.arr)
         return out
 
     def __rmod__(self, other):
@@ -293,12 +293,12 @@ class ndarray(object):
         shape[-1] *= 2
         dims = numpy.array(pu.c2f(shape),dtype=pu.dim_t)
         s = arrayfire_python.Array()
-        arrayfire_python.clib.af_device_array(ctypes.pointer(s.arr),
+        arrayfire_python.backend.get().af_device_array(ctypes.pointer(s.arr),
                                               ctypes.c_void_p(self.d_array.device_ptr()),
                                               self.ndim,
                                               ctypes.c_void_p(dims.ctypes.data),
                                               pu.typemap(ret_type))
-        arrayfire_python.clib.af_retain_array(ctypes.pointer(s.arr),s.arr)
+        arrayfire_python.backend.get().af_retain_array(ctypes.pointer(s.arr),s.arr)
         a = ndarray(shape, dtype=ret_type, af_array=s)
         a._base = self
         return a[...,::2]
@@ -310,12 +310,12 @@ class ndarray(object):
         shape[-1] *= 2
         dims = numpy.array(pu.c2f(shape),dtype=pu.dim_t)
         s = arrayfire_python.Array()
-        arrayfire_python.clib.af_device_array(ctypes.pointer(s.arr),
+        arrayfire_python.backend.get().af_device_array(ctypes.pointer(s.arr),
                                               ctypes.c_void_p(self.d_array.device_ptr()),
                                               self.ndim,
                                               ctypes.c_void_p(dims.ctypes.data),
                                               pu.typemap(ret_type))
-        arrayfire_python.clib.af_retain_array(ctypes.pointer(s.arr),s.arr)
+        arrayfire_python.backend.get().af_retain_array(ctypes.pointer(s.arr),s.arr)
         a = ndarray(shape, dtype=ret_type, af_array=s)
         a._base = self
         return a[...,1::2]
@@ -372,7 +372,7 @@ class ndarray(object):
         self.d_array[idx] = value
 
     def __array__(self):
-        arrayfire_python.clib.af_get_data_ptr(ctypes.c_void_p(self.h_array.ctypes.data), self.d_array.arr)
+        arrayfire_python.backend.get().af_get_data_ptr(ctypes.c_void_p(self.h_array.ctypes.data), self.d_array.arr)
         return numpy.copy(self.h_array)
 
     def transpose(self, *axes):
@@ -422,7 +422,7 @@ class ndarray(object):
             # No need to modify the af_array for empty shapes
             af_shape = numpy.array(pu.c2f(newshape), dtype=pu.dim_t)
             out_arr = ctypes.c_void_p(0)
-            arrayfire_python.clib.af_moddims(ctypes.pointer(out_arr), self.d_array.arr, af_shape.size, ctypes.c_void_p(af_shape.ctypes.data))
+            arrayfire_python.backend.get().af_moddims(ctypes.pointer(out_arr), self.d_array.arr, af_shape.size, ctypes.c_void_p(af_shape.ctypes.data))
             s = arrayfire_python.Array()
             s.arr = out_arr
             self.d_array = s

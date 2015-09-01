@@ -1,17 +1,19 @@
 import numpy
 import numbers
 import afnumpy
+import arrayfire_python
 
 dim_t = numpy.int64
 
-TypeToString = { afnumpy.arrayfire.f64: 'f64',
-                     afnumpy.arrayfire.f32: 'f32',
-                     afnumpy.arrayfire.u32: 'u32',
-                     afnumpy.arrayfire.s32: 's32',
-                     afnumpy.arrayfire.u64: 'u64',
-                     afnumpy.arrayfire.s64: 's64',
-                     afnumpy.arrayfire.c32: 'c32',
-                     afnumpy.arrayfire.c64: 'c64',
+TypeToString = { arrayfire_python.f64.value: 'f64',
+                     arrayfire_python.f32.value: 'f32',
+                     arrayfire_python.u32.value: 'u32',
+                     arrayfire_python.s32.value: 's32',
+                     arrayfire_python.u64.value: 'u64',
+                     arrayfire_python.s64.value: 's64',
+                     arrayfire_python.c32.value: 'c32',
+                     arrayfire_python.c64.value: 'c64',
+                     arrayfire_python.b8.value: 'b8',
                      }
 
 dummy = object()
@@ -26,7 +28,7 @@ def raw(x):
     if(isinstance(x,afnumpy.ndarray)):
         return x.d_array
 #    elif(isinstance(x,complex)):
-#        return afnumpy.arrayfire.af_cdouble(x.real, x.imag)
+#        return arrayfire_python.af_cdouble(x.real, x.imag)
     else:
         return x
 
@@ -40,27 +42,27 @@ def c2f(shape, dim = None):
 
 
 def typemap(dtype):
-    InvTypeMap = {afnumpy.arrayfire.f64: numpy.float64,
-                  afnumpy.arrayfire.f32: numpy.float32,
-                  afnumpy.arrayfire.c64: numpy.complex128,
-                  afnumpy.arrayfire.c32: numpy.complex64,
-                  afnumpy.arrayfire.s32: numpy.int32,
-                  afnumpy.arrayfire.s64: numpy.int64,
-                  afnumpy.arrayfire.u32: numpy.uint32,
-                  afnumpy.arrayfire.u64: numpy.uint64,
-                  afnumpy.arrayfire.b8: numpy.bool,
+    InvTypeMap = {arrayfire_python.f64.value: numpy.float64,
+                  arrayfire_python.f32.value: numpy.float32,
+                  arrayfire_python.c64.value: numpy.complex128,
+                  arrayfire_python.c32.value: numpy.complex64,
+                  arrayfire_python.s32.value: numpy.int32,
+                  arrayfire_python.s64.value: numpy.int64,
+                  arrayfire_python.u32.value: numpy.uint32,
+                  arrayfire_python.u64.value: numpy.uint64,
+                  arrayfire_python.b8.value: numpy.bool,
               }
-    TypeMap = {numpy.dtype('float32'): afnumpy.arrayfire.f32,
-               numpy.dtype('float64'): afnumpy.arrayfire.f64,
-               numpy.dtype('int8'): afnumpy.arrayfire.b8,
-               numpy.dtype('uint8'): afnumpy.arrayfire.u8,
-               numpy.dtype('bool'): afnumpy.arrayfire.b8,
-               numpy.dtype('int64'): afnumpy.arrayfire.s64,
-               numpy.dtype('uint64'): afnumpy.arrayfire.u64,
-               numpy.dtype('uint32'): afnumpy.arrayfire.u32,
-               numpy.dtype('int32'): afnumpy.arrayfire.s32,
-               numpy.dtype('complex128'): afnumpy.arrayfire.c64,
-               numpy.dtype('complex64'): afnumpy.arrayfire.c32,
+    TypeMap = {numpy.dtype('float32'): arrayfire_python.f32.value,
+               numpy.dtype('float64'): arrayfire_python.f64.value,
+               numpy.dtype('int8'): arrayfire_python.b8.value,
+               numpy.dtype('uint8'): arrayfire_python.u8.value,
+               numpy.dtype('bool'): arrayfire_python.b8.value,
+               numpy.dtype('int64'): arrayfire_python.s64.value,
+               numpy.dtype('uint64'): arrayfire_python.u64.value,
+               numpy.dtype('uint32'): arrayfire_python.u32.value,
+               numpy.dtype('int32'): arrayfire_python.s32.value,
+               numpy.dtype('complex128'): arrayfire_python.c64.value,
+               numpy.dtype('complex64'): arrayfire_python.c32.value,
     }
     if(dtype in InvTypeMap):
         return InvTypeMap[dtype]

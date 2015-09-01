@@ -88,7 +88,7 @@ def __slice_to_seq__(shape, idx, axis):
     if((start-end > 0 and step > 0) or
        (start-end < 0 and step < 0)):
         return None           
-    return  afnumpy.arrayfire.seq(float(start),
+    return  arrayfire_python.seq(float(start),
                                   float(end),
                                   float(step))
     
@@ -180,8 +180,8 @@ def __index_shape__(A_shape, idx, del_singleton=True):
                 continue
             else:
                 shape.append(1)
-        elif(isinstance(idx[i],afnumpy.arrayfire.seq)):
-            if(idx[i].s == afnumpy.arrayfire.af_span):
+        elif(isinstance(idx[i],arrayfire_python.index.Seq)):
+            if(idx[i].s == arrayfire_python.af_span):
                 shape.append(A_shape[i])
             else:
                 shape.append(idx[i].size)
@@ -189,7 +189,7 @@ def __index_shape__(A_shape, idx, del_singleton=True):
             shape.append(__slice_len__(idx[i], pu.c2f(A_shape), i))
         elif(isinstance(idx[i], arrayfire_python.Array)):
             shape.append(idx[i].elements())
-        elif(isinstance(idx[i],afnumpy.arrayfire.index)):
+        elif(isinstance(idx[i],arrayfire_python.index)):
             if(idx[i].isspan()):
                 shape.append(A_shape[i])
             else:
@@ -197,7 +197,7 @@ def __index_shape__(A_shape, idx, del_singleton=True):
                 if(af_idx.isBatch):
                     raise ValueError
                 if(af_idx.isSeq):
-                    shape.append(afnumpy.arrayfire.seq(af_idx.seq()).size)
+                    shape.append(arrayfire_python.seq(af_idx.seq()).size)
                 else:
                     shape.append(af_idx.arr_elements())
         else:
