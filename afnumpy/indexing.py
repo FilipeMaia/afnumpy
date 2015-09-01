@@ -1,6 +1,5 @@
 import arrayfire_python
 import sys
-arrayfire_python.index = sys.modules['arrayfire_python.index']
 from IPython.core.debugger import Tracer
 import afnumpy
 import private_utils as pu
