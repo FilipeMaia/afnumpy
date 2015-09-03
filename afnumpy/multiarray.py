@@ -300,8 +300,10 @@ class ndarray(object):
                                               pu.typemap(ret_type))
         arrayfire_python.backend.get().af_retain_array(ctypes.pointer(s.arr),s.arr)
         a = ndarray(shape, dtype=ret_type, af_array=s)
-        a._base = self
-        return a[...,::2]
+        ret = a[...,::2]
+        ret._base = a
+        ret._base_index = (Ellipsis, slice(None,None,2))
+        return ret
 
     @property
     def imag(self):
@@ -317,9 +319,11 @@ class ndarray(object):
                                               pu.typemap(ret_type))
         arrayfire_python.backend.get().af_retain_array(ctypes.pointer(s.arr),s.arr)
         a = ndarray(shape, dtype=ret_type, af_array=s)
-        a._base = self
-        return a[...,1::2]
-
+        ret = a[...,1::2]
+        ret._base = a
+        ret._base_index = (Ellipsis, slice(1,None,2))
+        return ret
+ 
     def ravel(self, order=None):
         if(order != None and order != 'K' and order != 'C'):
             raise NotImplementedError('order %s not supported' % (order))
@@ -353,14 +357,14 @@ class ndarray(object):
 
         return array
 
-    def __setitem__(self, idx, value):
+    def __setitem__(self, idx, value):        
         idx, idx_shape = indexing.__convert_dim__(self.shape, idx)
         if any(x is None for x in idx):
             # one of the indices is empty
             return            
         idx = tuple(idx)
         if len(idx) == 0:
-            idx = 0
+            idx = tuple([0])
         if(isinstance(value, ndarray)):
             if(value.dtype != self.dtype):
                 raise TypeError('left hand side must have same dtype as right hand side')
@@ -369,7 +373,13 @@ class ndarray(object):
             pass
         else:
             raise NotImplementedError('values must be a afnumpy.ndarray')
-        self.d_array[idx] = value
+        self.d_array[idx] = value            
+        # This is a hack to be able to make it look like arrays with stride[0] > 1 can still be views
+        # In practise right now it only applies to ndarray.real and ndarray.imag
+        try:
+            self._base[self._base_index] = self
+        except AttributeError:
+            pass
 
     def __array__(self):
         arrayfire_python.backend.get().af_get_data_ptr(ctypes.c_void_p(self.h_array.ctypes.data), self.d_array.arr)
@@ -421,10 +431,10 @@ class ndarray(object):
         if len(newshape) != 0:
             # No need to modify the af_array for empty shapes
             af_shape = numpy.array(pu.c2f(newshape), dtype=pu.dim_t)
-            out_arr = ctypes.c_void_p(0)
-            arrayfire_python.backend.get().af_moddims(ctypes.pointer(out_arr), self.d_array.arr, af_shape.size, ctypes.c_void_p(af_shape.ctypes.data))
             s = arrayfire_python.Array()
-            s.arr = out_arr
+#            Tracer()()
+            arrayfire_python.backend.get().af_moddims(ctypes.pointer(s.arr), self.d_array.arr, af_shape.size, ctypes.c_void_p(af_shape.ctypes.data))
+#            arrayfire_python.backend.get().af_moddims(ctypes.pointer(self.d_array.arr), self.d_array.arr, af_shape.size, ctypes.c_void_p(af_shape.ctypes.data))
             self.d_array = s
 
         self.h_array.shape = newshape

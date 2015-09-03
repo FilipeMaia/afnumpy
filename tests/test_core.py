@@ -38,6 +38,7 @@ def test_reshape():
     iassert(a.reshape((3,2)), b.reshape((3,2)))
     iassert(a.reshape(6), b.reshape(6))
     iassert(a.reshape((-1,2)), b.reshape((-1,2)))
+    assert a.d_array.device_ptr() == a.reshape((-1,2)).d_array.device_ptr()
 
     b = numpy.random.random((1))
     a = afnumpy.array(b)

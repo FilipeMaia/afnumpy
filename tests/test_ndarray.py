@@ -446,11 +446,17 @@ def test_setitem():
 def test_views():
     b = numpy.random.random((3,3))
     a = afnumpy.array(b)
+    a[0] = 1
+    b[0] = 1
     c = a[0]
     d = b[0]
     c[:] = 0
     d[:] = 0
     iassert(a,b)
+
+    assert a[0,:].d_array.device_ptr() == a[0,:].d_array.device_ptr()
+    # There is currently no way to get views with stride[0] > 1
+    # assert a[:,0].d_array.device_ptr() == a[:,0].d_array.device_ptr()
 
     b = numpy.random.random((3))
     a = afnumpy.array(b)
@@ -593,7 +599,7 @@ def test_ndarray_any():
 
 def test_ndarray_real():
     x = np.sqrt([1+0j, 0+1j])
-    y = af.sqrt([1+0j, 0+1j])
+    y = af.array(x)
     fassert(y.real, x.real)
     y.real[:] = 0
     x.real[:] = 0
