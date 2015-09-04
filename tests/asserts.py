@@ -17,6 +17,9 @@ def massert(af_a, np_a):
     elif isinstance(af_a, numbers.Number):
         assert isinstance(af_a, numbers.Number)
         assert isinstance(np_a, numbers.Number)
+    elif isinstance(af_a, numpy.number):
+        assert isinstance(af_a, numpy.number)
+        assert isinstance(np_a, numpy.number)
     else:
         assert type(af_a) == type(np_a)
 
