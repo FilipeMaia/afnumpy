@@ -1,5 +1,5 @@
 import ctypes
-import arrayfire_python
+import arrayfire
 import sys
 import numpy
 import numbers
@@ -39,9 +39,9 @@ def array(object, dtype=None, copy=True, order=None, subok=False, ndmin=0):
         dtype = object.dtype
     if(isinstance(object, ndarray)):
         if(copy):
-            s = arrayfire_python.cast(object.d_array.copy(), pu.typemap(dtype))
+            s = arrayfire.cast(object.d_array.copy(), pu.typemap(dtype))
         else:
-            s = arrayfire_python.cast(object.d_array, pu.typemap(dtype))
+            s = arrayfire.cast(object.d_array, pu.typemap(dtype))
         return ndarray(shape, dtype=dtype, af_array=s)
     elif(isinstance(object, numpy.ndarray)):
         return ndarray(shape, dtype=dtype, buffer=object.astype(dtype, copy=copy))
@@ -53,7 +53,7 @@ def arange(start, stop = None, step = None, dtype=None):
  
 def where(condition, x=pu.dummy, y=pu.dummy):
     a = condition
-    s = arrayfire_python.where(a.d_array)
+    s = arrayfire.where(a.d_array)
     # numpy uses int64 while arrayfire uses uint32
     s = ndarray(pu.af_shape(s), dtype=numpy.uint32, af_array=s).astype(numpy.int64)
     if(x is pu.dummy and y is pu.dummy):
@@ -108,18 +108,18 @@ class ndarray(object):
             else:
                 out_arr = ctypes.c_void_p(0)
                 if(buffer is not None):
-                    arrayfire_python.backend.get().af_create_array(ctypes.pointer(out_arr), ctypes.c_void_p(buffer.ctypes.data),
+                    arrayfire.backend.get().af_create_array(ctypes.pointer(out_arr), ctypes.c_void_p(buffer.ctypes.data),
                                                           s_a.size, ctypes.c_void_p(s_a.ctypes.data), pu.typemap(dtype))
                 else:
-                    arrayfire_python.backend.get().af_create_handle(ctypes.pointer(out_arr), s_a.size, ctypes.c_void_p(s_a.ctypes.data), pu.typemap(dtype))
-                self.d_array = arrayfire_python.Array()
+                    arrayfire.backend.get().af_create_handle(ctypes.pointer(out_arr), s_a.size, ctypes.c_void_p(s_a.ctypes.data), pu.typemap(dtype))
+                self.d_array = arrayfire.Array()
                 self.d_array.arr = out_arr
         else:
             raise NotImplementedError('Only up to 4 dimensions are supported')
         self.h_array = numpy.ndarray(shape,dtype,buffer,offset,strides,order)
         
     def __repr__(self):
-        arrayfire_python.backend.get().af_get_data_ptr(ctypes.c_void_p(self.h_array.ctypes.data), self.d_array.arr)
+        arrayfire.backend.get().af_get_data_ptr(ctypes.c_void_p(self.h_array.ctypes.data), self.d_array.arr)
         return self.h_array.__repr__()        
 
     def __str__(self):
@@ -185,18 +185,18 @@ class ndarray(object):
         if(isinstance(other, numbers.Number) and numpy.issubdtype(type(other), numpy.float) and
            numpy.issubdtype(self.dtype, numpy.integer)):
             # AF does not automatically upconvert A**0.5 to float for integer arrays
-            s = arrayfire_python.pow(self.astype(type(other)).d_array, pu.raw(other))
+            s = arrayfire.pow(self.astype(type(other)).d_array, pu.raw(other))
         else:
-            s = arrayfire_python.pow(self.d_array, pu.raw(other))
+            s = arrayfire.pow(self.d_array, pu.raw(other))
         return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
 
     def __rpow__(self, other):
         if(isinstance(other, numbers.Number) and numpy.issubdtype(type(other), numpy.float) and
            numpy.issubdtype(self.dtype, numpy.integer)):
             # AF does not automatically upconvert A**0.5 to float for integer arrays
-            s = arrayfire_python.pow(pu.raw(other), self.astype(type(other)).d_array)
+            s = arrayfire.pow(pu.raw(other), self.astype(type(other)).d_array)
         else:
-            s = arrayfire_python.pow(pu.raw(other), self.d_array)
+            s = arrayfire.pow(pu.raw(other), self.d_array)
         return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
 
     def __lt__(self, other):
@@ -228,7 +228,7 @@ class ndarray(object):
         return ndarray(self.shape, dtype=numpy.bool, af_array=s)
 
     def __abs__(self):
-        s = arrayfire_python.abs(self.d_array)
+        s = arrayfire.abs(self.d_array)
         # dtype is wrong for complex types
         return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
 
@@ -254,7 +254,7 @@ class ndarray(object):
         else:
             out = self - a * other
 #        out.d_array.eval()
-        arrayfire_python.backend.get().af_eval(out.d_array.arr)
+        arrayfire.backend.get().af_eval(out.d_array.arr)
         return out
 
     def __rmod__(self, other):
@@ -282,7 +282,7 @@ class ndarray(object):
 
     @property
     def flat(self):        
-        ret = ndarray(self.size, dtype=self.dtype, af_array=arrayfire_python.flat(self.d_array))
+        ret = ndarray(self.size, dtype=self.dtype, af_array=arrayfire.flat(self.d_array))
         ret._base = self
         return ret
 
@@ -292,13 +292,13 @@ class ndarray(object):
         shape = list(self.shape)
         shape[-1] *= 2
         dims = numpy.array(pu.c2f(shape),dtype=pu.dim_t)
-        s = arrayfire_python.Array()
-        arrayfire_python.backend.get().af_device_array(ctypes.pointer(s.arr),
+        s = arrayfire.Array()
+        arrayfire.backend.get().af_device_array(ctypes.pointer(s.arr),
                                               ctypes.c_void_p(self.d_array.device_ptr()),
                                               self.ndim,
                                               ctypes.c_void_p(dims.ctypes.data),
                                               pu.typemap(ret_type))
-        arrayfire_python.backend.get().af_retain_array(ctypes.pointer(s.arr),s.arr)
+        arrayfire.backend.get().af_retain_array(ctypes.pointer(s.arr),s.arr)
         a = ndarray(shape, dtype=ret_type, af_array=s)
         ret = a[...,::2]
         ret._base = a
@@ -311,13 +311,13 @@ class ndarray(object):
         shape = list(self.shape)
         shape[-1] *= 2
         dims = numpy.array(pu.c2f(shape),dtype=pu.dim_t)
-        s = arrayfire_python.Array()
-        arrayfire_python.backend.get().af_device_array(ctypes.pointer(s.arr),
+        s = arrayfire.Array()
+        arrayfire.backend.get().af_device_array(ctypes.pointer(s.arr),
                                               ctypes.c_void_p(self.d_array.device_ptr()),
                                               self.ndim,
                                               ctypes.c_void_p(dims.ctypes.data),
                                               pu.typemap(ret_type))
-        arrayfire_python.backend.get().af_retain_array(ctypes.pointer(s.arr),s.arr)
+        arrayfire.backend.get().af_retain_array(ctypes.pointer(s.arr),s.arr)
         a = ndarray(shape, dtype=ret_type, af_array=s)
         ret = a[...,1::2]
         ret._base = a
@@ -382,14 +382,14 @@ class ndarray(object):
             pass
 
     def __array__(self):
-        arrayfire_python.backend.get().af_get_data_ptr(ctypes.c_void_p(self.h_array.ctypes.data), self.d_array.arr)
+        arrayfire.backend.get().af_get_data_ptr(ctypes.c_void_p(self.h_array.ctypes.data), self.d_array.arr)
         return numpy.copy(self.h_array)
 
     def transpose(self, *axes):
         if(self.ndim == 1):
             return self
         if len(axes) == 0 and self.ndim == 2:
-            s = arrayfire_python.transpose(self.d_array)
+            s = arrayfire.transpose(self.d_array)
         else:
             order = [0,1,2,3]
             if len(axes) == 0 or axes[0] is None:
@@ -404,7 +404,7 @@ class ndarray(object):
                 order[:len(axes)] = order[:len(axes)][::-1]
 
             #print order
-            s = arrayfire_python.reorder(self.d_array, order[0],order[1],order[2],order[3])
+            s = arrayfire.reorder(self.d_array, order[0],order[1],order[2],order[3])
         return ndarray(pu.af_shape(s), dtype=self.dtype, af_array=s)
 
     def reshape(self, shape, order = 'C'):
@@ -431,10 +431,10 @@ class ndarray(object):
         if len(newshape) != 0:
             # No need to modify the af_array for empty shapes
             af_shape = numpy.array(pu.c2f(newshape), dtype=pu.dim_t)
-            s = arrayfire_python.Array()
+            s = arrayfire.Array()
 #            Tracer()()
-            arrayfire_python.backend.get().af_moddims(ctypes.pointer(s.arr), self.d_array.arr, af_shape.size, ctypes.c_void_p(af_shape.ctypes.data))
-#            arrayfire_python.backend.get().af_moddims(ctypes.pointer(self.d_array.arr), self.d_array.arr, af_shape.size, ctypes.c_void_p(af_shape.ctypes.data))
+            arrayfire.backend.get().af_moddims(ctypes.pointer(s.arr), self.d_array.arr, af_shape.size, ctypes.c_void_p(af_shape.ctypes.data))
+#            arrayfire.backend.get().af_moddims(ctypes.pointer(self.d_array.arr), self.d_array.arr, af_shape.size, ctypes.c_void_p(af_shape.ctypes.data))
             self.d_array = s
 
         self.h_array.shape = newshape
@@ -445,11 +445,11 @@ class ndarray(object):
 
     @reductufunc
     def max(self, s, axis):
-        return arrayfire_python.max(s, axis)
+        return arrayfire.max(s, axis)
 
     @reductufunc
     def min(self, s, axis):
-        return arrayfire_python.min(s, axis)
+        return arrayfire.min(s, axis)
 
     def astype(self, dtype, order='K', casting='unsafe', subok=True, copy=True):
         if(self.d_array is not None):
@@ -460,7 +460,7 @@ class ndarray(object):
             if(copy == False and order == 'K' and dtype == self.dtype):
                 return self
 #            s = self.d_array.astype(pu.typemap(dtype))
-            s = arrayfire_python.cast(self.d_array, pu.typemap(dtype))
+            s = arrayfire.cast(self.d_array, pu.typemap(dtype))
             return ndarray(self.shape, dtype=dtype, af_array=s)
         else:
             return array(self.h_array.astype(dtype, order, casting, subok, copy), dtype=dtype)
@@ -469,7 +469,7 @@ class ndarray(object):
     def round(self, decimals=0, out=None):
         if decimals != 0:
             raise NotImplementedError('only supports decimals=0')
-        s = arrayfire_python.round(self.d_array)
+        s = arrayfire.round(self.d_array)
         ret = ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
         if(out):
             out[:] = ret[:]
@@ -491,42 +491,42 @@ class ndarray(object):
     @reductufunc
     def sum(self, s, axis):
         if self.dtype == numpy.bool:
-            s = arrayfire_python.cast(s, pu.typemap(numpy.int64))
+            s = arrayfire.cast(s, pu.typemap(numpy.int64))
 #            s = s.astype(pu.typemap(numpy.int64))
-        return arrayfire_python.sum(s, axis)
+        return arrayfire.sum(s, axis)
 
     @outufunc
     @reductufunc
     def mean(self, s, axis):
         if self.dtype == numpy.bool:
             s = s.astype(pu.typemap(numpy.float64))
-        return arrayfire_python.mean(s, axis)
+        return arrayfire.mean(s, axis)
 
     @outufunc
     @reductufunc
     def prod(self, s, axis):
         if self.dtype == numpy.bool:
             s = s.astype(pu.typemap(numpy.int64))
-        return arrayfire_python.product(s, axis)
+        return arrayfire.product(s, axis)
 
     product = prod
 
     @outufunc
     @reductufunc
     def all(self, s, axis):
-        return arrayfire_python.all_true(s, axis)
+        return arrayfire.all_true(s, axis)
 
     @outufunc
     @reductufunc
     def any(self, s, axis):
-        return arrayfire_python.any_true(s, axis)
+        return arrayfire.any_true(s, axis)
 
 
     def conj(self):
         if not numpy.issubdtype(self.dtype, numpy.complex):
             return afnumpy.copy(self)
         if(self.d_array is not None):
-            s = arrayfire_python.conjg(self.d_array)
+            s = arrayfire.conjg(self.d_array)
             return ndarray(self.shape, dtype=pu.typemap(s.type()), af_array=s)
         else:
             return self.h_array.conj()
@@ -559,7 +559,7 @@ class ndarray(object):
             return self.flat.argmax(axis=0)
         if not isinstance(axis, numbers.Number):
             raise TypeError('an integer is required for the axis')
-        val, idx = arrayfire_python.imax(self.d_array, pu.c2f(self.shape, axis))
+        val, idx = arrayfire.imax(self.d_array, pu.c2f(self.shape, axis))
         shape = list(self.shape)
         shape.pop(axis)
         if(len(shape)):
@@ -572,7 +572,7 @@ class ndarray(object):
             return self.flat.argmin(axis=0)
         if not isinstance(axis, numbers.Number):
             raise TypeError('an integer is required for the axis')
-        val, idx = arrayfire_python.imin(self.d_array, pu.c2f(self.shape, axis))
+        val, idx = arrayfire.imin(self.d_array, pu.c2f(self.shape, axis))
         shape = list(self.shape)
         shape.pop(axis)
         if(len(shape)):
@@ -588,7 +588,7 @@ class ndarray(object):
             raise ValueError('order argument is not supported')
         if(axis < 0):
             axis = self.ndim+axis
-        val, idx = arrayfire_python.sort_index(self.d_array, pu.c2f(self.shape, axis))
+        val, idx = arrayfire.sort_index(self.d_array, pu.c2f(self.shape, axis))
         return ndarray(self.shape, dtype=pu.typemap(idx.type()), af_array=idx)
 
     @property            

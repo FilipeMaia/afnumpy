@@ -1,5 +1,5 @@
 import afnumpy
-import arrayfire_python
+import arrayfire
 import numpy
 from .. import private_utils as pu
 
@@ -26,6 +26,6 @@ def tile(A, reps):
     if (d < 4):
         tup = (1,)*(4-d) + tup
     tup = pu.c2f(tup)
-    s = arrayfire_python.tile(A.d_array, tup[0], tup[1], tup[2], tup[3])
+    s = arrayfire.tile(A.d_array, tup[0], tup[1], tup[2], tup[3])
     return afnumpy.ndarray(shape, dtype=pu.typemap(s.type()), af_array=s)
 
