@@ -70,6 +70,17 @@ def test_arctan():
     fassert(afnumpy.arctan(a, out=c), numpy.arctan(b, out=d))
     fassert(c, d)
 
+def test_arctan2():
+    a1 = afnumpy.random.random((2,3))
+    b1 = numpy.array(a1)
+    a2 = afnumpy.random.random((2,3))
+    b2 = numpy.array(a2)
+    fassert(afnumpy.arctan2(a1,a2), numpy.arctan2(b1,b2))
+    c = afnumpy.random.random((2,3))
+    d = numpy.array(c)
+    fassert(afnumpy.arctan2(a1,a2, out=c), numpy.arctan2(b1, b2, out=d))
+    fassert(c, d)
+
 def test_arccosh():
     # Domain for arccosh starts at 1
     a = afnumpy.random.random((2,3))+1
@@ -174,3 +185,8 @@ def test_multiply():
     fassert(afnumpy.multiply(a,a), numpy.multiply(b,b))
     fassert(afnumpy.multiply(a,a, out=ao), numpy.multiply(b,b, out = bo))
     fassert(ao, bo)
+
+def test_angle():
+    a = afnumpy.random.random((2,3))+afnumpy.random.random((2,3))*1.0j
+    b = numpy.array(a)
+    fassert(afnumpy.angle(a), numpy.angle(b))
