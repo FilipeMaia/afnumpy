@@ -343,13 +343,16 @@ class ndarray(object):
     def __getitem__(self, args):
         if not isinstance(args, tuple):
             args = (args,)
+        if len(args) == 1 and isinstance(args[0], afnumpy.ndarray) and args[0].dtype == 'bool':
+            # Special case for boolean getitem
+            return self.flat[afnumpy.where(args[0].flat)]
         idx, new_shape = indexing.__convert_dim__(self.shape, args)
         if any(x is None for x in idx):
             # one of the indices is empty
             return ndarray(indexing.__index_shape__(self.shape, idx), dtype=self.dtype)
         idx = tuple(idx)
         if len(idx) == 0:
-            idx = 0
+            idx = tuple([0])
         s = self.d_array[idx]
         shape = pu.af_shape(s)
         array = ndarray(shape, dtype=self.dtype, af_array=s)
@@ -363,6 +366,13 @@ class ndarray(object):
         return array
 
     def __setitem__(self, idx, value):        
+        if isinstance(idx, afnumpy.ndarray) and idx.dtype == 'bool':
+            # Special case for boolean setitem
+            self_flat = self.flat
+            idx = afnumpy.where(idx.flat)
+            self_flat[idx] = value
+            return
+
         idx, idx_shape = indexing.__convert_dim__(self.shape, idx)
         if any(x is None for x in idx):
             # one of the indices is empty
