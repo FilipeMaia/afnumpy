@@ -13,14 +13,14 @@ import ctypes
 def inplace_setitem(self, key, val):
     try:
         n_dims = self.numdims()
-
+        from arrayfire.base import *
         if (arrayfire.util.is_number(val)):
-            tdims = arrayfire.index.get_assign_dims(key, self.dims())
+            tdims = arrayfire.array._get_assign_dims(key, self.dims())
             other_arr = arrayfire.array.constant_array(val, tdims[0], tdims[1], tdims[2], tdims[3], self.type())
         else:
             other_arr = val.arr
 
-        inds  = arrayfire.index.get_indices(key)
+        inds  = arrayfire.array._get_indices(key)
 
         # In place assignment. Notice passing a pointer to self.arr as output
         arrayfire.util.safe_call(arrayfire.backend.get().af_assign_gen(ctypes.pointer(self.arr),

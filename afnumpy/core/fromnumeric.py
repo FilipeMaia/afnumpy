@@ -66,7 +66,7 @@ def sum(a, axis=None, dtype=None, out=None, keepdims=False):
 def sqrt(x):
     if isinstance(x, afnumpy.ndarray):
         s = arrayfire.sqrt(x.d_array)
-        return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.type()), af_array=s)
+        return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.dtype()), af_array=s)
     else:
         return numpy.sqrt(x)
 
