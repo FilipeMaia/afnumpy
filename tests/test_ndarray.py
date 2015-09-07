@@ -340,7 +340,6 @@ def test_getitem():
     a = afnumpy.array(b)
     iassert(a[:], b[:])
 
-
     b = numpy.random.random((2,3,1,2))
     a = afnumpy.array(b)
     iassert(a[:], b[:])
@@ -355,8 +354,6 @@ def test_getitem():
     b = numpy.ones(())
     a = afnumpy.array(b)
     iassert(a[()],b[()])
-
-
 
 def test_newaxis():
     b = numpy.random.random((3))
