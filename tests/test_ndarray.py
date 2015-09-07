@@ -451,6 +451,14 @@ def test_setitem():
     a[c] = 1
     b[d] = 1
     iassert(a, b)
+    a[a < 0.3] = 1
+    b[b < 0.3] = 1
+    iassert(a, b)
+
+    # Multidimensional Boolean
+    a1[a1 < 0.3] = 1
+    b1[b1 < 0.3] = 1
+    iassert(a1, b1)
 
 def test_views():
     b = numpy.random.random((3,3))
