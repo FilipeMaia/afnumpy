@@ -20,11 +20,17 @@ else:
 
 # Load diffraction pattern
 with h5py.File('virus.cxi', 'r') as f:
-    intensities  = np.array(f['entry_1/data_1/data'][0])
-    data_fourier = np.array(f['entry_1/data_1/data_fourier'][0])
+    intensities  = np.array(f['entry_1/data_1/data'][0]).astype(np.float32)
+    data_fourier = np.array(f['entry_1/data_1/data_fourier'][0]).astype(np.complex64)
 
 # True image
 true_image = fft.fftshift(fft.ifftn(data_fourier))
+#import arrayfire
+#print arrayfire.backend.name
+#print type(true_image)
+#print true_image.dtype
+#print intensities.dtype
+#print data_fourier.dtype
 
 # Initial image
 image = 1j + np.random.random(intensities.shape)
@@ -111,21 +117,24 @@ for i in range(nr_iterations):
     fourier = fft.fftn(image)
 
     # Check convergence
-    error = get_error(fourier, intensities)
+    #error = get_error(fourier, intensities)
     #print "Iteration: %d, error: %f" %(i, error)
-    print i
+    #print i
 
     # Update plot
     #update_plot(i, image, fourier, error, support, intensities)
     
     # Apply data constraint
-    fourier = data_constraint(fourier, intensities)
+    #fourier = data_constraint(fourier, intensities)
+    fourier /= np.abs(fourier)
+    fourier *= np.sqrt(intensities)
 
     # Backward propagation
     image = fft.ifftn(fourier)
 
     # Apply support constraint
-    image = support_constraint(image, support)
+    #image *= support
+    #image = support_constraint(image, support)
 
 # Timing
 print "%d Iterations took %d seconds using %s" %(nr_iterations, time.time() - t0, use)
