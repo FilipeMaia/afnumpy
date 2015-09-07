@@ -343,7 +343,7 @@ class ndarray(object):
     def __getitem__(self, args):
         if not isinstance(args, tuple):
             args = (args,)
-        if len(args) == 1 and isinstance(args[0], afnumpy.ndarray) and args[0].dtype == 'bool':
+        if len(args) == 1 and isinstance(args[0], afnumpy.ndarray) and args[0].dtype == numpy.dtype('bool'):
             # Special case for boolean getitem
             return self.flat[afnumpy.where(args[0].flat)]
         idx, new_shape = indexing.__convert_dim__(self.shape, args)
@@ -365,12 +365,18 @@ class ndarray(object):
 
         return array
 
-    def __setitem__(self, idx, value):        
-        if isinstance(idx, afnumpy.ndarray) and idx.dtype == 'bool':
-            # Special case for boolean setitem
-            self_flat = self.flat
-            idx = afnumpy.where(idx.flat)
-            self_flat[idx] = value
+    def __setitem__(self, idx, value):       
+        try:
+            if idx.dtype == numpy.dtype('bool') or (idx[0].dtype == 'bool' and len(idx) == 1):
+                # Special case for boolean setitem
+                self_flat = self.flat
+                idx = afnumpy.where(idx.flat)
+                self_flat[idx] = value
+                return
+        except AttributeError:
+            pass
+        except RuntimeError:
+            # idx is all False
             return
 
         idx, idx_shape = indexing.__convert_dim__(self.shape, idx)
