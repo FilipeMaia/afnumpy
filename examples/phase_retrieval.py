@@ -33,7 +33,7 @@ image = 1j + np.random.random(intensities.shape)
 support = np.abs(true_image)>1
 
 # Define Nr. of iterations
-nr_iterations = 100
+nr_iterations = 2000
 
 # Define data constraint
 def data_constraint(fourier, intensities):
@@ -42,8 +42,10 @@ def data_constraint(fourier, intensities):
 # Define support constraint
 def support_constraint(img, support):
     img = img.flatten()
-    img[np.where(support.flatten()==0)] = 0
+    img[support == 0] = 0
+    #img *= support
     return img.reshape((256,256))
+    #return  img
 
 # Define error that defines convergence
 def get_error(fourier, intensities):
@@ -110,10 +112,11 @@ for i in range(nr_iterations):
 
     # Check convergence
     error = get_error(fourier, intensities)
-    print "Iteration: %d, error: %f" %(i, error)
+    #print "Iteration: %d, error: %f" %(i, error)
+    print i
 
     # Update plot
-    update_plot(i, image, fourier, error, support, intensities)
+    #update_plot(i, image, fourier, error, support, intensities)
     
     # Apply data constraint
     fourier = data_constraint(fourier, intensities)
