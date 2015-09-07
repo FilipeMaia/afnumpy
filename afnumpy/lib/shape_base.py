@@ -28,5 +28,6 @@ def tile(A, reps):
         tup = (1,)*(4-d) + tup
     tup = pu.c2f(tup)
     s = arrayfire.tile(A.d_array, int(tup[0]), int(tup[1]), int(tup[2]), int(tup[3]))
-    return afnumpy.ndarray(shape, dtype=pu.typemap(s.type()), af_array=s)
+    return afnumpy.ndarray(shape, dtype=pu.typemap(s.dtype()), af_array=s)
+
 

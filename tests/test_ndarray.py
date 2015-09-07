@@ -350,6 +350,11 @@ def test_getitem():
     c = afnumpy.array(d)
     iassert(a[1,c,0,:], b[1,d,0,:])
 
+    # Boolean indexing
+    d = b > 0.5
+    c = afnumpy.array(d)
+    iassert(a[c], b[d])
+
     # Zero dimensional
     b = numpy.ones(())
     a = afnumpy.array(b)
@@ -440,6 +445,13 @@ def test_setitem():
     iassert(a1,b1)
     assert mem_before == a1.d_array.device_ptr()
     
+    # Boolean indexing
+    d = b > 0.5
+    c = afnumpy.array(d)
+    a[c] = 1
+    b[d] = 1
+    iassert(a, b)
+
 def test_views():
     b = numpy.random.random((3,3))
     a = afnumpy.array(b)

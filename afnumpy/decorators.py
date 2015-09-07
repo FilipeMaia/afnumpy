@@ -54,7 +54,7 @@ def reductufunc(func):
                 shape = (1,)*a.ndim
             else:
                 shape = ()
-            ret = afnumpy.ndarray(tuple(shape), dtype=pu.typemap(s.type()), 
+            ret = afnumpy.ndarray(tuple(shape), dtype=pu.typemap(s.dtype()), 
                                   af_array=s)
         else:
             shape = list(a.shape)
@@ -68,7 +68,7 @@ def reductufunc(func):
                     shape[ax] = 1
                 else:
                     shape.pop(ax)
-            ret = afnumpy.ndarray(tuple(shape), dtype=pu.typemap(s.type()), 
+            ret = afnumpy.ndarray(tuple(shape), dtype=pu.typemap(s.dtype()), 
                                   af_array=s)
         if(dtype is not None):
             ret = ret.astype(dtype)
