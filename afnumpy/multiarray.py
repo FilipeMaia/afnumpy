@@ -290,6 +290,9 @@ class ndarray(object):
     def real(self):
         ret_type = numpy.real(numpy.zeros((),dtype=self.dtype)).dtype
         shape = list(self.shape)
+        if not numpy.issubdtype(self.dtype, numpy.complexfloating):
+            return self
+
         shape[-1] *= 2
         dims = numpy.array(pu.c2f(shape),dtype=pu.dim_t)
         s = arrayfire.Array()
@@ -309,6 +312,8 @@ class ndarray(object):
     def imag(self):
         ret_type = numpy.real(numpy.zeros((),dtype=self.dtype)).dtype
         shape = list(self.shape)
+        if not numpy.issubdtype(self.dtype, numpy.complexfloating):
+            return afnumpy.zeros(self.shape)
         shape[-1] *= 2
         dims = numpy.array(pu.c2f(shape),dtype=pu.dim_t)
         s = arrayfire.Array()
