@@ -46,3 +46,48 @@ def meshgrid(*xi, **kwargs):
             return [x * mult_fact for x in output]
         else:
             return afnumpy.broadcast_arrays(*output)
+
+def angle(z, deg=0):
+    """
+    Return the angle of the complex argument.
+
+    Parameters
+    ----------
+    z : array_like
+        A complex number or sequence of complex numbers.
+    deg : bool, optional
+        Return angle in degrees if True, radians if False (default).
+
+    Returns
+    -------
+    angle : {ndarray, scalar}
+        The counterclockwise angle from the positive real axis on
+        the complex plane, with dtype as numpy.float64.
+
+    See Also
+    --------
+    arctan2
+    absolute
+
+
+
+    Examples
+    --------
+    >>> np.angle([1.0, 1.0j, 1+1j])               # in radians
+    array([ 0.        ,  1.57079633,  0.78539816])
+    >>> np.angle(1+1j, deg=True)                  # in degrees
+    45.0
+
+    """
+    if deg:
+        fact = 180/pi
+    else:
+        fact = 1.0
+    z = afnumpy.asarray(z)
+    if numpy.issubdtype(z.dtype, numpy.complexfloating):
+        zimag = z.imag
+        zreal = z.real
+    else:
+        zimag = 0
+        zreal = z
+    return afnumpy.arctan2(zimag, zreal) * fact

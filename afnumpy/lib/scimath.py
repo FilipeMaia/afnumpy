@@ -29,6 +29,14 @@ def arctan(x):
         return numpy.arctan(x)
 
 @outufunc
+def arctan2(x1, x2):
+    if isinstance(x1, afnumpy.ndarray) and isinstance(x2, afnumpy.ndarray):
+        s = arrayfire.atan2(x1.d_array, x2.d_array)
+        return afnumpy.ndarray(x1.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+    else:
+        return numpy.arctan(x1, x2)
+
+@outufunc
 def arccosh(x):
     if isinstance(x, afnumpy.ndarray):
         s = arrayfire.acosh(x.d_array)
