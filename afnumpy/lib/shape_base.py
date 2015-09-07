@@ -1,6 +1,7 @@
 import afnumpy
 import arrayfire
 import numpy
+from IPython.core.debugger import Tracer
 from .. import private_utils as pu
 
 def tile(A, reps):
@@ -26,6 +27,7 @@ def tile(A, reps):
     if (d < 4):
         tup = (1,)*(4-d) + tup
     tup = pu.c2f(tup)
-    s = arrayfire.tile(A.d_array, tup[0], tup[1], tup[2], tup[3])
+    s = arrayfire.tile(A.d_array, int(tup[0]), int(tup[1]), int(tup[2]), int(tup[3]))
     return afnumpy.ndarray(shape, dtype=pu.typemap(s.dtype()), af_array=s)
+
 
