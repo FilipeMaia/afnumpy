@@ -125,6 +125,11 @@ def log(x):
     else:
         return numpy.log(x)
 
+def real(x):
+    return afnumpy.asanyarray(x).real
+
+def imag(x):
+    return afnumpy.asanyarray(x).imag
 
 @outufunc
 def multiply(x1, x2):
@@ -142,7 +147,15 @@ def add(x1, x2):
 def divide(x1, x2):
     return x1/x2
 
-        
+
+@outufunc
+def conjugate(x):
+    if isinstance(x, afnumpy.ndarray):
+        return x.conj()
+    else:
+        return numpy.conjugate(x)        
+
+conj = conjugate
         
 inf = numpy.inf
 Inf = numpy.Inf

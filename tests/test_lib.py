@@ -174,6 +174,22 @@ def test_log():
     b = numpy.array(a)
     fassert(afnumpy.log(a), numpy.log(b))
 
+def test_real():
+    x = numpy.sqrt([1+0j, 0+1j])
+    y = afnumpy.array(x)
+    fassert(afnumpy.real(y), numpy.real(x))
+    y.real[:] = 0
+    x.real[:] = 0
+    fassert(y, x)
+
+def test_imag():
+    x = numpy.sqrt([1+0j, 0+1j])
+    y = afnumpy.array(x)
+    fassert(afnumpy.imag(y), numpy.imag(x))
+    y.real[:] = 0
+    x.real[:] = 0
+    fassert(y, x)
+
 def test_multiply():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -186,7 +202,53 @@ def test_multiply():
     fassert(afnumpy.multiply(a,a, out=ao), numpy.multiply(b,b, out = bo))
     fassert(ao, bo)
 
+def test_subtract():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.subtract(a,a), numpy.subtract(b,b))
+    a = afnumpy.array(2)
+    ao = afnumpy.array(0)
+    b = numpy.array(a)
+    bo = numpy.array(0)
+    fassert(afnumpy.subtract(a,a), numpy.subtract(b,b))
+    fassert(afnumpy.subtract(a,a, out=ao), numpy.subtract(b,b, out = bo))
+    fassert(ao, bo)
+
+def test_add():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.add(a,a), numpy.add(b,b))
+    a = afnumpy.array(2)
+    ao = afnumpy.array(0)
+    b = numpy.array(a)
+    bo = numpy.array(0)
+    fassert(afnumpy.add(a,a), numpy.add(b,b))
+    fassert(afnumpy.add(a,a, out=ao), numpy.add(b,b, out = bo))
+    fassert(ao, bo)
+
+def test_divide():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.divide(a,a), numpy.divide(b,b))
+    a = afnumpy.array(2)
+    ao = afnumpy.array(0)
+    b = numpy.array(a)
+    bo = numpy.array(0)
+    fassert(afnumpy.divide(a,a), numpy.divide(b,b))
+    fassert(afnumpy.divide(a,a, out=ao), numpy.divide(b,b, out = bo))
+    fassert(ao, bo)
+
 def test_angle():
     a = afnumpy.random.random((2,3))+afnumpy.random.random((2,3))*1.0j
     b = numpy.array(a)
     fassert(afnumpy.angle(a), numpy.angle(b))
+
+def test_conjugate():
+    a = afnumpy.random.random((2,3))+afnumpy.random.random((2,3))*1.0j
+    b = numpy.array(a)
+    fassert(afnumpy.conjugate(a), numpy.conjugate(b))
+
+def test_conj():
+    a = afnumpy.random.random((2,3))+afnumpy.random.random((2,3))*1.0j
+    b = numpy.array(a)
+    fassert(afnumpy.conj(a), numpy.conj(b))
