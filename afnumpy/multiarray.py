@@ -102,8 +102,6 @@ class ndarray(object):
             s_a = numpy.array((1),dtype=pu.dim_t)
         if(s_a.size <= 4):
             if(af_array is not None):
-                # We need to make sure to keep a copy of af_array
-                # Otherwise python will free it and havoc ensues
                 self.d_array = af_array
             else:
                 out_arr = ctypes.c_void_p(0)
@@ -117,6 +115,13 @@ class ndarray(object):
         else:
             raise NotImplementedError('Only up to 4 dimensions are supported')
         self.h_array = numpy.ndarray(shape,dtype,buffer,offset,strides,order)
+
+        # Check if array size matches the af_array size
+        # This is necessary as certain operations that cause reduction in
+        # dimensions in numpy do not necessarily do that in arrayfire
+        if af_array is not None and self.d_array.dims() != pu.c2f(self._shape):
+            self.__reshape__(self._shape)
+
         
     def __repr__(self):
         arrayfire.backend.get().af_get_data_ptr(ctypes.c_void_p(self.h_array.ctypes.data), self.d_array.arr)
