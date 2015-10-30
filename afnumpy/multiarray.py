@@ -458,7 +458,6 @@ class ndarray(object):
             # No need to modify the af_array for empty shapes
             af_shape = numpy.array(pu.c2f(newshape), dtype=pu.dim_t)
             s = arrayfire.Array()
-#            Tracer()()
             arrayfire.backend.get().af_moddims(ctypes.pointer(s.arr), self.d_array.arr, af_shape.size, ctypes.c_void_p(af_shape.ctypes.data))
 #            arrayfire.backend.get().af_moddims(ctypes.pointer(self.d_array.arr), self.d_array.arr, af_shape.size, ctypes.c_void_p(af_shape.ctypes.data))
             self.d_array = s
@@ -519,33 +518,33 @@ class ndarray(object):
         if self.dtype == numpy.bool:
             s = arrayfire.cast(s, pu.typemap(numpy.int64))
 #            s = s.astype(pu.typemap(numpy.int64))
-        return arrayfire.sum(s, axis)
+        return arrayfire.sum(s, dim=axis)
 
     @outufunc
     @reductufunc
     def mean(self, s, axis):
         if self.dtype == numpy.bool:
             s = s.astype(pu.typemap(numpy.float64))
-        return arrayfire.mean(s, axis)
+        return arrayfire.mean(s, dim=axis)
 
     @outufunc
     @reductufunc
     def prod(self, s, axis):
         if self.dtype == numpy.bool:
             s = s.astype(pu.typemap(numpy.int64))
-        return arrayfire.product(s, axis)
+        return arrayfire.product(s, dim=axis)
 
     product = prod
 
     @outufunc
     @reductufunc
     def all(self, s, axis):
-        return arrayfire.all_true(s, axis)
+        return arrayfire.all_true(s, dim=axis)
 
     @outufunc
     @reductufunc
     def any(self, s, axis):
-        return arrayfire.any_true(s, axis)
+        return arrayfire.any_true(s, dim=axis)
 
 
     def conj(self):
