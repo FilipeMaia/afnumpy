@@ -210,6 +210,10 @@ def test_unary_operators():
     b = numpy.array(a)
     fassert(-a, -b)
     fassert(+a, +b)
+    b = numpy.random.randint(0,2,3).astype('bool')
+    a = afnumpy.array(b)
+    fassert(-a, -b)
+    fassert(+a, +b)
     # fassert(~a, ~b)
 
 def test_comparisons():

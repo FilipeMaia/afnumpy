@@ -238,7 +238,11 @@ class ndarray(object):
         return ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
 
     def __neg__(self):
-        return 0 - self;
+        if self.dtype == numpy.dtype('bool'):
+            # Special case for boolean getitem
+            return self.dtype.type(1) - self;
+        else:
+            return self.dtype.type(0) - self;
 
     def __pos__(self):
         return self;
