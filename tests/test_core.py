@@ -225,3 +225,12 @@ def test_argsort():
     # Arrayfire at the moment can only sort along the last dimension
     # iassert(af.argsort(y, axis=0), np.argsort(x, axis=0))
     
+def test_isnan():
+    b = 0.0/numpy.random.randint(-1,2,(2,3))
+    a = afnumpy.array(b)
+    fassert(afnumpy.isnan(a), numpy.isnan(b))
+
+def test_isinf():
+    b = 1.0/numpy.random.randint(-1,2,(2,3))
+    a = afnumpy.array(b)
+    fassert(afnumpy.isnan(a), numpy.isnan(b))

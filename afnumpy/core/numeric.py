@@ -1,12 +1,12 @@
 import arrayfire
 import numpy
-from .. import private_utils as pu
 import afnumpy
+import afnumpy.private_utils as pu
 from numpy import newaxis
 import numbers
 from numpy import broadcast
 from IPython.core.debugger import Tracer
-
+from afnumpy.decorators import *
 
 def concatenate(arrays, axis=0):
     if(len(arrays) < 1):
@@ -177,3 +177,18 @@ def cross(a, b, axisa=-1, axisb=-1, axisc=-1, axis=None):
     else:
         # This works because we are moving the last axis
         return rollaxis(cp, -1, axisc)
+
+@outufunc
+def isnan(x):
+    if not isinstance(x, afnumpy.ndarray):
+        return numpy.isnan(x)
+    s = arrayfire.isnan(x.d_array)
+    return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+
+@outufunc
+def isinf(x):
+    if not isinstance(x, afnumpy.ndarray):
+        return numpy.isinf(x)
+    s = arrayfire.isinf(x.d_array)
+    return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+
