@@ -339,6 +339,12 @@ def test_getitem():
     iassert(a[:,2], b[:,2])
     iassert(a[1,:], b[1,:])
     iassert(a[:,::-1], b[:,::-1])
+    
+    # Boolean indexing
+    d = numpy.random.random((2)) > 0.5
+    c = afnumpy.array(d)
+    iassert(a[c,:], b[d,:])
+
 
     b = numpy.random.random((2,3,1))
     a = afnumpy.array(b)
@@ -358,6 +364,10 @@ def test_getitem():
     d = b > 0.5
     c = afnumpy.array(d)
     iassert(a[c], b[d])
+
+    d = numpy.random.random((2,3)) > 0.5
+    c = afnumpy.array(d)
+    iassert(a[c,:], b[d,:])
 
     # Zero dimensional
     b = numpy.ones(())

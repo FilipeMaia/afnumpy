@@ -123,7 +123,12 @@ def __convert_dim__(shape, idx):
 
     # If it's an array just return the array
     if(isinstance(idx, afnumpy.ndarray)):
-        return [idx.d_array], idx.shape
+        # If it's a boolean array the resulting shape
+        # matches the number of non-zero entries
+        if idx.dtype is afnumpy.bool:
+            return [idx.d_array], (idx.sum())
+        else:
+            return [idx.d_array], idx.shape
     # Otherwise turns thing into a tuple
     if not isinstance(idx, tuple):
         idx = (idx,)
@@ -187,7 +192,10 @@ def __index_shape__(A_shape, idx, del_singleton=True):
         elif(isinstance(idx[i],slice)):
             shape.append(__slice_len__(idx[i], pu.c2f(A_shape), i))
         elif(isinstance(idx[i], arrayfire.Array)):
-            shape.append(idx[i].elements())
+            if idx[i].dtype() is arrayfire.Dtype.b8:
+                shape.append(int(arrayfire.sum(idx[i])))
+            else:
+                shape.append(idx[i].elements())
         elif(isinstance(idx[i],arrayfire.index)):
             if(idx[i].isspan()):
                 shape.append(A_shape[i])
