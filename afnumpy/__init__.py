@@ -15,8 +15,10 @@ def inplace_setitem(self, key, val):
         if (arrayfire.util._is_number(val)):
             tdims = arrayfire.array._get_assign_dims(key, self.dims())
             other_arr = arrayfire.array.constant_array(val, tdims[0], tdims[1], tdims[2], tdims[3], self.type())
+            del_other = True
         else:
             other_arr = val.arr
+            del_other = False
 
         inds  = arrayfire.array._get_indices(key)
 
@@ -25,6 +27,8 @@ def inplace_setitem(self, key, val):
                                                                             self.arr, ctypes.c_longlong(n_dims), 
                                                                             inds.pointer,
                                                                             other_arr))
+        if del_other:
+            safe_call(arrayfire.backend.get().af_release_array(other_arr))
     except RuntimeError as e:
         raise IndexError(str(e))  
 
