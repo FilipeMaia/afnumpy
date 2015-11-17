@@ -28,7 +28,7 @@ def inplace_setitem(self, key, val):
                                                                             inds.pointer,
                                                                             other_arr))
         if del_other:
-            safe_call(arrayfire.backend.get().af_release_array(other_arr))
+            arrayfire.safe_call(arrayfire.backend.get().af_release_array(other_arr))
     except RuntimeError as e:
         raise IndexError(str(e))  
 
