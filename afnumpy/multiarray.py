@@ -623,3 +623,13 @@ class ndarray(object):
     @property            
     def base(self):
         return self._base
+
+    @property
+    def strides(self):
+        strides = ()
+        idx = (slice(1,None),)
+        base_addr = self.d_array.device_ptr()
+        for i in range(0, self.ndim):
+            strides = (self.d_array[idx].device_ptr()-base_addr,)+strides
+            idx = (slice(None),)+idx
+        return strides
