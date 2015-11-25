@@ -643,3 +643,14 @@ def test_ndarray_imag():
     y.imag[:] = 0
     x.imag[:] = 0
     fassert(y, x)
+
+def test_ndarray_strides():
+    a = afnumpy.random.random((4,3))
+    b = numpy.array(a)
+    iassert(a.strides, b.strides)
+    iassert(a[:,:].strides, b[:,:].strides)
+    iassert(a[1:,:].strides, b[1:,:].strides)
+    iassert(a[:,1:].strides, b[:,1:].strides)
+    # The following case fails as the stride
+    # hack requires at least 2 elements per dimension
+    # iassert(a[3:,:].strides, b[3:,:].strides)
