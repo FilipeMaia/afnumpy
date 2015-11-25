@@ -291,7 +291,9 @@ class ndarray(object):
 
     @property
     def flat(self):        
-        ret = ndarray(self.size, dtype=self.dtype, af_array=arrayfire.flat(self.d_array))
+        # Currently arrayfire.flat is doing unnecessary copies
+        # ret = ndarray(self.size, dtype=self.dtype, af_array=arrayfire.flat(self.d_array))
+        ret = self.reshape(-1)
         ret._base = self
         return ret
 
@@ -460,11 +462,11 @@ class ndarray(object):
             raise ValueError('total size of new array must be unchanged')
         if len(newshape) != 0:
             # No need to modify the af_array for empty shapes
-            af_shape = numpy.array(pu.c2f(newshape), dtype=pu.dim_t)
-            s = arrayfire.Array()
-            arrayfire.backend.get().af_moddims(ctypes.pointer(s.arr), self.d_array.arr, af_shape.size, ctypes.c_void_p(af_shape.ctypes.data))
-#            arrayfire.backend.get().af_moddims(ctypes.pointer(self.d_array.arr), self.d_array.arr, af_shape.size, ctypes.c_void_p(af_shape.ctypes.data))
-            self.d_array = s
+            # af_shape = numpy.array(pu.c2f(newshape), dtype=pu.dim_t)
+            # s = arrayfire.Array()
+            # arrayfire.backend.get().af_moddims(ctypes.pointer(s.arr), self.d_array.arr, af_shape.size, ctypes.c_void_p(af_shape.ctypes.data))
+            # self.d_array = s
+            self.d_array = self.__af_moddims__(newshape)
 
         self.h_array.shape = newshape
         self._shape = tuple(newshape)
@@ -629,7 +631,39 @@ class ndarray(object):
         strides = ()
         idx = (slice(1,None),)
         base_addr = self.d_array.device_ptr()
+        dims = self.d_array.dims()
+        # Append any missing ones
+        dims = dims + (1,)*(self.ndim-len(dims))
         for i in range(0, self.ndim):
-            strides = (self.d_array[idx].device_ptr()-base_addr,)+strides
+            if(dims[i] > 1):
+                strides = (self.d_array[idx].device_ptr()-base_addr,)+strides
+            else:
+                if len(strides):                    
+                    strides = (dims[i-1]*numpy.prod(strides),)+strides
+                else:
+                    strides = (self.itemsize,)+strides
             idx = (slice(None),)+idx
         return strides
+
+    @property
+    def itemsize(self):
+        return self.dtype.itemsize
+
+    def __af_moddims__(self, newshape):
+        af_shape = numpy.array(pu.c2f(newshape), dtype=pu.dim_t)
+        s = arrayfire.Array()
+
+        # Check if we can get away with just creating a new array
+        if(self.strides is () or 
+           self.strides[0] == numpy.prod(self.shape[1:])*self.itemsize):
+            # There's a good chance this can cause a double free
+            backend = arrayfire.backend.get()
+            backend.af_device_array(ctypes.pointer(s.arr),
+                                    ctypes.c_void_p(self.d_array.device_ptr()),
+                                    af_shape.size,
+                                    ctypes.c_void_p(af_shape.ctypes.data),
+                                    pu.typemap(self.dtype).value)            
+        else:
+            arrayfire.backend.get().af_moddims(ctypes.pointer(s.arr), self.d_array.arr,
+                                               af_shape.size, ctypes.c_void_p(af_shape.ctypes.data))
+        return s
