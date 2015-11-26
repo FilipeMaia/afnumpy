@@ -359,9 +359,6 @@ class ndarray(object):
     def __getitem__(self, args):
         if not isinstance(args, tuple):
             args = (args,)
-        if len(args) == 1 and isinstance(args[0], afnumpy.ndarray) and args[0].dtype == numpy.dtype('bool'):
-            # Special case for boolean getitem
-            return self.flat[afnumpy.where(args[0].flat)]
         idx, new_shape, input_shape = indexing.__convert_dim__(self.shape, args)
         if numpy.prod(new_shape) == 0:
             # We're gonna end up with an empty array
@@ -387,20 +384,6 @@ class ndarray(object):
         return array
 
     def __setitem__(self, idx, value):  
-        """
-        try:
-            if idx.dtype == numpy.dtype('bool') or (idx[0].dtype == 'bool' and len(idx) == 1):
-                # Special case for boolean setitem
-                self_flat = self.flat
-                idx = afnumpy.where(idx.flat)
-                self_flat[idx] = value
-                return
-        except AttributeError:
-            pass
-        except RuntimeError:
-            # idx is all False
-            return
-        """
         idx, idx_shape, input_shape = indexing.__convert_dim__(self.shape, idx)
         if numpy.prod(idx_shape) == 0:
             # We've selected an empty array
