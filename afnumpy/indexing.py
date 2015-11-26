@@ -120,15 +120,17 @@ def __convert_dim__(shape, idx):
     # Convert numpy style indexing arguments to arrayfire style
     # Always returns a list
     # Should also return the shape of the result
+    # Also returns the shape that the input should be reshaped to
+    input_shape = list(shape)
 
     # If it's an array just return the array
     if(isinstance(idx, afnumpy.ndarray)):
         # If it's a boolean array the resulting shape
         # matches the number of non-zero entries
-        if idx.dtype is afnumpy.bool:
-            return [idx.d_array], (idx.sum())
+        if idx.dtype is numpy.dtype('bool'):
+            return [idx.d_array], (idx.sum()), (numpy.prod(input_shape))
         else:
-            return [idx.d_array], idx.shape
+            return [idx.d_array], idx.shape, input_shape
     # Otherwise turns thing into a tuple
     if not isinstance(idx, tuple):
         idx = (idx,)
@@ -148,7 +150,7 @@ def __convert_dim__(shape, idx):
         idx.pop(i)
         if any(e is Ellipsis for e in idx):
             raise IndexError('Only a single Ellipsis allowed')
-        while len(idx)-idx.count(newaxis) < len(shape):
+        while __idx_ndims__(idx)-idx.count(newaxis) < len(shape):
             idx.insert(i, slice(None,None,None))
 
     # Check and remove newaxis. Store their location for final reshape
@@ -158,20 +160,31 @@ def __convert_dim__(shape, idx):
         idx.remove(newaxis)
 
     # Append enough ':' to match the dimension of the aray
-    while len(idx) < len(shape):
+    while __idx_ndims__(idx) < len(shape):
         idx.append(slice(None,None,None))
 
-    ret = [0]*len(shape)
-    for axis in range(0,len(shape)):
+    # ret = [0]*len(idx)
+    ret = []
+    for axis in range(0,len(idx)):
+        # Handle boolean arrays indexes which require a reshape
+        # of the input array
+        if(isinstance(idx[axis], afnumpy.ndarray) and 
+           idx[axis].ndim > 1):
+            # Flatten the extra dimensions          
+            extra_dims = 1
+            for i in range(1,idx[axis].ndim):
+                extra_dims *= input_shape.pop(axis+1)
+            input_shape[axis] *= extra_dims
         af_idx = __npidx_to_afidx__(idx[axis], shape[axis])
-        ret[pu.c2f(shape,axis)] = af_idx
+        ret.insert(0,af_idx)
+#        ret[pu.c2f(shape,axis)] = af_idx
 
     ret_shape = __index_shape__(shape, ret)
 
     # Insert new dimensions start from the end so we don't perturb other insertions
     for n in newaxes[::-1]:
         ret_shape.insert(n,1)
-    return ret, tuple(ret_shape)
+    return ret, tuple(ret_shape), tuple(input_shape)
 
 def __index_shape__(A_shape, idx, del_singleton=True):
     shape = []
@@ -210,6 +223,16 @@ def __index_shape__(A_shape, idx, del_singleton=True):
         else:
             raise ValueError
     return pu.c2f(shape)
+
+def __idx_ndims__(idx):
+    ndims = 0
+    for i in range(0,len(idx)):
+        if isinstance(idx[i], afnumpy.ndarray):
+            ndims += idx[i].ndim
+        else:
+            ndims += 1
+    return ndims
+    
 
 def __expand_dim__(shape, value, idx):
     # reshape value, adding size 1 dimensions, such that the dimensions of value match idx

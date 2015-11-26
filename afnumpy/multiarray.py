@@ -60,6 +60,9 @@ def where(condition, x=pu.dummy, y=pu.dummy):
         idx = []
         mult = 1
         for i in a.shape[::-1]:
+            # This is necessary otherwise the order of operations is
+            # not necessarily preserved, due to the arrayfire JIT
+            arrayfire.backend.get().af_eval(s.d_array.arr)
             mult *= i
             idx = [s % mult] + idx 
             s /= mult
@@ -95,7 +98,8 @@ class ndarray(object):
             self._shape = (shape,)
         else:
             self._shape = tuple(shape)
-        self.dtype = dtype
+        # Make sure you transform the type to a numpy dtype
+        self.dtype = numpy.dtype(dtype)
         s_a = numpy.array(pu.c2f(shape),dtype=pu.dim_t)
         if(s_a.size < 1):
             # We'll use af_arrays of size (1) to keep scalars
@@ -180,6 +184,7 @@ class ndarray(object):
     @iufunc
     def __idiv__(self, other):
         afnumpy.divide(self, pu.raw(other), out=self)
+#        arrayfire.backend.get().af_eval(self.d_array.arr)
         return self
 
     def __rdiv__(self, other):
@@ -240,9 +245,9 @@ class ndarray(object):
     def __neg__(self):
         if self.dtype == numpy.dtype('bool'):
             # Special case for boolean getitem
-            return self.dtype.type(1) - self;
+            return self.dtype.type(1) - self
         else:
-            return self.dtype.type(0) - self;
+            return self * self.dtype.type(-1)
 
     def __pos__(self):
         return self;
@@ -357,14 +362,19 @@ class ndarray(object):
         if len(args) == 1 and isinstance(args[0], afnumpy.ndarray) and args[0].dtype == numpy.dtype('bool'):
             # Special case for boolean getitem
             return self.flat[afnumpy.where(args[0].flat)]
-        idx, new_shape = indexing.__convert_dim__(self.shape, args)
+        idx, new_shape, input_shape = indexing.__convert_dim__(self.shape, args)
+        if numpy.prod(new_shape) == 0:
+            # We're gonna end up with an empty array
+            # As we don't yet support empty arrays return an empty numpy array
+            return numpy.empty(new_shape, dtype=self.dtype)
+            
         if any(x is None for x in idx):
             # one of the indices is empty
             return ndarray(indexing.__index_shape__(self.shape, idx), dtype=self.dtype)
         idx = tuple(idx)
         if len(idx) == 0:
             idx = tuple([0])
-        s = self.d_array[idx]
+        s = self.reshape(input_shape).d_array[idx]
         shape = pu.af_shape(s)
         array = ndarray(shape, dtype=self.dtype, af_array=s)
         if(shape != new_shape):
@@ -376,7 +386,8 @@ class ndarray(object):
 
         return array
 
-    def __setitem__(self, idx, value):       
+    def __setitem__(self, idx, value):  
+        """
         try:
             if idx.dtype == numpy.dtype('bool') or (idx[0].dtype == 'bool' and len(idx) == 1):
                 # Special case for boolean setitem
@@ -389,8 +400,12 @@ class ndarray(object):
         except RuntimeError:
             # idx is all False
             return
-
-        idx, idx_shape = indexing.__convert_dim__(self.shape, idx)
+        """
+        idx, idx_shape, input_shape = indexing.__convert_dim__(self.shape, idx)
+        if numpy.prod(idx_shape) == 0:
+            # We've selected an empty array
+            # No need to do anything
+            return
         if any(x is None for x in idx):
             # one of the indices is empty
             return            
@@ -405,7 +420,7 @@ class ndarray(object):
             pass
         else:
             raise NotImplementedError('values must be a afnumpy.ndarray')
-        self.d_array[idx] = value            
+        self.reshape(input_shape).d_array[idx] = value            
         # This is a hack to be able to make it look like arrays with stride[0] > 1 can still be views
         # In practise right now it only applies to ndarray.real and ndarray.imag
         try:
@@ -466,6 +481,9 @@ class ndarray(object):
             # s = arrayfire.Array()
             # arrayfire.backend.get().af_moddims(ctypes.pointer(s.arr), self.d_array.arr, af_shape.size, ctypes.c_void_p(af_shape.ctypes.data))
             # self.d_array = s
+            if tuple(newshape) == self.shape:
+                # No need to do anything
+                return
             self.d_array = self.__af_moddims__(newshape)
 
         self.h_array.shape = newshape

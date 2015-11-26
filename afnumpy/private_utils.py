@@ -3,7 +3,7 @@ import numbers
 import afnumpy
 import arrayfire
 
-dim_t = numpy.int64
+dim_t = numpy.dtype('int64')
 
 try:
     TypeToString = { arrayfire.f64.value: 'f64',
