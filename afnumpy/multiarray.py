@@ -245,7 +245,7 @@ class ndarray(object):
     def __neg__(self):
         if self.dtype == numpy.dtype('bool'):
             # Special case for boolean getitem
-            return self.dtype.type(1) - self
+            return afnumpy.array([True]) - self
         else:
             return self * self.dtype.type(-1)
 
