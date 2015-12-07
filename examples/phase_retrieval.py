@@ -39,7 +39,10 @@ true_image = fft.fftshift(fft.ifftn(data_fourier))
 image = (1j + np.random.random(intensities.shape)).astype(np.complex64)
 
 # Define support
-support = np.abs(true_image)>1
+yy,xx = np.meshgrid(np.arange(image.shape[0]), np.arange(image.shape[1]))
+rr = np.sqrt((xx-image.shape[1]/2)**2 + (yy-image.shape[0]/2)**2)
+support = rr < 24
+#support = np.abs(true_image)>1
 
 # Define Nr. of iterations
 nr_iterations = 500
@@ -66,7 +69,7 @@ axes = []
 ims  = []
 line = []
 text = []
-def update_plot(iteration, image, fourier, error, support, intensities):
+def update_plot(iteration, image, phase, error, support, intensities):
     if not len(figs):
         plt.ion()
         fig = plt.figure(figsize=(7,10))
@@ -88,7 +91,7 @@ def update_plot(iteration, image, fourier, error, support, intensities):
         #plt.tight_layout()
         ims.append(ax1.imshow(np.abs(image)))
         ims.append(ax2.imshow(np.abs(image)*support))
-        ims.append(ax3.imshow(np.abs(fourier)**2, norm=LogNorm()))
+        ims.append(ax3.imshow(phase, vmin=-np.pi, vmax=np.pi))
         ims.append(ax4.imshow(intensities, norm=LogNorm()))
         l, = ax5.plot(error)
         line.append(l)
@@ -102,23 +105,25 @@ def update_plot(iteration, image, fourier, error, support, intensities):
         ims[0].set_clim([np.abs(image).min(), np.abs(image).max()])
         ims[1].set_data(np.abs(image)*support)
         ims[1].set_clim([np.abs(image).min(), np.abs(image).max()])
-        ims[2].set_data(np.abs(fourier)**2)
-        ims[2].set_clim([intensities.min(), intensities.max()])
+        ims[2].set_data(phase[::2,::2])
+        ims[2].set_clim([-np.pi, np.pi])
         ims[3].set_data(intensities)
         ims[3].set_clim([intensities.min(), intensities.max()])
         line[0].set_xdata(range(iteration+1))
         line[0].set_ydata(error)
         axes[4].set_xlim([0,iteration+1])
-        axes[4].set_ylim([0.03, 0.1])
+        axes[4].set_ylim([0.001, 0.1])
         text[0].set_text('Iteration = %d' %iteration)
     plt.draw()
 
 
+print np.angle(data_fourier).min(), np.angle(data_fourier).max()
+    
 fourier = fft.fftn(image)
-update_plot(0, image[200:-200,200:-200], fourier, get_error(fourier, intensities), support[200:-200,200:-200], intensities)
+update_plot(0, image[200:-200,200:-200], np.angle(fourier), get_error(fourier, intensities), support[200:-200,200:-200], intensities)
     
 print "Sleep for 20 seconds"
-time.sleep(2)
+time.sleep(int(sys.argv[2]))
 print "Starting now"
 
 # Time the reconstruction
@@ -136,11 +141,11 @@ for i in range(nr_iterations):
     # Check convergence
     error.append(get_error(fourier, intensities))
     #error = 0
-    #print "Iteration: %d, error: %f" %(i, error)
+    print "Iteration: %d, error: %f" %(i, error[-1])
 
     # Update plot
     if (not i%10):
-        update_plot(i, image[200:-200,200:-200], fourier, error, support[200:-200,200:-200], intensities)
+        update_plot(i, image[200:-200,200:-200], np.angle(fourier), error, support[200:-200,200:-200], intensities)
     
     # Apply data constraint
     #fourier = data_constraint(fourier, intensities)
@@ -158,7 +163,7 @@ for i in range(nr_iterations):
 t1 = time.time() - t0
 print "%d Iterations took %2.f seconds (%.2f iterations per second) using %s" %(nr_iterations, t1, float(nr_iterations)/t1, use)
 
-update_plot(i, image[200:-200, 200:-200], fourier, error, support[200:-200,200:-200], intensities)
+update_plot(i, image[200:-200, 200:-200], np.angle(fourier), error, support[200:-200,200:-200], intensities)
 
 plt.ioff()
 plt.show()
