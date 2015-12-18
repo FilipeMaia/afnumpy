@@ -81,6 +81,11 @@ def test_array():
     b = numpy.array(a)
     iassert(a, b)
 
+    # Check for non contiguous input
+    b = numpy.array([[1.,2.,3.],[4.,5.,6.]]).T
+    a = afnumpy.array(b)
+    iassert(a, b)
+
 
 
 def test_binary_arithmetic():

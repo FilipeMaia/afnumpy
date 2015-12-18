@@ -44,7 +44,7 @@ def array(object, dtype=None, copy=True, order=None, subok=False, ndmin=0):
             s = arrayfire.cast(object.d_array, pu.typemap(dtype))
         return ndarray(shape, dtype=dtype, af_array=s)
     elif(isinstance(object, numpy.ndarray)):
-        return ndarray(shape, dtype=dtype, buffer=object.astype(dtype, copy=copy))
+        return ndarray(shape, dtype=dtype, buffer=numpy.ascontiguousarray(object.astype(dtype, copy=copy)))
     else:
         raise AssertionError
         
