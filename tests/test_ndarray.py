@@ -379,6 +379,13 @@ def test_getitem():
     a = afnumpy.array(b)
     iassert(a[()],b[()])
 
+    # Multidimensional array indexing
+    b = numpy.random.random((2,2))
+    a = afnumpy.array(b)
+    d = numpy.array([0,1])
+    c = afnumpy.array(d)
+    iassert(a[c,c], b[d,d])
+
 def test_newaxis():
     b = numpy.random.random((3))
     a = afnumpy.array(b)
