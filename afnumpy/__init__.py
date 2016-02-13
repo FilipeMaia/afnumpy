@@ -32,5 +32,25 @@ def inplace_setitem(self, key, val):
     except RuntimeError as e:
         raise IndexError(str(e))  
 
+
+def raw_ptr(self):
+    """
+    Return the device pointer held by the array.
+
+    Returns
+    ------
+    ptr : int
+          Contains location of the device pointer
+
+    Note
+    ----
+    - This can be used to integrate with custom C code and / or PyCUDA or PyOpenCL.
+    - No mem copy is peformed, this function returns the raw device pointer.
+    """
+    ptr = ctypes.c_void_p(0)
+    arrayfire.backend.get().af_get_raw_ptr(ctypes.pointer(ptr), self.arr)
+    return ptr.value
+
 arrayfire.Array.__setitem__ = inplace_setitem
+arrayfire.Array.device_ptr = raw_ptr
 
