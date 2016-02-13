@@ -8,6 +8,16 @@ import linalg
 from linalg import vdot, dot
 import ctypes
 
+def arrayfire_version(numeric = False):
+    major = ctypes.c_int(0)
+    minor = ctypes.c_int(0)
+    patch = ctypes.c_int(0)
+    arrayfire.backend.get().af_get_version(ctypes.pointer(major),
+                                           ctypes.pointer(minor),
+                                           ctypes.pointer(patch));
+    if(numeric):
+        return major.value * 1000000 + minor.value*1000 + patch.value
+    return '%d.%d.%d' % (major.value, minor.value, patch.value)
 
 def inplace_setitem(self, key, val):
     try:
@@ -52,5 +62,9 @@ def raw_ptr(self):
     return ptr.value
 
 arrayfire.Array.__setitem__ = inplace_setitem
-arrayfire.Array.device_ptr = raw_ptr
+
+if arrayfire_version(numeric=True) >= 3003000:
+    arrayfire.Array.device_ptr = raw_ptr
+elif arrayfire_version(numeric=True) >= 3002000:
+    raise RuntimeError('afnumpy is incompatible with arrayfire 3.2. Please upgrade.')
 
