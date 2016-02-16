@@ -5,23 +5,27 @@ sudo: false
 cache:
   directories:
     - $HOME/.cache/pip
+    - $HOME/arrayfire
 
 addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
+      - kubuntu-ppa-backports
     packages:
       - libatlas-base-dev
       - libfftw3-dev
       - gcc-4.8
       - g++-4.8
+      - cmake
 
 before_install:
   - pip install codecov
   - git clone https://github.com/arrayfire/arrayfire
   - cd arrayfire && mkdir build && cd build 
+  - cmake --version
   - cmake -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.8 -DBUILD_CPU=ON -DBUILD_CUDA=OFF -DBUILD_GRAPHICS=OFF -DBUILD_OPENCL=OFF -DBUILD_TEST=OFF .. 
-  - make
+  - make -j 2
   - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$PWD/lib
   
 install:
