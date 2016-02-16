@@ -38,6 +38,7 @@ install:
   - pip install numpy
   - pip install arrayfire
   - pip install ipython
+  - pip install pytest-cov
   - cd ${HOME}/build/FilipeMaia/afnumpy
   - python setup.py install
 
