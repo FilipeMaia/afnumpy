@@ -26,7 +26,7 @@ before_install:
   - pip install codecov
   - cd $HOME
   - if [ ! -d "$HOME/arrayfire" ]; then git clone  https://github.com/arrayfire/arrayfire; else echo 'Using cached directory'; fi
-  - cd arrayfire && mkdir build && cd build 
+  - mkdir -p arrayfire/build && cd arrayfire/build
   - cmake --version
   - pwd
   - echo $HOME
