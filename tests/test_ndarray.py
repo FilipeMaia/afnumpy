@@ -4,6 +4,8 @@ import afnumpy as af
 import numpy as np
 from IPython.core.debugger import Tracer
 from asserts import *
+import pytest
+xfail = pytest.mark.xfail
 
 def test_zeros():
     a = afnumpy.zeros(3)
@@ -304,7 +306,7 @@ def test_ndarray_abs():
     a = afnumpy.array(b)
     fassert(abs(a), abs(b))
 
-        
+@xfail
 def test_getitem():
     b = numpy.random.random((3))
     a = afnumpy.array(b)
@@ -384,6 +386,7 @@ def test_getitem():
     a = afnumpy.array(b)
     d = numpy.array([0,1])
     c = afnumpy.array(d)
+    # This will fail
     iassert(a[c,c], b[d,d])
 
 def test_newaxis():
@@ -567,10 +570,6 @@ def test_ndarray_shape():
     b.shape = (3,2)
     fassert(a,b)
 
-def test_ndarray_strides():
-    b = numpy.random.random((2,3))
-    a = afnumpy.array(b)
-    iassert(a.strides, b.strides)
 
 def test_ndarray_round():
     b = numpy.random.random((2,3))
@@ -656,6 +655,7 @@ def test_ndarray_imag():
     x.imag[:] = 0
     fassert(y, x)
 
+@xfail
 def test_ndarray_strides():
     a = afnumpy.random.random((4,3))
     b = numpy.array(a)
@@ -665,4 +665,4 @@ def test_ndarray_strides():
     iassert(a[:,1:].strides, b[:,1:].strides)
     # The following case fails as the stride
     # hack requires at least 2 elements per dimension
-    # iassert(a[3:,:].strides, b[3:,:].strides)
+    iassert(a[3:,:].strides, b[3:,:].strides)

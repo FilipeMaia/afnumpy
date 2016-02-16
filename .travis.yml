@@ -46,4 +46,4 @@ after_success:
 
 script:
   - cd ${HOME}/build/FilipeMaia/afnumpy
-  - py.test -v
+  - py.test -v --color=yes --showlocals --durations=10
