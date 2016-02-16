@@ -630,6 +630,10 @@ class ndarray(object):
     @property
     def strides(self):
         strides = ()
+        # if arrayfire_version(numeric=True) >= 3003000:
+        #     # we have access to the stride functions
+        #     return pu.c2f(self.d_array.strides())
+        # else:
         idx = (slice(1,None),)
         base_addr = self.d_array.device_ptr()
         dims = self.d_array.dims()
