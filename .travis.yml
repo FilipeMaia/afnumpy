@@ -9,6 +9,7 @@ cache:
   directories:
     - $HOME/.cache/pip
     - $HOME/arrayfire
+    - $HOME/local
 
 addons:
   apt:
@@ -27,12 +28,14 @@ before_install:
   - cd $HOME
   - if [ ! -d "$HOME/arrayfire" ]; then git clone  https://github.com/arrayfire/arrayfire; else echo 'Using cached directory'; fi
   - mkdir -p arrayfire/build && cd arrayfire/build
+  - git pull
   - cmake --version
   - pwd
   - echo $HOME
-  - cmake -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.8 -DBUILD_CPU=ON -DBUILD_CUDA=OFF  -DBUILD_GRAPHICS=OFF -DBUILD_OPENCL=OFF -DBUILD_TEST=OFF -DBUILD_EXAMPLES=OFF .. 
+  - cmake -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.8 -DBUILD_CPU=ON -DBUILD_CUDA=OFF  -DBUILD_GRAPHICS=OFF -DBUILD_OPENCL=OFF -DBUILD_TEST=OFF -DBUILD_EXAMPLES=OFF  -DCMAKE_INSTALL_PREFIX=${HOME}/local .. 
   - make -j 2
-  - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$PWD/lib
+  - make install
+  - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HOME}/local/lib
   
 install:
   - pip install numpy
