@@ -11,7 +11,7 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-      - ppa:kubuntu-ppa/backports
+      - kubuntu-backports
     packages:
       - libatlas-base-dev
       - libfftw3-dev
