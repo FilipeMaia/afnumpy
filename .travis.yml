@@ -6,6 +6,11 @@ cache:
   directories:
     - $HOME/.cache/pip
 
+addons:
+  apt:
+    packages:
+      - libatlas-base-dev
+
 before_install:
   - pip install codecov
   - git clone https://github.com/arrayfire/arrayfire
