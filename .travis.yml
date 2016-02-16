@@ -9,7 +9,11 @@ cache:
 before_install:
   - pip install codecov
   - git clone https://github.com/arrayfire/arrayfire
-  - cd arrayfire && mkdir build && cd build && cmake -DBUILD_CPU=ON -DBUILD_CUDA=OFF -DBUILD_GRAPHICS=OFF -DBUILD_OPENCL=OFF -DBUILD_TEST=OFF .. && make
+  - cd arrayfire && mkdir build && cd build 
+  - cmake -DBUILD_CPU=ON -DBUILD_CUDA=OFF -DBUILD_GRAPHICS=OFF -DBUILD_OPENCL=OFF -DBUILD_TEST=OFF .. 
+  - make
+  - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$PWD/lib
+  
 install:
   - pip install numpy
   - pip install arrayfire
