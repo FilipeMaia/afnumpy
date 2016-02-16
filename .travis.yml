@@ -10,6 +10,7 @@ addons:
   apt:
     packages:
       - libatlas-base-dev
+      - libfftw3-dev
 
 before_install:
   - pip install codecov
