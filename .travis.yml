@@ -47,4 +47,4 @@ after_success:
 
 script:
   - cd ${HOME}/build/FilipeMaia/afnumpy
-  - py.test --cov=./ -v --color=yes --showlocals --durations=10
+  - coverage run --source afnumpy -m py.test  -v --color=yes --showlocals --durations=10
