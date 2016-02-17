@@ -264,7 +264,7 @@ class ndarray(object):
         return a
 
     def __pos__(self):
-        return self;
+        return array(self)
 
     def __invert__(self):
         raise NotImplementedError
@@ -649,7 +649,6 @@ class ndarray(object):
         if afnumpy.arrayfire_version(numeric=True) >= 3003000:
             strides = pu.c2f(self.d_array.strides()[0:self.ndim])
             strides = tuple([s*self.dtype.itemsize for s in strides])
-            print strides
         else:        
             idx = (slice(1,None),)
             base_addr = self.d_array.device_ptr()
