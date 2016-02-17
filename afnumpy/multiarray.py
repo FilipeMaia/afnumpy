@@ -211,31 +211,43 @@ class ndarray(object):
 
     def __lt__(self, other):
         s = self.d_array < pu.raw(other)
-        return ndarray(self.shape, dtype=numpy.bool, af_array=s)
+        a = ndarray(self.shape, dtype=numpy.bool, af_array=s)
+        a.eval()
+        return a
 
     def __le__(self, other):
         s = self.d_array <= pu.raw(other)
-        return ndarray(self.shape, dtype=numpy.bool, af_array=s)
+        a = ndarray(self.shape, dtype=numpy.bool, af_array=s)
+        a.eval()
+        return a
 
     def __gt__(self, other):
         s = self.d_array > pu.raw(other)
-        return ndarray(self.shape, dtype=numpy.bool, af_array=s)
+        a = ndarray(self.shape, dtype=numpy.bool, af_array=s)
+        a.eval()
+        return a
 
     def __ge__(self, other):
         s = self.d_array >= pu.raw(other)
-        return ndarray(self.shape, dtype=numpy.bool, af_array=s)
+        a = ndarray(self.shape, dtype=numpy.bool, af_array=s)
+        a.eval()
+        return a
 
     def __eq__(self, other):
         if(other is None):
             return False
         s = self.d_array == pu.raw(other)
-        return ndarray(self.shape, dtype=numpy.bool, af_array=s)
+        a = ndarray(self.shape, dtype=numpy.bool, af_array=s)
+        a.eval()
+        return a
 
     def __ne__(self, other):
         if(other is None):
             return True
         s = self.d_array != pu.raw(other)
-        return ndarray(self.shape, dtype=numpy.bool, af_array=s)
+        a = ndarray(self.shape, dtype=numpy.bool, af_array=s)
+        a.eval()
+        return a
 
     def __abs__(self):
         s = arrayfire.abs(self.d_array)
@@ -245,9 +257,11 @@ class ndarray(object):
     def __neg__(self):
         if self.dtype == numpy.dtype('bool'):
             # Special case for boolean getitem
-            return afnumpy.array([True]) - self
+            a = afnumpy.array([True]) - self
         else:
-            return self * self.dtype.type(-1)
+            a = self * self.dtype.type(-1)
+        a.eval()
+        return a
 
     def __pos__(self):
         return self;
@@ -256,6 +270,7 @@ class ndarray(object):
         raise NotImplementedError
 
     def __nonzero__(self):
+        # This should be improved
         return numpy.array(self).__nonzero__()
 
     def __len__(self):
@@ -655,3 +670,6 @@ class ndarray(object):
     @property
     def itemsize(self):
         return self.dtype.itemsize
+
+    def eval(self):
+        return arrayfire.backend.get().af_eval(self.d_array.arr)
