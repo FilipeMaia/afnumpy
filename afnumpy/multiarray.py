@@ -137,7 +137,9 @@ class ndarray(object):
     @ufunc
     def __add__(self, other):
         s = self.d_array + pu.raw(other)
-        return ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a.eval()
+        return a
 
     @iufunc
     def __iadd__(self, other):
@@ -146,12 +148,16 @@ class ndarray(object):
 
     def __radd__(self, other):
         s = pu.raw(other) + self.d_array
-        return ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a.eval()
+        return a
 
     @ufunc
     def __sub__(self, other):
         s = self.d_array - pu.raw(other)
-        return ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a.eval()
+        return a
 
     @iufunc
     def __isub__(self, other):
@@ -160,12 +166,16 @@ class ndarray(object):
 
     def __rsub__(self, other):
         s = pu.raw(other) - self.d_array
-        return ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a.eval()
+        return a
 
     @ufunc
     def __mul__(self, other):
         s = self.d_array * pu.raw(other)
-        return ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a.eval()
+        return a
 
     @iufunc
     def __imul__(self, other):
@@ -174,12 +184,16 @@ class ndarray(object):
 
     def __rmul__(self, other):
         s = pu.raw(other) * self.d_array
-        return ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a.eval()
+        return a
 
     @ufunc
     def __div__(self, other):
         s = self.d_array / pu.raw(other)
-        return ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a.eval()
+        return a
 
     @iufunc
     def __idiv__(self, other):
@@ -189,7 +203,9 @@ class ndarray(object):
 
     def __rdiv__(self, other):
         s = pu.raw(other) / self.d_array
-        return ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a.eval()
+        return a
         
     def __pow__(self, other):
         if(isinstance(other, numbers.Number) and numpy.issubdtype(type(other), numpy.float) and
@@ -198,7 +214,9 @@ class ndarray(object):
             s = arrayfire.pow(self.astype(type(other)).d_array, pu.raw(other))
         else:
             s = arrayfire.pow(self.d_array, pu.raw(other))
-        return ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a.eval()
+        return a
 
     def __rpow__(self, other):
         if(isinstance(other, numbers.Number) and numpy.issubdtype(type(other), numpy.float) and
@@ -207,7 +225,9 @@ class ndarray(object):
             s = arrayfire.pow(pu.raw(other), self.astype(type(other)).d_array)
         else:
             s = arrayfire.pow(pu.raw(other), self.d_array)
-        return ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a.eval()
+        return a
 
     def __lt__(self, other):
         s = self.d_array < pu.raw(other)
@@ -282,12 +302,13 @@ class ndarray(object):
             out = self - afnumpy.floor(self / other) * other
         else:
             out = self - a * other
-#        out.d_array.eval()
-        arrayfire.backend.get().af_eval(out.d_array.arr)
+        out.eval()
         return out
 
     def __rmod__(self, other):
-        return other - afnumpy.floor(other / self) * self
+        a = other - afnumpy.floor(other / self) * self
+        a.eval()
+        return a
 
     @property
     def ndim(self):
