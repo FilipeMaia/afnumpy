@@ -144,6 +144,7 @@ class ndarray(object):
     @iufunc
     def __iadd__(self, other):
         afnumpy.add(self, pu.raw(other), out=self)
+        self.eval()
         return self
 
     def __radd__(self, other):
@@ -162,6 +163,7 @@ class ndarray(object):
     @iufunc
     def __isub__(self, other):
         afnumpy.subtract(self, pu.raw(other), out=self)
+        self.eval()
         return self
 
     def __rsub__(self, other):
@@ -180,6 +182,7 @@ class ndarray(object):
     @iufunc
     def __imul__(self, other):
         afnumpy.multiply(self, pu.raw(other), out=self)
+        self.eval()
         return self
 
     def __rmul__(self, other):
@@ -198,7 +201,7 @@ class ndarray(object):
     @iufunc
     def __idiv__(self, other):
         afnumpy.divide(self, pu.raw(other), out=self)
-#        arrayfire.backend.get().af_eval(self.d_array.arr)
+        self.eval()
         return self
 
     def __rdiv__(self, other):
