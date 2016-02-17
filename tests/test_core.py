@@ -226,11 +226,13 @@ def test_argsort():
     # iassert(af.argsort(y, axis=0), np.argsort(x, axis=0))
     
 def test_isnan():
-    b = 0.0/numpy.random.randint(-1,2,(2,3))
+    b = 1.0*numpy.random.randint(0,2,(2,3))
+    b[b == 0] = numpy.nan
     a = afnumpy.array(b)
     fassert(afnumpy.isnan(a), numpy.isnan(b))
 
 def test_isinf():
-    b = 1.0/numpy.random.randint(-1,2,(2,3))
+    b = 1.0*numpy.random.randint(0,2,(2,3))
+    b[b == 0] = numpy.inf
     a = afnumpy.array(b)
     fassert(afnumpy.isnan(a), numpy.isnan(b))
