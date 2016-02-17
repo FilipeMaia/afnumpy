@@ -143,7 +143,7 @@ class ndarray(object):
 
     @iufunc
     def __iadd__(self, other):
-        self[:] = self[:] + pu.raw(other)
+        afnumpy.add(self, pu.raw(other), out=self)
         return self
 
     def __radd__(self, other):
