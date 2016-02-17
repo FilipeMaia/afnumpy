@@ -656,7 +656,6 @@ def test_ndarray_imag():
     x.imag[:] = 0
     fassert(y, x)
 
-@xfail
 def test_ndarray_strides():
     a = afnumpy.random.random((4,3))
     b = numpy.array(a)
@@ -664,6 +663,16 @@ def test_ndarray_strides():
     iassert(a[:,:].strides, b[:,:].strides)
     iassert(a[1:,:].strides, b[1:,:].strides)
     iassert(a[:,1:].strides, b[:,1:].strides)
-    # The following case fails as the stride
+    # The following cases fails for arrayfire < 3.3 as the stride
     # hack requires at least 2 elements per dimension
     iassert(a[3:,:].strides, b[3:,:].strides)
+    iassert(a[2:,2:].strides, b[2:,2:].strides)
+    iassert(a[3,:2].strides, b[3,:2].strides)
+
+@xfail
+def test_ndarray_strides_xfail():
+    # The following case fails as arrayfire always drops
+    # leading dimensions of size 1 and so the stride
+    # information is missing
+    iassert(a[3:,:2].strides, b[3:,:2].strides)
+

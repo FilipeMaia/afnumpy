@@ -291,10 +291,6 @@ class ndarray(object):
         self.__reshape__(value)
 
     @property
-    def strides(self):
-        return self.h_array.strides
-
-    @property
     def flat(self):        
         # Currently arrayfire.flat is doing unnecessary copies
         # ret = ndarray(self.size, dtype=self.dtype, af_array=arrayfire.flat(self.d_array))
@@ -634,24 +630,26 @@ class ndarray(object):
     @property
     def strides(self):
         strides = ()
-        # if arrayfire_version(numeric=True) >= 3003000:
-        #     # we have access to the stride functions
-        #     return pu.c2f(self.d_array.strides())
-        # else:
-        idx = (slice(1,None),)
-        base_addr = self.d_array.device_ptr()
-        dims = self.d_array.dims()
-        # Append any missing ones
-        dims = dims + (1,)*(self.ndim-len(dims))
-        for i in range(0, self.ndim):
-            if(dims[i] > 1):
-                strides = (self.d_array[idx].device_ptr()-base_addr,)+strides
-            else:
-                if len(strides):                    
-                    strides = (dims[i-1]*numpy.prod(strides),)+strides
+        # we have access to the stride functions
+        if afnumpy.arrayfire_version(numeric=True) >= 3003000:
+            strides = pu.c2f(self.d_array.strides()[0:self.ndim])
+            strides = tuple([s*self.dtype.itemsize for s in strides])
+            print strides
+        else:        
+            idx = (slice(1,None),)
+            base_addr = self.d_array.device_ptr()
+            dims = self.d_array.dims()
+            # Append any missing ones
+            dims = dims + (1,)*(self.ndim-len(dims))
+            for i in range(0, self.ndim):
+                if(dims[i] > 1):
+                    strides = (self.d_array[idx].device_ptr()-base_addr,)+strides
                 else:
-                    strides = (self.itemsize,)+strides
-            idx = (slice(None),)+idx
+                    if len(strides):                    
+                        strides = (dims[i-1]*numpy.prod(strides),)+strides
+                    else:
+                        strides = (self.itemsize,)+strides
+                idx = (slice(None),)+idx
         return strides
 
     @property
