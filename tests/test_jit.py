@@ -38,7 +38,7 @@ def test_unary():
     c = -a
     c_sum = c.sum()
     a *= -1
-#    assert(c_sum == c.sum())
+    assert(c_sum == c.sum())
     c = +a
     c_sum = c.sum()
     a *= -1
