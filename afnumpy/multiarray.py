@@ -56,13 +56,12 @@ def where(condition, x=pu.dummy, y=pu.dummy):
     s = arrayfire.where(a.d_array)
     # numpy uses int64 while arrayfire uses uint32
     s = ndarray(pu.af_shape(s), dtype=numpy.uint32, af_array=s).astype(numpy.int64)
+    # Looks like where goes through the JIT??
+    s.eval()
     if(x is pu.dummy and y is pu.dummy):
         idx = []
         mult = 1
         for i in a.shape[::-1]:
-            # This is necessary otherwise the order of operations is
-            # not necessarily preserved, due to the arrayfire JIT
-            arrayfire.backend.get().af_eval(s.d_array.arr)
             mult *= i
             idx = [s % mult] + idx 
             s /= mult
