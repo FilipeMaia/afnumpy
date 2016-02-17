@@ -138,76 +138,76 @@ class ndarray(object):
     def __add__(self, other):
         s = self.d_array + pu.raw(other)
         a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
-        a.eval()
+        a._eval()
         return a
 
     @iufunc
     def __iadd__(self, other):
         afnumpy.add(self, pu.raw(other), out=self)
-        self.eval()
+        self._eval()
         return self
 
     def __radd__(self, other):
         s = pu.raw(other) + self.d_array
         a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
-        a.eval()
+        a._eval()
         return a
 
     @ufunc
     def __sub__(self, other):
         s = self.d_array - pu.raw(other)
         a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
-        a.eval()
+        a._eval()
         return a
 
     @iufunc
     def __isub__(self, other):
         afnumpy.subtract(self, pu.raw(other), out=self)
-        self.eval()
+        self._eval()
         return self
 
     def __rsub__(self, other):
         s = pu.raw(other) - self.d_array
         a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
-        a.eval()
+        a._eval()
         return a
 
     @ufunc
     def __mul__(self, other):
         s = self.d_array * pu.raw(other)
         a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
-        a.eval()
+        a._eval()
         return a
 
     @iufunc
     def __imul__(self, other):
         afnumpy.multiply(self, pu.raw(other), out=self)
-        self.eval()
+        self._eval()
         return self
 
     def __rmul__(self, other):
         s = pu.raw(other) * self.d_array
         a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
-        a.eval()
+        a._eval()
         return a
 
     @ufunc
     def __div__(self, other):
         s = self.d_array / pu.raw(other)
         a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
-        a.eval()
+        a._eval()
         return a
 
     @iufunc
     def __idiv__(self, other):
         afnumpy.divide(self, pu.raw(other), out=self)
-        self.eval()
+        self._eval()
         return self
 
     def __rdiv__(self, other):
         s = pu.raw(other) / self.d_array
         a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
-        a.eval()
+        a._eval()
         return a
         
     def __pow__(self, other):
@@ -218,7 +218,7 @@ class ndarray(object):
         else:
             s = arrayfire.pow(self.d_array, pu.raw(other))
         a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
-        a.eval()
+        a._eval()
         return a
 
     def __rpow__(self, other):
@@ -229,31 +229,31 @@ class ndarray(object):
         else:
             s = arrayfire.pow(pu.raw(other), self.d_array)
         a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
-        a.eval()
+        a._eval()
         return a
 
     def __lt__(self, other):
         s = self.d_array < pu.raw(other)
         a = ndarray(self.shape, dtype=numpy.bool, af_array=s)
-        a.eval()
+        a._eval()
         return a
 
     def __le__(self, other):
         s = self.d_array <= pu.raw(other)
         a = ndarray(self.shape, dtype=numpy.bool, af_array=s)
-        a.eval()
+        a._eval()
         return a
 
     def __gt__(self, other):
         s = self.d_array > pu.raw(other)
         a = ndarray(self.shape, dtype=numpy.bool, af_array=s)
-        a.eval()
+        a._eval()
         return a
 
     def __ge__(self, other):
         s = self.d_array >= pu.raw(other)
         a = ndarray(self.shape, dtype=numpy.bool, af_array=s)
-        a.eval()
+        a._eval()
         return a
 
     def __eq__(self, other):
@@ -261,7 +261,7 @@ class ndarray(object):
             return False
         s = self.d_array == pu.raw(other)
         a = ndarray(self.shape, dtype=numpy.bool, af_array=s)
-        a.eval()
+        a._eval()
         return a
 
     def __ne__(self, other):
@@ -269,7 +269,7 @@ class ndarray(object):
             return True
         s = self.d_array != pu.raw(other)
         a = ndarray(self.shape, dtype=numpy.bool, af_array=s)
-        a.eval()
+        a._eval()
         return a
 
     def __abs__(self):
@@ -283,7 +283,7 @@ class ndarray(object):
             a = afnumpy.array([True]) - self
         else:
             a = self * self.dtype.type(-1)
-        a.eval()
+        a._eval()
         return a
 
     def __pos__(self):
@@ -305,12 +305,12 @@ class ndarray(object):
             out = self - afnumpy.floor(self / other) * other
         else:
             out = self - a * other
-        out.eval()
+        out._eval()
         return out
 
     def __rmod__(self, other):
         a = other - afnumpy.floor(other / self) * self
-        a.eval()
+        a._eval()
         return a
 
     @property
@@ -696,3 +696,10 @@ class ndarray(object):
 
     def eval(self):
         return arrayfire.backend.get().af_eval(self.d_array.arr)
+
+    def _eval(self):
+        if afnumpy.force_eval:
+            return self.eval()
+        else:
+            return 0
+            

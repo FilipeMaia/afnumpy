@@ -68,3 +68,8 @@ if arrayfire_version(numeric=True) >= 3003000:
 elif arrayfire_version(numeric=True) >= 3002000:
     raise RuntimeError('afnumpy is incompatible with arrayfire 3.2. Please upgrade.')
 
+
+# This defines if we'll try to force JIT evals
+# after every instructions.
+# We we do not we risk having certain operations out of order
+force_eval = True
