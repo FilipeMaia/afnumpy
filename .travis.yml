@@ -27,7 +27,7 @@ addons:
 before_install:
   - pip install codecov
   - cd $HOME
-  - if [ ! -d "$HOME/arrayfire" ]; then git clone  https://github.com/arrayfire/arrayfire; else echo 'Using arrayfire from cached directory'; fi
+  - if [ ! -d "$HOME/arrayfire/.git" ]; then git clone  https://github.com/arrayfire/arrayfire; else echo 'Using arrayfire from cached directory'; fi
   - mkdir -p arrayfire/build && cd arrayfire/build
   - git pull
   - cmake -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.8 -DBUILD_CPU=ON -DBUILD_CUDA=OFF  -DBUILD_GRAPHICS=OFF -DBUILD_OPENCL=OFF -DBUILD_TEST=OFF -DBUILD_EXAMPLES=OFF  -DCMAKE_INSTALL_PREFIX=${HOME}/local .. 
@@ -36,7 +36,7 @@ before_install:
   - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HOME}/local/lib
 # Install arrayfire-python
   - cd $HOME
-  - if [ ! -d "$HOME/arrayfire-python" ]; then git clone  https://github.com/arrayfire/arrayfire-python.git; else echo 'Using arrayfire-python from cached directory'; fi
+  - if [ ! -d "$HOME/arrayfire-python/.git" ]; then git clone  https://github.com/arrayfire/arrayfire-python.git; else echo 'Using arrayfire-python from cached directory'; fi
   - cd arrayfire-python
   - git pull
   - python setup.py install  
