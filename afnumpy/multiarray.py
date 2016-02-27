@@ -671,6 +671,8 @@ class ndarray(object):
         # we have access to the stride functions
         if afnumpy.arrayfire_version(numeric=True) >= 3003000:
             strides = pu.c2f(self.d_array.strides()[0:self.ndim])
+            if len(strides) < self.ndim and self.ndim > 1:
+                strides = (strides[0]*self.shape[1],) + strides
             strides = tuple([s*self.dtype.itemsize for s in strides])
         else:        
             idx = (slice(1,None),)
