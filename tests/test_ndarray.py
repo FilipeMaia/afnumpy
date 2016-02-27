@@ -666,6 +666,7 @@ def test_ndarray_imag():
     x.imag[:] = 0
     fassert(y, x)
 
+@xfail
 def test_ndarray_strides():
     a = afnumpy.random.random((4,3))
     b = numpy.array(a)
