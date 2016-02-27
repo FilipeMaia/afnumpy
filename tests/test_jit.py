@@ -1,5 +1,6 @@
 import afnumpy
 from asserts import *
+import pytest
 xfail = pytest.mark.xfail
 
 def test_comparisons():
