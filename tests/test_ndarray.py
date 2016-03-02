@@ -306,7 +306,6 @@ def test_ndarray_abs():
     a = afnumpy.array(b)
     fassert(abs(a), abs(b))
 
-@xfail
 def test_getitem():
     b = numpy.random.random((3))
     a = afnumpy.array(b)
@@ -381,6 +380,8 @@ def test_getitem():
     a = afnumpy.array(b)
     iassert(a[()],b[()])
 
+@xfail
+def test_getitem_multi_array():
     # Multidimensional array indexing
     b = numpy.random.random((2,2))
     a = afnumpy.array(b)
