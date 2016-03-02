@@ -47,7 +47,6 @@ def test_unary():
     assert(c_sum == c.sum())
 
 def test_arithmetic():
-    afnumpy.arrayfire.backend.set_unsafe('cuda')
     a = afnumpy.arange(10, dtype="float32")
     a.eval()
     c = a % 3
