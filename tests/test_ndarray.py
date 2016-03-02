@@ -90,7 +90,6 @@ def test_array():
 
 
 # For some strange reason this fails in Travis
-@xfail
 def test_binary_arithmetic():
     a = afnumpy.random.rand(3)
     b = numpy.array(a)
@@ -666,7 +665,6 @@ def test_ndarray_imag():
     x.imag[:] = 0
     fassert(y, x)
 
-@xfail
 def test_ndarray_strides():
     a = afnumpy.random.random((4,3))
     b = numpy.array(a)
