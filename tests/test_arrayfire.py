@@ -6,7 +6,9 @@ import arrayfire
 from asserts import *
 import afnumpy as af
 import numpy as np
+from decorators import *
 
+@foreach_backend
 def test_cast():
     a = afnumpy.random.rand(2,3)
     # Check that device_ptr does not cause a copy

@@ -1,8 +1,10 @@
 import afnumpy
 from asserts import *
 import pytest
+from decorators import *
 xfail = pytest.mark.xfail
 
+@foreach_backend
 def test_comparisons():
     a = afnumpy.arange(10, dtype="float32") - 5.
     b = afnumpy.ones((10), dtype="float32")
@@ -34,6 +36,7 @@ def test_comparisons():
     a *= 0
     assert(a_sum == a_mask.sum())
 
+@foreach_backend
 def test_unary():
     a = afnumpy.arange(10, dtype="float32")-5
     a.eval()
@@ -46,6 +49,7 @@ def test_unary():
     a *= -1
     assert(c_sum == c.sum())
 
+@foreach_backend
 def test_arithmetic():
     a = afnumpy.arange(10, dtype="float32")
     a.eval()

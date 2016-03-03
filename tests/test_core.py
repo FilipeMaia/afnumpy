@@ -3,7 +3,9 @@ import afnumpy as af
 import numpy
 import numpy as np
 from asserts import *
+from decorators import *
 
+@foreach_backend
 def test_floor():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
@@ -13,6 +15,7 @@ def test_floor():
     a = afnumpy.array(b)
     iassert(afnumpy.floor(a), numpy.floor(b))
 
+@foreach_backend
 def test_ceil():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
@@ -22,6 +25,7 @@ def test_ceil():
     a = afnumpy.array(b)
     iassert(afnumpy.ceil(a), numpy.ceil(b))
     
+@foreach_backend
 def test_asanyarray():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
@@ -31,6 +35,7 @@ def test_asanyarray():
     iassert(afnumpy.asanyarray([1,2]), numpy.asanyarray([1,2]))
     iassert(afnumpy.asanyarray(b), numpy.asanyarray(b))
 
+@foreach_backend
 def test_reshape():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
@@ -45,16 +50,19 @@ def test_reshape():
     iassert(a.reshape(()), b.reshape(()))
     iassert(a.reshape([]), b.reshape([]))
 
+@foreach_backend
 def test_abs():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
     fassert(afnumpy.abs(a), numpy.abs(b))
 
+@foreach_backend
 def test_ones():
     a = afnumpy.ones(3)
     b = numpy.ones(3)
     iassert(a, b)
 
+@foreach_backend
 def test_roll():    
     b = numpy.random.random(3)
     a = afnumpy.array(b)
@@ -76,6 +84,7 @@ def test_roll():
     a = afnumpy.array(b)
     fassert(afnumpy.roll(a, 2), numpy.roll(b, 2))
 
+@foreach_backend
 def test_concatenate():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
@@ -83,11 +92,13 @@ def test_concatenate():
     iassert(afnumpy.concatenate((a,a)), numpy.concatenate((b,b)))
     iassert(afnumpy.concatenate((a,a),axis=1), numpy.concatenate((b,b),axis=1))
 
+@foreach_backend
 def test_round():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
     fassert(afnumpy.round(a), numpy.round(b))
 
+@foreach_backend
 def test_take():
     a = [4, 3, 5, 7, 6, 8]
     indices = [0, 1, 4]
@@ -96,11 +107,13 @@ def test_take():
     a = afnumpy.array(a)
     iassert(afnumpy.take(a, indices), numpy.take(b, indices))
 
+@foreach_backend
 def test_ascontiguousarray():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
     fassert(afnumpy.ascontiguousarray(a), numpy.ascontiguousarray(b))
 
+@foreach_backend
 def test_min():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -108,6 +121,7 @@ def test_min():
     fassert(afnumpy.min(a,axis=0), numpy.min(b,axis=0))
     fassert(afnumpy.min(a,axis=1), numpy.min(b,axis=1))
 
+@foreach_backend
 def test_max():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -115,6 +129,7 @@ def test_max():
     fassert(afnumpy.max(a,axis=0), numpy.max(b,axis=0))
     fassert(afnumpy.max(a,axis=1), numpy.max(b,axis=1))
 
+@foreach_backend
 def test_prod():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -122,6 +137,7 @@ def test_prod():
     fassert(afnumpy.prod(a,axis=0), numpy.prod(b,axis=0))
     fassert(afnumpy.prod(a,axis=1), numpy.prod(b,axis=1))
 
+@foreach_backend
 def test_mean():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -130,13 +146,13 @@ def test_mean():
     fassert(afnumpy.mean(a,axis=1), numpy.mean(b,axis=1))
     fassert(afnumpy.mean(a,axis=(0,1)), numpy.mean(b,axis=(0,1)))
 
-
+@foreach_backend
 def test_sqrt():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
     fassert(afnumpy.sqrt(a), numpy.sqrt(b))
 
-
+@foreach_backend
 def test_dtypes():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -148,7 +164,7 @@ def test_dtypes():
     assert(type(afnumpy.complex64([1,2,3])), afnumpy.multiarray.ndarray)
     assert(type(afnumpy.bool8(True)), numpy.bool_)
     
-
+@foreach_backend
 def test_transpose():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
@@ -163,6 +179,7 @@ def test_transpose():
     iassert(a.transpose(), b.transpose())
     iassert(a.transpose((2,0,1)), b.transpose((2,0,1)))
 
+@foreach_backend
 def test_rollaxis():
     b = numpy.random.random((3,4,5,6))
     a = afnumpy.array(b)
@@ -170,20 +187,24 @@ def test_rollaxis():
     iassert(afnumpy.rollaxis(a, 2),numpy.rollaxis(b, 2))
     iassert(afnumpy.rollaxis(a, 1, 4),numpy.rollaxis(b, 1, 4))
 
+@foreach_backend
 def test_cross():
     x = [1, 2, 3]
     y = [4, 5, 6]
     iassert(afnumpy.cross(x, y), numpy.cross(x, y))
 
+@foreach_backend
 def test_linspace():
     iassert(afnumpy.linspace(0,10), numpy.linspace(0,10))
 
+@foreach_backend
 def test_squeeze():
     x = numpy.array([[[0], [1], [2]]])
     y = afnumpy.array(x)
     iassert(afnumpy.squeeze(y), numpy.squeeze(x))
     iassert(afnumpy.squeeze(y, axis=(2,)), numpy.squeeze(x, axis=(2,)))
-    
+
+@foreach_backend    
 def test_all():
     iassert(afnumpy.all([[True, False], [True, True]]),
             numpy.all([[True, False], [True, True]]))
@@ -191,7 +212,7 @@ def test_all():
     y = afnumpy.array(x)
     iassert(y.all(axis=0),x.all(axis=0))
 
-
+@foreach_backend
 def test_any():
     iassert(afnumpy.any([[True, False], [True, True]]),
             numpy.any([[True, False], [True, True]]))
@@ -199,6 +220,7 @@ def test_any():
     y = afnumpy.array(x)
     iassert(y.any(axis=0),x.any(axis=0))
     
+@foreach_backend
 def test_argmax():
     a = afnumpy.arange(6).reshape((2,3))
     b = numpy.array(a)
@@ -208,6 +230,7 @@ def test_argmax():
     a[0,1] = 5
     iassert(afnumpy.argmax(a),numpy.argmax(b))
 
+@foreach_backend
 def test_argmin():
     a = afnumpy.arange(6).reshape((2,3))
     b = numpy.array(a)
@@ -217,6 +240,7 @@ def test_argmin():
     a[0,1] = 5
     iassert(afnumpy.argmin(a),numpy.argmin(b))
 
+@foreach_backend
 def test_argsort():
     # Sort does not support 64bit int yet
     x = np.array([3, 1, 2], dtype=float)
@@ -229,12 +253,14 @@ def test_argsort():
     # Arrayfire at the moment can only sort along the last dimension
     # iassert(af.argsort(y, axis=0), np.argsort(x, axis=0))
     
+@foreach_backend
 def test_isnan():
     b = 1.0*numpy.random.randint(0,2,(2,3))
     b[b == 0] = numpy.nan
     a = afnumpy.array(b)
     fassert(afnumpy.isnan(a), numpy.isnan(b))
 
+@foreach_backend
 def test_isinf():
     b = 1.0*numpy.random.randint(0,2,(2,3))
     b[b == 0] = numpy.inf
