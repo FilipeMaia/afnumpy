@@ -1,7 +1,6 @@
 import afnumpy
 import arrayfire
 import numpy
-from IPython.core.debugger import Tracer
 from .. import private_utils as pu
 
 def tile(A, reps):

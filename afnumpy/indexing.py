@@ -1,6 +1,5 @@
 import arrayfire
 import sys
-from IPython.core.debugger import Tracer
 import afnumpy
 import private_utils as pu
 import numbers
@@ -236,7 +235,6 @@ def __idx_ndims__(idx):
 
 def __expand_dim__(shape, value, idx):
     # reshape value, adding size 1 dimensions, such that the dimensions of value match idx
-#    Tracer()()
     idx_shape = __index_shape__(shape, idx, False)
     value_shape = list(value.shape)        
     past_one_dims = False

@@ -5,7 +5,6 @@ import afnumpy.private_utils as pu
 from numpy import newaxis
 import numbers
 from numpy import broadcast
-from IPython.core.debugger import Tracer
 from afnumpy.decorators import *
 
 def concatenate(arrays, axis=0):

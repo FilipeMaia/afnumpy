@@ -1,4 +1,3 @@
-from IPython.core.debugger import Tracer
 import afnumpy
 import numpy
 

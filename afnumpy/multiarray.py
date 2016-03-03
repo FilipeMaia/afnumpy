@@ -3,7 +3,6 @@ import arrayfire
 import sys
 import numpy
 import numbers
-from IPython.core.debugger import Tracer
 import private_utils as pu
 import afnumpy
 import indexing
