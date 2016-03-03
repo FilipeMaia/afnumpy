@@ -93,6 +93,17 @@ def test_fftn():
     a = afnumpy.array(b)
     fassert(afnumpy.fft.fftn(a), numpy.fft.fftn(b))
 
+    # Test shape argument
+    b = numpy.random.random((3,3))
+    a = afnumpy.array(b)
+    s = (3,3)
+    fassert(afnumpy.fft.fftn(a, s), numpy.fft.fftn(b, s))
+    s = (3,6)
+    fassert(afnumpy.fft.fftn(a, s), numpy.fft.fftn(b, s))
+    s = (3,2)
+    fassert(afnumpy.fft.fftn(a, s), numpy.fft.fftn(b, s))
+
+
 def test_ifftn():    
     # Real to complex inverse fft not implemented in arrayfire
     # b = numpy.random.random((3,3))
@@ -111,6 +122,16 @@ def test_ifftn():
 #    b = numpy.ones((3,3))+numpy.zeros((3,3))*1.0j
     a = afnumpy.array(b)
     fassert(afnumpy.fft.ifftn(a), numpy.fft.ifftn(b))
+
+    # Test shape argument
+    b = numpy.random.random((3,3))
+    a = afnumpy.array(b)
+    s = (3,3)
+    fassert(afnumpy.fft.ifftn(a, s), numpy.fft.ifftn(b, s))
+    s = (3,6)
+    fassert(afnumpy.fft.ifftn(a, s), numpy.fft.ifftn(b, s))
+    s = (3,2)
+    fassert(afnumpy.fft.ifftn(a, s), numpy.fft.ifftn(b, s))
 
 def test_fftshift():
     b = numpy.random.random((3))
