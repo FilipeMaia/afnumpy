@@ -4,20 +4,16 @@ import afnumpy as af
 import numpy as np
 from asserts import *
 import pytest
-from decorators import *
 xfail = pytest.mark.xfail
 
-@foreach_backend
 def test_zeros():
     a = afnumpy.zeros(3)
     b = numpy.zeros(3)
     iassert(a, b)
 
-@foreach_backend
 def test_fromstring():
     iassert(afnumpy.fromstring('\x01\x02', dtype=numpy.uint8),numpy.fromstring('\x01\x02', dtype=numpy.uint8))
 
-@foreach_backend
 def test_ndarray_transpose():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
@@ -35,7 +31,6 @@ def test_ndarray_transpose():
 
     
 
-@foreach_backend
 def test_where():
     a1 = afnumpy.array([1,2,3])
     b1 = numpy.array(a1)
@@ -65,7 +60,6 @@ def test_where():
     iassert(afnumpy.where(a2), numpy.where(b2))
 
 
-@foreach_backend
 def test_array():
     a = afnumpy.array([3])
     b = numpy.array([3])
@@ -95,7 +89,6 @@ def test_array():
 
 
 # For some strange reason this fails in Travis
-@foreach_backend
 def test_binary_arithmetic():
     a = afnumpy.random.rand(3)
     b = numpy.array(a)
@@ -148,7 +141,6 @@ def test_binary_arithmetic():
     fassert(3.0%a, 3.0%b)
 
 
-@foreach_backend
 def test_broadcast_binary_arithmetic():
     a = afnumpy.random.rand(2,3)
     b = afnumpy.random.rand(2,1)
@@ -171,7 +163,6 @@ def test_broadcast_binary_arithmetic():
     c-=d
     fassert(a, c)
 
-@foreach_backend
 def test_augmented_assignment():
     a = afnumpy.random.rand(3)
     b = numpy.array(a)
@@ -220,7 +211,6 @@ def test_augmented_assignment():
     b /= 3
     fassert(a, b)
 
-@foreach_backend
 def test_unary_operators():
     a = afnumpy.random.rand(3)
     b = numpy.array(a)
@@ -232,7 +222,6 @@ def test_unary_operators():
     fassert(+a, +b)
     # fassert(~a, ~b)
 
-@foreach_backend
 def test_comparisons():
     a1 = afnumpy.random.rand(3)
     b1 = numpy.array(a1)
@@ -264,7 +253,6 @@ def test_comparisons():
     iassert(a1 != 0.5, b1 != 0.5)
     iassert(0.5 != a1, 0.5 != b1)
 
-@foreach_backend
 def test_ndarray_all():    
     b = numpy.random.randint(0,2,3).astype('bool')
     a = afnumpy.array(b)
@@ -277,7 +265,6 @@ def test_ndarray_all():
     iassert(a.all(axis=0), b.all(axis=0))
     iassert(a.all(keepdims=True), b.all(keepdims=True))
 
-@foreach_backend
 def test_sum():    
     b = numpy.random.random(3)
     a = afnumpy.array(b)
@@ -290,7 +277,6 @@ def test_sum():
     fassert(afnumpy.sum(a), numpy.sum(b))
     fassert(afnumpy.sum(a,axis=0), numpy.sum(b,axis=0))
 
-@foreach_backend
 def test_max():    
     b = numpy.random.random(3)+numpy.random.random(3)*1.0j
     a = afnumpy.array(b)
@@ -301,7 +287,6 @@ def test_max():
     a = afnumpy.array(b)
     fassert(a.max(), b.max())
 
-@foreach_backend
 def test_min():    
     b = numpy.random.random(3)+numpy.random.random(3)*1.0j
     a = afnumpy.array(b)
@@ -312,7 +297,6 @@ def test_min():
     a = afnumpy.array(b)
     fassert(a.min(), b.min())
 
-@foreach_backend
 def test_ndarray_abs():    
     b = numpy.random.random(3)+numpy.random.random(3)*1.0j
     a = afnumpy.array(b)
@@ -321,7 +305,6 @@ def test_ndarray_abs():
     a = afnumpy.array(b)
     fassert(abs(a), abs(b))
 
-@foreach_backend
 def test_getitem():
     b = numpy.random.random((3))
     a = afnumpy.array(b)
@@ -397,7 +380,6 @@ def test_getitem():
     iassert(a[()],b[()])
 
 @xfail
-@foreach_backend
 def test_getitem_multi_array():
     # Multidimensional array indexing
     b = numpy.random.random((2,2))
@@ -417,13 +399,11 @@ def test_getitem_multi_array():
     # [1,1] while for arrayfire it would be [0,0], [0,1], [1,0], [1,1].
     iassert(a[c,c], b[d,d])
 
-@foreach_backend
 def test_newaxis():
     b = numpy.random.random((3))
     a = afnumpy.array(b)
     # iassert(a[afnumpy.newaxis,:], b[numpy.newaxis,:])
 
-@foreach_backend
 def test_setitem():
     b = numpy.random.random((3))
     a = afnumpy.array(b)
@@ -519,7 +499,6 @@ def test_setitem():
     b1[b1 < 0.3] = 1
     iassert(a1, b1)
 
-@foreach_backend
 def test_views():
     b = numpy.random.random((3,3))
     a = afnumpy.array(b)
@@ -544,14 +523,12 @@ def test_views():
     d[()] = 0
     iassert(a,b)
 
-@foreach_backend
 def test_ndarray_astype():
     b = numpy.random.random(3)
     a = afnumpy.array(b)
     iassert(a.astype(numpy.uint8),b.astype(numpy.uint8))
     iassert(a.astype(numpy.complex128),b.astype(numpy.complex128))
 
-@foreach_backend
 def test_ndarray_len():
     b = numpy.random.random(3)
     a = afnumpy.array(b)
@@ -561,14 +538,12 @@ def test_ndarray_len():
     assert(len(a) == len(b))
 
 
-@foreach_backend
 def test_vstack():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
     iassert(afnumpy.vstack(a), numpy.vstack(b))
     iassert(afnumpy.vstack((a,a)), numpy.vstack((b,b)))
 
-@foreach_backend
 def test_hstack():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
@@ -576,7 +551,6 @@ def test_hstack():
     iassert(afnumpy.hstack((a,a)), numpy.hstack((b,b)))
 
 
-@foreach_backend
 def test_empty_ndarray():
     a = afnumpy.zeros(())
     b = numpy.zeros(())
@@ -593,14 +567,12 @@ def test_empty_ndarray():
     
 
 
-@foreach_backend
 def test_arange():
     iassert(afnumpy.arange(10), numpy.arange(10))
     iassert(afnumpy.arange(1,10), numpy.arange(1,10))
     iassert(afnumpy.arange(10,1,-1), numpy.arange(10,1,-1))
     iassert(afnumpy.arange(10,1,-1,dtype=numpy.int32), numpy.arange(10,1,-1,dtype=numpy.int32))
 
-@foreach_backend
 def test_ndarray_shape():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
@@ -609,13 +581,11 @@ def test_ndarray_shape():
     fassert(a,b)
 
 
-@foreach_backend
 def test_ndarray_round():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
     fassert(a.round(), b.round())
 
-@foreach_backend
 def test_ndarray_take():
     b = numpy.array([4, 3, 5, 7, 6, 8])
     a = afnumpy.array(b)
@@ -626,7 +596,6 @@ def test_ndarray_take():
     iassert(a.take([0,1],axis=1), b.take([0,1],axis=1))
     iassert(a.take([0,1]), b.take([0,1]))
 
-@foreach_backend
 def test_ndarray_min():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -634,7 +603,6 @@ def test_ndarray_min():
     fassert(a.min(axis=1), b.min(axis=1))
     fassert(a.min(axis=1, keepdims=True), b.min(axis=1, keepdims=True))
 
-@foreach_backend
 def test_ndarray_max():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -642,7 +610,6 @@ def test_ndarray_max():
     fassert(a.max(axis=1), b.max(axis=1))
     fassert(a.max(axis=1, keepdims=True), b.max(axis=1, keepdims=True))
 
-@foreach_backend
 def test_ndarray_sum():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -655,14 +622,12 @@ def test_ndarray_sum():
     b = afnumpy.array(a)
     fassert(a.sum(), b.sum())
 
-@foreach_backend
 def test_ndarray_conj():
     # The weird astype is because of issue #914 in arrayfire
     a =afnumpy.random.random((2,3)).astype(numpy.complex64)+1.0j
     b = numpy.array(a)
     fassert(a.conj(), b.conj())
 
-@foreach_backend
 def test_empty():
     a = afnumpy.empty((2,3))
     b = numpy.array(a)
@@ -670,7 +635,6 @@ def test_empty():
     b[:] = 1
     fassert(a,b)
 
-@foreach_backend
 def test_ndarray_T():
     x = numpy.array([[1.,2.],[3.,4.]])
     y = afnumpy.array(x)
@@ -679,14 +643,12 @@ def test_ndarray_T():
     y = afnumpy.array(x)
     fassert(y.T,x.T)
 
-@foreach_backend
 def test_ndarray_any():
     x = numpy.array([[True, False], [True, True]])
     y = afnumpy.array(x)
     iassert(y.any(),x.any())
     iassert(y.any(axis=0),x.any(axis=0))
 
-@foreach_backend
 def test_ndarray_real():
     x = np.sqrt([1+0j, 0+1j])
     y = af.array(x)
@@ -695,7 +657,6 @@ def test_ndarray_real():
     x.real[:] = 0
     fassert(y, x)
 
-@foreach_backend
 def test_ndarray_imag():
     x = np.sqrt([1+0j, 0+1j])
     y = af.array(x)
@@ -704,7 +665,6 @@ def test_ndarray_imag():
     x.imag[:] = 0
     fassert(y, x)
 
-@foreach_backend
 def test_ndarray_strides():
     a = afnumpy.random.random((4,3))
     b = numpy.array(a)
@@ -719,14 +679,12 @@ def test_ndarray_strides():
     iassert(a[3,:2].strides, b[3,:2].strides)
 
 @xfail
-@foreach_backend
 def test_ndarray_strides_xfail():
     # The following case fails as arrayfire always drops
     # leading dimensions of size 1 and so the stride
     # information is missing
     iassert(a[3:,:2].strides, b[3:,:2].strides)
 
-@foreach_backend
 def test_ndarray_copy():
     b = numpy.random.random((3,3))
     a = afnumpy.array(b)

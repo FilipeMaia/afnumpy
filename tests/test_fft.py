@@ -3,9 +3,7 @@ import afnumpy.fft
 import numpy
 import numpy.fft
 from asserts import *
-from decorators import *
 
-@foreach_backend
 def test_fft():    
     b = numpy.random.random((3,3))
     a = afnumpy.array(b)
@@ -23,7 +21,6 @@ def test_fft():
     a = afnumpy.array(b)
     fassert(afnumpy.fft.fft(a), numpy.fft.fft(b))
 
-@foreach_backend
 def test_ifft():    
     # Real to complex inverse fft not implemented in arrayfire
     # b = numpy.random.random((3,3))
@@ -43,7 +40,6 @@ def test_ifft():
     a = afnumpy.array(b)
     fassert(afnumpy.fft.ifft(a), numpy.fft.ifft(b))
 
-@foreach_backend
 def test_fft2():    
     b = numpy.random.random((3,3))
     a = afnumpy.array(b)
@@ -61,7 +57,6 @@ def test_fft2():
     a = afnumpy.array(b)
     fassert(afnumpy.fft.fft2(a), numpy.fft.fft2(b))
 
-@foreach_backend
 def test_ifft2():    
     # Real to complex inverse fft not implemented in arrayfire
     # b = numpy.random.random((3,3))
@@ -81,7 +76,6 @@ def test_ifft2():
     a = afnumpy.array(b)
     fassert(afnumpy.fft.ifft2(a), numpy.fft.ifft2(b))
 
-@foreach_backend
 def test_fftn():    
     b = numpy.random.random((3,3))
     a = afnumpy.array(b)
@@ -109,7 +103,6 @@ def test_fftn():
     s = (3,2)
     fassert(afnumpy.fft.fftn(a, s), numpy.fft.fftn(b, s))
 
-@foreach_backend
 def test_ifftn():    
     # Real to complex inverse fft not implemented in arrayfire
     # b = numpy.random.random((3,3))
@@ -139,7 +132,6 @@ def test_ifftn():
     s = (3,2)
     fassert(afnumpy.fft.ifftn(a, s), numpy.fft.ifftn(b, s))
 
-@foreach_backend
 def test_fftshift():
     b = numpy.random.random((3))
     a = afnumpy.array(b)
@@ -155,7 +147,6 @@ def test_fftshift():
     fassert(afnumpy.fft.fftshift(a,axes=2), numpy.fft.fftshift(b,axes=2))
     fassert(afnumpy.fft.fftshift(a,axes=(1,2)), numpy.fft.fftshift(b,axes=(1,2)))
 
-@foreach_backend
 def test_ifftshift():
     b = numpy.random.random((3))
     a = afnumpy.array(b)

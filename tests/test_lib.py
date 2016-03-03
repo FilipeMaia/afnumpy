@@ -1,9 +1,7 @@
 import afnumpy
 import numpy
 from asserts import *
-from decorators import *
 
-@foreach_backend
 def test_copy():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
@@ -13,7 +11,6 @@ def test_copy():
     b[:] = 0
     iassert(c,d)
 
-@foreach_backend
 def test_meshgrid():
     nx, ny = (3, 2)
     x2 = numpy.linspace(0, 1, nx)
@@ -23,7 +20,6 @@ def test_meshgrid():
 
     iassert(afnumpy.meshgrid(x1, y1), numpy.meshgrid(x2, y2))
 
-@foreach_backend
 def test_broadcast_arrays():
     # Currently arrayfire is missing support for int64
     x2 = numpy.array([[1,2,3]], dtype=numpy.float32)
@@ -37,7 +33,6 @@ def test_broadcast_arrays():
     y2 = numpy.array(2)
     iassert(afnumpy.broadcast_arrays(x1, y1), numpy.broadcast_arrays(x2, y2))
 
-@foreach_backend
 def test_tile():
     # Currently arrayfire is missing support for int64
     b = numpy.array([0, 1, 2], dtype=numpy.float32)
@@ -46,7 +41,6 @@ def test_tile():
     iassert(afnumpy.tile(a, (2,2)), numpy.tile(b, (2,2)))
     iassert(afnumpy.tile(a, (2,1,2)), numpy.tile(b, (2,1,2)))
 
-@foreach_backend
 def test_arccos():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -56,7 +50,6 @@ def test_arccos():
     fassert(afnumpy.arccos(a, out=c), numpy.arccos(b, out=d))
     fassert(c, d)
 
-@foreach_backend
 def test_arcsin():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -66,7 +59,6 @@ def test_arcsin():
     fassert(afnumpy.arcsin(a, out=c), numpy.arcsin(b, out=d))
     fassert(c, d)
 
-@foreach_backend
 def test_arctan():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -76,7 +68,6 @@ def test_arctan():
     fassert(afnumpy.arctan(a, out=c), numpy.arctan(b, out=d))
     fassert(c, d)
 
-@foreach_backend
 def test_arctan2():
     a1 = afnumpy.random.random((2,3))
     b1 = numpy.array(a1)
@@ -88,7 +79,6 @@ def test_arctan2():
     fassert(afnumpy.arctan2(a1,a2, out=c), numpy.arctan2(b1, b2, out=d))
     fassert(c, d)
 
-@foreach_backend
 def test_arccosh():
     # Domain for arccosh starts at 1
     a = afnumpy.random.random((2,3))+1
@@ -99,7 +89,6 @@ def test_arccosh():
     fassert(afnumpy.arccosh(a, out=c), numpy.arccosh(b, out=d))
     fassert(c, d)
 
-@foreach_backend
 def test_arcsinh():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -109,7 +98,6 @@ def test_arcsinh():
     fassert(afnumpy.arcsinh(a, out=c), numpy.arcsinh(b, out=d))
     fassert(c, d)
 
-@foreach_backend
 def test_arctanh():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -119,7 +107,6 @@ def test_arctanh():
     fassert(afnumpy.arctanh(a, out=c), numpy.arctanh(b, out=d))
     fassert(c, d)
 
-@foreach_backend
 def test_cos():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -129,7 +116,6 @@ def test_cos():
     fassert(afnumpy.cos(a, out=c), numpy.cos(b, out=d))
     fassert(c, d)
 
-@foreach_backend
 def test_sin():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -139,7 +125,6 @@ def test_sin():
     fassert(afnumpy.sin(a, out=c), numpy.sin(b, out=d))
     fassert(c, d)
 
-@foreach_backend
 def test_tan():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -149,7 +134,6 @@ def test_tan():
     fassert(afnumpy.tan(a, out=c), numpy.tan(b, out=d))
     fassert(c, d)
 
-@foreach_backend
 def test_cosh():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -159,7 +143,6 @@ def test_cosh():
     fassert(afnumpy.cosh(a, out=c), numpy.cosh(b, out=d))
     fassert(c, d)
 
-@foreach_backend
 def test_sinh():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -169,7 +152,6 @@ def test_sinh():
     fassert(afnumpy.sinh(a, out=c), numpy.sinh(b, out=d))
     fassert(c, d)
 
-@foreach_backend
 def test_tanh():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -179,19 +161,16 @@ def test_tanh():
     fassert(afnumpy.tanh(a, out=c), numpy.tanh(b, out=d))
     fassert(c, d)
 
-@foreach_backend
 def test_exp():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
     fassert(afnumpy.exp(a), numpy.exp(b))
 
-@foreach_backend
 def test_log():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
     fassert(afnumpy.log(a), numpy.log(b))
 
-@foreach_backend
 def test_real():
     x = numpy.sqrt([1+0j, 0+1j])
     y = afnumpy.array(x)
@@ -200,7 +179,6 @@ def test_real():
     x.real[:] = 0
     fassert(y, x)
 
-@foreach_backend
 def test_imag():
     x = numpy.sqrt([1+0j, 0+1j])
     y = afnumpy.array(x)
@@ -209,7 +187,6 @@ def test_imag():
     x.real[:] = 0
     fassert(y, x)
 
-@foreach_backend
 def test_multiply():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -222,7 +199,6 @@ def test_multiply():
     fassert(afnumpy.multiply(a,a, out=ao), numpy.multiply(b,b, out = bo))
     fassert(ao, bo)
 
-@foreach_backend
 def test_subtract():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -235,7 +211,6 @@ def test_subtract():
     fassert(afnumpy.subtract(a,a, out=ao), numpy.subtract(b,b, out = bo))
     fassert(ao, bo)
 
-@foreach_backend
 def test_add():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -248,7 +223,6 @@ def test_add():
     fassert(afnumpy.add(a,a, out=ao), numpy.add(b,b, out = bo))
     fassert(ao, bo)
 
-@foreach_backend
 def test_divide():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -261,19 +235,16 @@ def test_divide():
     fassert(afnumpy.divide(a,a, out=ao), numpy.divide(b,b, out = bo))
     fassert(ao, bo)
 
-@foreach_backend
 def test_angle():
     a = afnumpy.random.random((2,3))+afnumpy.random.random((2,3))*1.0j
     b = numpy.array(a)
     fassert(afnumpy.angle(a), numpy.angle(b))
 
-@foreach_backend
 def test_conjugate():
     a = afnumpy.random.random((2,3))+afnumpy.random.random((2,3))*1.0j
     b = numpy.array(a)
     fassert(afnumpy.conjugate(a), numpy.conjugate(b))
 
-@foreach_backend
 def test_conj():
     a = afnumpy.random.random((2,3))+afnumpy.random.random((2,3))*1.0j
     b = numpy.array(a)

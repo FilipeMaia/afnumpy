@@ -3,9 +3,7 @@ import numpy
 from asserts import *
 import pytest
 xfail = pytest.mark.xfail
-from decorators import *
 
-@foreach_backend
 def test_norm():
     a = afnumpy.random.random((3))
     b = numpy.array(a)
@@ -19,7 +17,6 @@ def test_norm():
     fassert(afnumpy.linalg.norm(a, ord=numpy.Inf), numpy.linalg.norm(b, ord=numpy.Inf))
     fassert(afnumpy.linalg.norm(a, ord=-numpy.Inf), numpy.linalg.norm(b, ord=-numpy.Inf))
 
-@foreach_backend
 def test_vdot():    
     b = numpy.random.random(3)+numpy.random.random(3)*1.0j
     a = afnumpy.array(b)
