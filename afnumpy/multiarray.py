@@ -445,9 +445,12 @@ class ndarray(object):
         except AttributeError:
             pass
 
-    def __array__(self):
+    def __array__(self, dtype=None):
         arrayfire.backend.get().af_get_data_ptr(ctypes.c_void_p(self.h_array.ctypes.data), self.d_array.arr)
-        return numpy.copy(self.h_array)
+        if dtype is None:
+            return numpy.copy(self.h_array)
+        else:
+            return numpy.copy(self.h_array).astype(dtype)
 
     def transpose(self, *axes):
         if(self.ndim == 1):
