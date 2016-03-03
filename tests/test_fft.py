@@ -2,7 +2,6 @@ import afnumpy
 import afnumpy.fft
 import numpy
 import numpy.fft
-from IPython.core.debugger import Tracer
 from asserts import *
 
 def test_fft():    

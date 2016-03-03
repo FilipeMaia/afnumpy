@@ -1,6 +1,5 @@
 import afnumpy
 import numpy
-from IPython.core.debugger import Tracer
 from asserts import *
 
 def test_copy():

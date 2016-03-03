@@ -2,7 +2,6 @@ import afnumpy
 import numpy
 import afnumpy as af
 import numpy as np
-from IPython.core.debugger import Tracer
 from asserts import *
 import pytest
 xfail = pytest.mark.xfail

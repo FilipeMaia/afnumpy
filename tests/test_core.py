@@ -3,7 +3,6 @@ import afnumpy as af
 import numpy
 import numpy as np
 from asserts import *
-from IPython.core.debugger import Tracer
 
 def test_floor():
     b = numpy.random.random((2,3))
