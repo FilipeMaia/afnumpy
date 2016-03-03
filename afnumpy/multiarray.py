@@ -706,4 +706,6 @@ class ndarray(object):
             return self.eval()
         else:
             return 0
-            
+
+    def copy(self, order='C'):
+        return array(self, copy=True, order=order)

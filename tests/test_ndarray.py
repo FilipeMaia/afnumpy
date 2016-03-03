@@ -686,3 +686,7 @@ def test_ndarray_strides_xfail():
     # information is missing
     iassert(a[3:,:2].strides, b[3:,:2].strides)
 
+def test_ndarray_copy():
+    b = numpy.random.random((3,3))
+    a = afnumpy.array(b)
+    iassert(a.copy(), b.copy())
