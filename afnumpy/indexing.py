@@ -122,9 +122,20 @@ def __npidx_to_afidx__(idx, dim_len):
         if  __slice_len__(ret, [dim_len], 0) <= 0:
             return None
         return ret
-    if(isinstance(idx, afnumpy.ndarray)):
-        return idx.d_array
-    return afnumpy.array(idx).d_array
+            
+    if(not isinstance(idx, afnumpy.ndarray)):
+        idx = afnumpy.array(idx)
+
+    if(afnumpy.safe_indexing):
+        # Check if we're going out of bounds
+        max_index = afnumpy.arrayfire.max(idx.d_array)
+        min_index = afnumpy.arrayfire.min(idx.d_array)
+        if max_index >= dim_len:
+            raise IndexError('index %d is out of bounds for axis with size %d' % (max_index, dim_len))
+        if min_index < 0:
+            # Transform negative indices in positive ones
+            idx.d_array[idx.d_array < 0] += dim_len
+    return idx.d_array
         
 
 def __convert_dim__(shape, idx):
@@ -134,15 +145,6 @@ def __convert_dim__(shape, idx):
     # Also returns the shape that the input should be reshaped to
     input_shape = list(shape)
 
-    # If it's an array just return the array
-    if(isinstance(idx, afnumpy.ndarray)):
-        # If it's a boolean array the resulting shape
-        # matches the number of non-zero entries
-        if idx.dtype is numpy.dtype('bool'):
-            return [idx.d_array], (idx.sum()), (numpy.prod(input_shape))
-        else:
-            return [idx.d_array], idx.shape, input_shape
-    # Otherwise turns thing into a tuple
     if not isinstance(idx, tuple):
         idx = (idx,)
     idx = list(idx)

@@ -73,3 +73,7 @@ elif arrayfire_version(numeric=True) >= 3002000:
 # after every instructions.
 # We we do not we risk having certain operations out of order
 force_eval = True
+
+# Check arrays for out of bounds indexing
+# Also properly handle negative indices
+safe_indexing = True

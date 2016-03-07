@@ -385,6 +385,21 @@ def test_getitem():
     iassert(a[1:4],b[1:4])
     iassert(a[3::-1],b[3::-1])
 
+    # Partial boolean indexing
+    b = numpy.ones((3,3))
+    a = afnumpy.array(b)
+    d = numpy.ones((3)) > 0
+    c = afnumpy.array(d)
+    iassert(a[c],b[d])
+
+    # Partial array indexing
+    b = numpy.ones((3,3))
+    a = afnumpy.array(b)
+    d = numpy.array([0,1])
+    c = afnumpy.array(d)
+    iassert(a[c],b[d])
+
+
 @xfail
 def test_getitem_multi_array():
     # Multidimensional array indexing
