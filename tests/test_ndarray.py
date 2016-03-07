@@ -379,6 +379,12 @@ def test_getitem():
     a = afnumpy.array(b)
     iassert(a[()],b[()])
 
+    # Slices that extend outside the array
+    b = numpy.ones((3))
+    a = afnumpy.array(b)
+    iassert(a[1:4],b[1:4])
+    iassert(a[3::-1],b[3::-1])
+
 @xfail
 def test_getitem_multi_array():
     # Multidimensional array indexing

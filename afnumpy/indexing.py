@@ -8,13 +8,19 @@ import math
 
 def __slice_len__(idx, shape, axis):
     maxlen = shape[axis]
+    # Out of bounds slices should be converted to None
+    if(idx.stop >= maxlen):
+        idx.stop = None
+    if(idx.start >= maxlen):
+        idx.start = None
+
     if idx.step is None:
         step = 1
     else:
         step = idx.step
     if idx.start is None:
         if step < 0:
-            start = maxlen
+            start = maxlen-1
         else:
             start = 0
     else:
@@ -23,7 +29,7 @@ def __slice_len__(idx, shape, axis):
             start += maxlen
     if idx.stop is None:
         if step < 0:
-            end = 0
+            end = -1
         else:
             end = maxlen
     else:
@@ -97,6 +103,12 @@ def __npidx_to_afidx__(idx, dim_len):
         start = idx.start
         stop = idx.stop
         step = idx.step
+        # Out of bounds slices should be converted to None
+        if(stop >= dim_len):
+            stop = None
+        if(start >= dim_len):
+            start = None
+
         if(start is not None and start < 0):
             start += dim_len
         if(stop is not None and stop < 0):
