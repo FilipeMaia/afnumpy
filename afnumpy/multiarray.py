@@ -126,7 +126,8 @@ class ndarray(object):
 
         
     def __repr__(self):
-        arrayfire.backend.get().af_get_data_ptr(ctypes.c_void_p(self.h_array.ctypes.data), self.d_array.arr)
+        if self.size:
+            arrayfire.backend.get().af_get_data_ptr(ctypes.c_void_p(self.h_array.ctypes.data), self.d_array.arr)
         return self.h_array.__repr__()        
 
     def __str__(self):
@@ -445,7 +446,8 @@ class ndarray(object):
             pass
 
     def __array__(self, dtype=None):
-        arrayfire.backend.get().af_get_data_ptr(ctypes.c_void_p(self.h_array.ctypes.data), self.d_array.arr)
+        if self.size:
+            arrayfire.backend.get().af_get_data_ptr(ctypes.c_void_p(self.h_array.ctypes.data), self.d_array.arr)
         if dtype is None:
             return numpy.copy(self.h_array)
         else:
