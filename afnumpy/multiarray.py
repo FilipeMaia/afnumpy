@@ -61,7 +61,7 @@ def where(condition, x=pu.dummy, y=pu.dummy):
         idx = []
         mult = 1
         for i in a.shape[::-1]:
-            mult *= i
+            mult = i
             idx = [s % mult] + idx 
             s /= mult
         idx = tuple(idx)
@@ -393,7 +393,11 @@ class ndarray(object):
     def __getitem__(self, args):
         if not isinstance(args, tuple):
             args = (args,)
-        idx, new_shape, input_shape = indexing.__convert_dim__(self.shape, args)
+        try:
+            idx, new_shape, input_shape = indexing.__convert_dim__(self.shape, args)
+        except NotImplementedError:
+            # Slow indexing method for not currently implemented fancy indexing
+            return afnumpy.array(numpy.array(self).__getitem__(args))
         if numpy.prod(new_shape) == 0:
             # We're gonna end up with an empty array
             # As we don't yet support empty arrays return an empty numpy array
@@ -418,7 +422,15 @@ class ndarray(object):
         return array
 
     def __setitem__(self, idx, value):  
-        idx, idx_shape, input_shape = indexing.__convert_dim__(self.shape, idx)
+        try:
+            idx, idx_shape, input_shape = indexing.__convert_dim__(self.shape, idx)
+        except NotImplementedError:
+            # Slow indexing method for not currently implemented fancy indexing
+            a = numpy.array(self)
+            a.__setitem__(idx, value)
+            self[...] = afnumpy.array(a)
+            return
+
         if numpy.prod(idx_shape) == 0:
             # We've selected an empty array
             # No need to do anything
@@ -429,12 +441,12 @@ class ndarray(object):
         idx = tuple(idx)
         if len(idx) == 0:
             idx = tuple([0])
-        if(isinstance(value, ndarray)):
-            if(value.dtype != self.dtype):
-                raise TypeError('left hand side must have same dtype as right hand side')
-            value = indexing.__expand_dim__(self.shape, value, idx).d_array
-        elif(isinstance(value, numbers.Number)):
+        if(isinstance(value, numbers.Number)):
             pass
+        elif(isinstance(value, ndarray)):
+            if(value.dtype != self.dtype):
+                value.astype(self.dtype)
+            value = indexing.__expand_dim__(self.shape, value, idx).d_array
         else:
             raise NotImplementedError('values must be a afnumpy.ndarray')
         self.reshape(input_shape).d_array[idx] = value            
@@ -710,3 +722,18 @@ class ndarray(object):
 
     def copy(self, order='C'):
         return array(self, copy=True, order=order)
+
+    def nonzero(self):
+        s = arrayfire.where(self.d_array)
+        s = ndarray(pu.af_shape(s), dtype=numpy.uint32,
+                    af_array=s).astype(numpy.int64)
+        # TODO: Unexplained eval
+        s.eval()
+        idx = []
+        mult = 1
+        for i in self.shape[::-1]:
+            mult = i
+            idx = [s % mult] + idx 
+            s /= mult
+        idx = tuple(idx)
+        return idx

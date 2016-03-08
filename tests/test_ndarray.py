@@ -59,6 +59,13 @@ def test_where():
     # Test where with input as indices
     iassert(afnumpy.where(a2), numpy.where(b2))
 
+    # And now multidimensional
+    b1 = numpy.random.random((3,3,3)) > 0.5
+    a1 = afnumpy.array(b1)
+
+    # Test where with input as indices
+    iassert(afnumpy.where(a1), numpy.where(b1))
+
 
 def test_array():
     a = afnumpy.array([3])
@@ -520,6 +527,27 @@ def test_setitem():
     b1[b1 < 0.3] = 1
     iassert(a1, b1)
 
+def test_setitem_multi_array():
+    # Multidimensional array indexing
+    b = numpy.random.random((2,2))
+    a = afnumpy.array(b)
+    d = numpy.array([0,1])
+    c = afnumpy.array(d)
+    # This will fail because while multiple arrays
+    # as indices in numpy treat the values given by
+    # the arrays as the coordinates of the hyperslabs
+    # to keep arrayfire does things differently.
+    # In arrayfire each entry of each array gets combined
+    # with all entries of all other arrays to define the coordinate
+    # In numpy each entry only gets combined with the corresponding
+    # entry in the other arrays.
+    # For example if one has [0,1],[0,1] as the two arrays for numpy
+    # this would mean that the coordinates retrieved would be [0,0], 
+    # [1,1] while for arrayfire it would be [0,0], [0,1], [1,0], [1,1].
+    a[c,c] = c 
+    b[d,d] = d
+    iassert(a, b)
+
 def test_views():
     b = numpy.random.random((3,3))
     a = afnumpy.array(b)
@@ -710,3 +738,8 @@ def test_ndarray_copy():
     b = numpy.random.random((3,3))
     a = afnumpy.array(b)
     iassert(a.copy(), b.copy())
+
+def test_ndarray_nonzero():
+    b = numpy.random.random((3,3,3)) > 0.5
+    a = afnumpy.array(b)    
+    iassert(a.nonzero(), b.nonzero())

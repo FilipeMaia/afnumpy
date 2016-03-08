@@ -178,6 +178,21 @@ def __convert_dim__(shape, idx):
 
     # ret = [0]*len(idx)
     ret = []
+
+    # Check for the number of ndarrays. Raise error if there are multiple
+    arrays_in_idx = []
+    for axis in range(0,len(idx)):
+        if isinstance(idx[axis], afnumpy.ndarray):
+            arrays_in_idx.append(axis)
+        if isinstance(idx[axis], numpy.ndarray):
+            idx[axis] = afnumpy.array(idx[axis])
+            arrays_in_idx.append(axis)
+    if len(arrays_in_idx) > 1:
+        raise NotImplementedError('Fancy indexing with multiple arrays is not implemented')
+        # bcast_arrays = afnumpy.broadcast_arrays(*[idx[axis] for axis in arrays_in_idx])
+        # for axis,bcast_array in zip(arrays_in_idx, bcast_arrays):
+        #     idx[axis] = bcast_array
+
     for axis in range(0,len(idx)):
         # Handle boolean arrays indexes which require a reshape
         # of the input array
