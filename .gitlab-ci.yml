@@ -31,7 +31,7 @@ prepare_job:
     - if [ ! -d "$HOME/arrayfire-python/.git" ]; then git clone  https://github.com/arrayfire/arrayfire-python.git; else echo 'Using arrayfire-python from cached directory'; fi
     - cd arrayfire-python
     - git pull
-    - python setup.py install  
+    - python setup.py install  --user
   
 build_job:
   tags:
@@ -39,7 +39,7 @@ build_job:
   stage: build
   script:
     - cd ${HOME}/build/FilipeMaia/afnumpy
-    - python setup.py install
+    - python setup.py install --user
 
 test_job:
   tags: 
