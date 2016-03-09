@@ -17,10 +17,11 @@ prepare_job:
   script:
     - cd $HOME
     - if [ ! -d "$HOME/arrayfire/.git" ]; then git clone  https://github.com/arrayfire/arrayfire; else echo 'Using arrayfire from cached directory'; fi
-    - mkdir -p arrayfire/build && cd arrayfire/build
+    - mkdir -p arrayfire/build && cd arrayfire
     - git pull
     - git submodule init
     - git submodule update
+    - cd build
     - cmake -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DBUILD_CPU=OFF -DBUILD_CUDA=ON -DBUILD_OPENCL=OFF -DBUILD_GRAPHICS=OFF -DBUILD_TEST=OFF -DBUILD_EXAMPLES=OFF  -DCMAKE_INSTALL_PREFIX=${HOME}/local .. 
     - make -j 
     - make install
