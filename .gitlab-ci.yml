@@ -46,4 +46,4 @@ test_job:
   script:
     - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HOME}/local/lib
     - coverage run --source afnumpy -m py.test  -v --color=yes --showlocals --durations=10
-    - codecov
+    - codecov --token=`cat ${HOME}/afnumpy_codecov.token`
