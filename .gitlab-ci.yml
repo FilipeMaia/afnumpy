@@ -38,7 +38,6 @@ build_job:
     - cuda
   stage: build
   script:
-    - cd ${HOME}/build/FilipeMaia/afnumpy
     - python setup.py install --user
 
 test_job:
@@ -46,6 +45,5 @@ test_job:
     - cuda
   stage: test
   script:
-    - cd ${HOME}/build/FilipeMaia/afnumpy
     - coverage run --source afnumpy -m py.test  -v --color=yes --showlocals --durations=10
     - codecov
