@@ -25,7 +25,6 @@ prepare_job:
     - cmake -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DBUILD_CPU=OFF -DBUILD_CUDA=ON -DBUILD_OPENCL=OFF -DBUILD_GRAPHICS=OFF -DBUILD_TEST=OFF -DBUILD_EXAMPLES=OFF  -DCMAKE_INSTALL_PREFIX=${HOME}/local .. 
     - make -j 
     - make install
-    - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HOME}/local/lib
     # Install arrayfire-python
     - cd $HOME
     - if [ ! -d "$HOME/arrayfire-python/.git" ]; then git clone  https://github.com/arrayfire/arrayfire-python.git; else echo 'Using arrayfire-python from cached directory'; fi
@@ -45,5 +44,6 @@ test_job:
     - cuda
   stage: test
   script:
+    - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HOME}/local/lib
     - coverage run --source afnumpy -m py.test  -v --color=yes --showlocals --durations=10
     - codecov
