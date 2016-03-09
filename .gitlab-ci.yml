@@ -20,7 +20,7 @@ prepare_job:
     - mkdir -p arrayfire/build && cd arrayfire/build
     - git pull
     - cmake -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DBUILD_CPU=OFF -DBUILD_CUDA=ON -DBUILD_OPENCL=OFF -DBUILD_GRAPHICS=OFF -DBUILD_TEST=OFF -DBUILD_EXAMPLES=OFF  -DCMAKE_INSTALL_PREFIX=${HOME}/local .. 
-    - make -j 2
+    - make -j 
     - make install
     - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HOME}/local/lib
     # Install arrayfire-python
