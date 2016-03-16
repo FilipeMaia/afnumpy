@@ -1,11 +1,11 @@
 import arrayfire
 import numpy
 import afnumpy
-import afnumpy.private_utils as pu
+from .. import private_utils as pu
 from numpy import newaxis
 import numbers
 from numpy import broadcast
-from afnumpy.decorators import *
+from ..decorators import *
 
 def concatenate(arrays, axis=0):
     if(len(arrays) < 1):
@@ -34,7 +34,7 @@ def roll(a, shift, axis=None):
         s = arrayfire.shift(a.d_array, 0, 0, 0, shift)
     else:
         raise NotImplementedError
-    return afnumpy.ndarray(shape, dtype=a.dtype, af_array=s)        
+    return afnumpy.ndarray(shape, dtype=a.dtype, af_array=s)
 
 def rollaxis(a, axis, start=0):
     n = a.ndim
@@ -79,7 +79,7 @@ def ceil(x, out=None):
     if out is not None:
         out[:] = a[:]
     return a
-            
+
 def abs(x, out=None):
     if not isinstance(x, afnumpy.ndarray):
         return numpy.abs(x, out)

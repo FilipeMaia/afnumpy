@@ -1,7 +1,7 @@
 import arrayfire
 import sys
 import afnumpy
-import private_utils as pu
+from . import private_utils as pu
 import numbers
 import numpy
 import math
@@ -9,9 +9,9 @@ import math
 def __slice_len__(idx, shape, axis):
     maxlen = shape[axis]
     # Out of bounds slices should be converted to None
-    if(idx.stop >= maxlen):
+    if(idx.stop is not None and idx.stop >= maxlen):
         idx.stop = None
-    if(idx.start >= maxlen):
+    if(idx.start is not None and idx.start >= maxlen):
         idx.start = None
 
     if idx.step is None:
@@ -51,7 +51,7 @@ def __slice_to_seq__(shape, idx, axis):
             idx = maxlen + idx
         if(idx >= maxlen):
             raise IndexError('index %d is out of bounds for axis %d with size %d' % (idx, axis, maxlen))
-        return idx        
+        return idx
 
     if(isinstance(idx, afnumpy.ndarray)):
         return idx.d_array
@@ -91,11 +91,11 @@ def __slice_to_seq__(shape, idx, axis):
 
     if((start-end > 0 and step > 0) or
        (start-end < 0 and step < 0)):
-        return None           
+        return None
     return  arrayfire.seq(float(start),
                                   float(end),
                                   float(step))
-    
+
 def __npidx_to_afidx__(idx, dim_len):
     if(isinstance(idx, numbers.Number)):
         return idx
@@ -104,9 +104,9 @@ def __npidx_to_afidx__(idx, dim_len):
         stop = idx.stop
         step = idx.step
         # Out of bounds slices should be converted to None
-        if(stop >= dim_len):
+        if(stop is not None and stop >= dim_len):
             stop = None
-        if(start >= dim_len):
+        if(start is not None and start >= dim_len):
             start = None
 
         if(start is not None and start < 0):
@@ -122,7 +122,7 @@ def __npidx_to_afidx__(idx, dim_len):
         if  __slice_len__(ret, [dim_len], 0) <= 0:
             return None
         return ret
-            
+
     if(not isinstance(idx, afnumpy.ndarray)):
         idx = afnumpy.array(idx)
 
@@ -136,7 +136,7 @@ def __npidx_to_afidx__(idx, dim_len):
             # Transform negative indices in positive ones
             idx.d_array[idx.d_array < 0] += dim_len
     return idx.d_array
-        
+
 
 def __convert_dim__(shape, idx):
     # Convert numpy style indexing arguments to arrayfire style
@@ -153,7 +153,7 @@ def __convert_dim__(shape, idx):
     # newaxis is an alias for 'None', and 'None' can be used in place of this with the same result.
     newaxis = None
     # Check for Ellipsis. Expand it to ':' such that idx shape matches array shape, ignoring any newaxise
-    
+
     # We have to do this because we don't want to trigger comparisons
     if any(e is Ellipsis for e in idx):
         for axis in range(0, len(idx)):
@@ -196,9 +196,9 @@ def __convert_dim__(shape, idx):
     for axis in range(0,len(idx)):
         # Handle boolean arrays indexes which require a reshape
         # of the input array
-        if(isinstance(idx[axis], afnumpy.ndarray) and 
+        if(isinstance(idx[axis], afnumpy.ndarray) and
            idx[axis].ndim > 1):
-            # Flatten the extra dimensions          
+            # Flatten the extra dimensions
             extra_dims = 1
             for i in range(1,idx[axis].ndim):
                 extra_dims *= input_shape.pop(axis+1)
@@ -260,12 +260,12 @@ def __idx_ndims__(idx):
         else:
             ndims += 1
     return ndims
-    
+
 
 def __expand_dim__(shape, value, idx):
     # reshape value, adding size 1 dimensions, such that the dimensions of value match idx
     idx_shape = __index_shape__(shape, idx, False)
-    value_shape = list(value.shape)        
+    value_shape = list(value.shape)
     past_one_dims = False
     needs_reshape = False
     for i in range(0, len(idx_shape)):
@@ -282,7 +282,7 @@ def __expand_dim__(shape, value, idx):
             past_one_dims = True
 
     if(len(idx_shape) != len(value_shape)):
-        raise ValueError        
+        raise ValueError
 
     if(needs_reshape):
         return value.reshape(value_shape)

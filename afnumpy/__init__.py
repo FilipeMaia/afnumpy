@@ -1,11 +1,11 @@
 import arrayfire
 import numpy
-from multiarray import ndarray, zeros, where, array, fromstring, arange, empty
-import random
-from core import *
-from lib import *
-import linalg
-from linalg import vdot, dot
+from .multiarray import ndarray, zeros, where, array, fromstring, arange, empty
+from . import random
+from .core import *
+from .lib import *
+from . import linalg
+from .linalg import vdot, dot
 import ctypes
 
 def arrayfire_version(numeric = False):
@@ -34,13 +34,13 @@ def inplace_setitem(self, key, val):
 
         # In place assignment. Notice passing a pointer to self.arr as output
         arrayfire.util.safe_call(arrayfire.backend.get().af_assign_gen(ctypes.pointer(self.arr),
-                                                                            self.arr, ctypes.c_longlong(n_dims), 
+                                                                            self.arr, ctypes.c_longlong(n_dims),
                                                                             inds.pointer,
                                                                             other_arr))
         if del_other:
             arrayfire.safe_call(arrayfire.backend.get().af_release_array(other_arr))
     except RuntimeError as e:
-        raise IndexError(str(e))  
+        raise IndexError(str(e))
 
 
 def raw_ptr(self):

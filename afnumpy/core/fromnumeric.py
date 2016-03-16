@@ -1,8 +1,8 @@
 import numpy
 import afnumpy
 import arrayfire
-from afnumpy import private_utils as pu
-from afnumpy.decorators import *
+from .. import private_utils as pu
+from ..decorators import *
 
 def all(a, axis=None, out=None, keepdims=False):
     try:
@@ -33,7 +33,7 @@ def amin(a, axis=None, out=None, keepdims=False):
         return a.min(axis, out, keepdims)
     except AttributeError:
         return numpy.amin(a, axis, out, keepdims)
-        
+
 min = amin
 
 def amax(a, axis=None, out=None, keepdims=False):
@@ -41,7 +41,7 @@ def amax(a, axis=None, out=None, keepdims=False):
         return a.max(axis, out, keepdims)
     except AttributeError:
         return numpy.amax(a, axis, out, keepdims)
-        
+
 max = amax
 
 def prod(a, axis=None, dtype=None, out=None, keepdims=False):

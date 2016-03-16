@@ -149,12 +149,12 @@ class float64(numpy.float64):
         else:
             return afnumpy.array(x).astype(cls)
 
-class float128(numpy.float128):
+class float128(numpy.float64):
     def __new__(cls, x=0):
         if isinstance(x, afnumpy.ndarray):
             raise NotImplementedError('Arrayfire does not support 128 bit floats')
         elif isinstance(x, numbers.Number):
-            return numpy.float128(x)
+            return numpy.float64(x)
         else:
             raise NotImplementedError('Arrayfire does not support 128 bit floats')
 
@@ -189,7 +189,7 @@ float = float
 complex = complex
 bool = bool
 int = int
-long = long
+long = int
 bool8 = bool_
 
 promote_types = numpy.promote_types
