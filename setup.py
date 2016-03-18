@@ -17,5 +17,5 @@ setup (name = 'afnumpy',
        keywords = ['arrayfire', 'numpy', 'GPU'],
        description = """A GPU-ready drop-in replacement for numpy""",
        packages = ["afnumpy", "afnumpy/core", "afnumpy/lib", "afnumpy/linalg"],
-       install_requires=['arrayfire'],
+       install_requires=['arrayfire', 'numpy'],
 )
