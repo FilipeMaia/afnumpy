@@ -407,24 +407,12 @@ def test_getitem():
     iassert(a[c],b[d])
 
 
-@xfail
 def test_getitem_multi_array():
     # Multidimensional array indexing
     b = numpy.random.random((2,2))
     a = afnumpy.array(b)
     d = numpy.array([0,1])
     c = afnumpy.array(d)
-    # This will fail because while multiple arrays
-    # as indices in numpy treat the values given by
-    # the arrays as the coordinates of the hyperslabs
-    # to keep arrayfire does things differently.
-    # In arrayfire each entry of each array gets combined
-    # with all entries of all other arrays to define the coordinate
-    # In numpy each entry only gets combined with the corresponding
-    # entry in the other arrays.
-    # For example if one has [0,1],[0,1] as the two arrays for numpy
-    # this would mean that the coordinates retrieved would be [0,0], 
-    # [1,1] while for arrayfire it would be [0,0], [0,1], [1,0], [1,1].
     iassert(a[c,c], b[d,d])
 
 def test_newaxis():

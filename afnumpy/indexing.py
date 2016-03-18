@@ -188,6 +188,17 @@ def __convert_dim__(shape, idx):
             idx[axis] = afnumpy.array(idx[axis])
             arrays_in_idx.append(axis)
     if len(arrays_in_idx) > 1:
+        # This will fail because while multiple arrays
+        # as indices in numpy treat the values given by
+        # the arrays as the coordinates of the hyperslabs
+        # to keep, arrayfire does things differently.
+        # In arrayfire each entry of each array gets combined
+        # with all entries of all other arrays to define the coordinate
+        # In numpy each entry only gets combined with the corresponding
+        # entry in the other arrays.
+        # For example if one has [0,1],[0,1] as the two arrays for numpy
+        # this would mean that the coordinates retrieved would be [0,0],
+        # [1,1] while for arrayfire it would be [0,0], [0,1], [1,0], [1,1].
         raise NotImplementedError('Fancy indexing with multiple arrays is not implemented')
         # bcast_arrays = afnumpy.broadcast_arrays(*[idx[axis] for axis in arrays_in_idx])
         # for axis,bcast_array in zip(arrays_in_idx, bcast_arrays):
