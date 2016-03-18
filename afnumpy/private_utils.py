@@ -110,3 +110,7 @@ def typemap(dtype):
 
         
 
+def isintegertype(obj):
+    if isinstance(obj, numbers.Number):
+        return numpy.issubdtype(type(obj), numpy.integer)
+    return numpy.issubdtype(obj.dtype, numpy.integer)
