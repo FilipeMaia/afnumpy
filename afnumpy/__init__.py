@@ -77,3 +77,6 @@ force_eval = True
 # Check arrays for out of bounds indexing
 # Also properly handle negative indices
 safe_indexing = True
+
+# The version number of afnumpy
+__version__ = "1.0"
