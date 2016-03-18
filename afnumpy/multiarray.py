@@ -41,7 +41,9 @@ def array(object, dtype=None, copy=True, order=None, subok=False, ndmin=0):
             s = arrayfire.cast(object.d_array.copy(), pu.typemap(dtype))
         else:
             s = arrayfire.cast(object.d_array, pu.typemap(dtype))
-        return ndarray(shape, dtype=dtype, af_array=s)
+        a = ndarray(shape, dtype=dtype, af_array=s)
+        a._eval()
+        return a
     elif(isinstance(object, numpy.ndarray)):
         return ndarray(shape, dtype=dtype, buffer=numpy.ascontiguousarray(object.astype(dtype, copy=copy)))
     else:
@@ -573,9 +575,10 @@ class ndarray(object):
                 raise NotImplementedError('only casting=unsafe implemented')
             if(copy == False and order == 'K' and dtype == self.dtype):
                 return self
-#            s = self.d_array.astype(pu.typemap(dtype))
             s = arrayfire.cast(self.d_array, pu.typemap(dtype))
-            return ndarray(self.shape, dtype=dtype, af_array=s)
+            a = ndarray(self.shape, dtype=dtype, af_array=s)
+            a._eval()
+            return a
         else:
             return array(self.h_array.astype(dtype, order, casting, subok, copy), dtype=dtype)
 

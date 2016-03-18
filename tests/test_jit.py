@@ -97,3 +97,8 @@ def test_arithmetic():
     c_sum = c.sum()
     a += 1
     assert(c_sum == c.sum())
+
+def test_cast():
+    a = afnumpy.zeros(25).astype(numpy.complex64)
+    a[0] = 1. + 0.j
+    assert(a[0] == 1. + 0j)
