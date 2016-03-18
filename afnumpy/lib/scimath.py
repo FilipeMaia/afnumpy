@@ -1,8 +1,8 @@
 import numpy
 import afnumpy
 import arrayfire
-from afnumpy import private_utils as pu
-from afnumpy.decorators import *
+from .. import private_utils as pu
+from ..decorators import *
 
 @outufunc
 def arccos(x):
@@ -153,10 +153,10 @@ def conjugate(x):
     if isinstance(x, afnumpy.ndarray):
         return x.conj()
     else:
-        return numpy.conjugate(x)        
+        return numpy.conjugate(x)
 
 conj = conjugate
-        
+
 inf = numpy.inf
 Inf = numpy.Inf
 Infinity = numpy.Infinity

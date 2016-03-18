@@ -1,7 +1,7 @@
 import numpy
-from afnumpy.multiarray import ndarray
+from .multiarray import ndarray
 import arrayfire
-import private_utils as pu
+from . import private_utils as pu
 import afnumpy
 import numbers
 
@@ -73,7 +73,7 @@ def fftshift(x, axes=None):
         mylist = afnumpy.concatenate((afnumpy.arange(p2, n), afnumpy.arange(p2)))
         y = afnumpy.take(y, mylist, k)
     return y
-    
+
 def ifftshift(x, axes=None):
     tmp = afnumpy.asarray(x)
     ndim = len(tmp.shape)
