@@ -63,7 +63,7 @@ def where(condition, x=pu.dummy, y=pu.dummy):
         for i in a.shape[::-1]:
             mult = i
             idx = [s % mult] + idx
-            s /= mult
+            s //= mult
         idx = tuple(idx)
         return idx
     elif(x is not pu.dummy and y is not pu.dummy):
@@ -329,16 +329,14 @@ class ndarray(object):
         return self.shape[0]
 
     def __mod__(self, other):
-        a = self / other
-        if numpy.issubdtype(a.dtype, numpy.float):
-            out = self - afnumpy.floor(self / other) * other
-        else:
-            out = self - a * other
-        out._eval()
-        return out
+        s = self.d_array % pu.raw(other)
+        a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a._eval()
+        return a
 
     def __rmod__(self, other):
-        a = other - afnumpy.floor(other / self) * self
+        s = pu.raw(other) % self.d_array
+        a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
         a._eval()
         return a
 
@@ -764,6 +762,6 @@ class ndarray(object):
         for i in self.shape[::-1]:
             mult = i
             idx = [s % mult] + idx
-            s /= mult
+            s //= mult
         idx = tuple(idx)
         return idx
