@@ -147,6 +147,13 @@ def add(x1, x2):
 def divide(x1, x2):
     return x1/x2
 
+@outufunc
+def floor_divide(x1, x2):
+    return x1//x2
+
+@outufunc
+def true_divide(x1, x2):
+    return x1/x2
 
 @outufunc
 def conjugate(x):

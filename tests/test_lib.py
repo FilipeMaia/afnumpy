@@ -1,6 +1,7 @@
 import afnumpy
 import numpy
 from asserts import *
+import sys
 
 def test_copy():
     b = numpy.random.random((2,3))
@@ -228,11 +229,40 @@ def test_divide():
     b = numpy.array(a)
     fassert(afnumpy.divide(a,a), numpy.divide(b,b))
     a = afnumpy.array(2)
-    ao = afnumpy.array(0)
     b = numpy.array(a)
-    bo = numpy.array(0)
+    if sys.version_info >= (3, 0):
+        ao = afnumpy.array(0.)
+        bo = numpy.array(0.)
+    else:
+        ao = afnumpy.array(0)
+        bo = numpy.array(0)
     fassert(afnumpy.divide(a,a), numpy.divide(b,b))
     fassert(afnumpy.divide(a,a, out=ao), numpy.divide(b,b, out = bo))
+    fassert(ao, bo)
+
+
+def test_true_divide():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.true_divide(a,a), numpy.true_divide(b,b))
+    a = afnumpy.array(2)
+    b = numpy.array(a)
+    ao = afnumpy.array(0.)
+    bo = numpy.array(0.)
+    fassert(afnumpy.true_divide(a,a), numpy.true_divide(b,b))
+    fassert(afnumpy.true_divide(a,a, out=ao), numpy.true_divide(b,b, out = bo))
+    fassert(ao, bo)
+
+def test_floor_divide():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.floor_divide(a,a), numpy.floor_divide(b,b))
+    a = afnumpy.array(2)
+    b = numpy.array(a)
+    ao = afnumpy.array(0)
+    bo = numpy.array(0)
+    fassert(afnumpy.floor_divide(a,a), numpy.floor_divide(b,b))
+    fassert(afnumpy.floor_divide(a,a, out=ao), numpy.floor_divide(b,b, out = bo))
     fassert(ao, bo)
 
 def test_angle():

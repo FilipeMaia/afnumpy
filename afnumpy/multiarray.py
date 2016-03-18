@@ -197,14 +197,44 @@ class ndarray(object):
         a._eval()
         return a
 
+    __floordiv__ = __div__
+
+    @ufunc
+    def __truediv__(self, other):
+        # Check if we need to cast input to floating point to get a true division
+        if(pu.isintegertype(self) and pu.isintegertype(other)):
+            s = self.astype(numpy.float32).d_array / pu.raw(other)
+        else:
+            s = self.d_array / pu.raw(other)
+        a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a._eval()
+        return a
+
     @iufunc
     def __idiv__(self, other):
-        afnumpy.divide(self, pu.raw(other), out=self)
+        afnumpy.floor_divide(self, pu.raw(other), out=self)
+        self._eval()
+        return self
+
+    @iufunc
+    def __itruediv__(self, other):
+        afnumpy.true_divide(self, pu.raw(other), out=self)
         self._eval()
         return self
 
     def __rdiv__(self, other):
         s = pu.raw(other) / self.d_array
+        a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+        a._eval()
+        return a
+
+
+    def __rtruediv__(self, other):
+        # Check if we need to cast input to floating point to get a true division
+        if(pu.isintegertype(self) and pu.isintegertype(other)):
+            s = pu.raw(other) / self.astype(numpy.float32).d_array
+        else:
+            s = pu.raw(other) / self.d_array
         a = ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
         a._eval()
         return a
