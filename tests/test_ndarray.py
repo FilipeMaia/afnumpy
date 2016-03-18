@@ -732,6 +732,8 @@ def test_ndarray_strides_xfail():
     # The following case fails as arrayfire always drops
     # leading dimensions of size 1 and so the stride
     # information is missing
+    a = afnumpy.random.random((4,3))
+    b = numpy.array(a)
     iassert(a[3:,:2].strides, b[3:,:2].strides)
 
 def test_ndarray_copy():
