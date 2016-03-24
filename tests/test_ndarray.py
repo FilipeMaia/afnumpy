@@ -140,6 +140,7 @@ def test_binary_arithmetic():
 
     fassert(a/3.0, b/3.0)
     fassert(3.0/a, 3.0/b)
+    fassert(3/a, 3/b)
 
     fassert(a**3.0, b**3.0)
     fassert(3.0**a, 3.0**b)
