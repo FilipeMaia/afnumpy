@@ -147,6 +147,7 @@ def test_binary_arithmetic():
     fassert(a%3.0, b%3.0)
     fassert(3.0%a, 3.0%b)
 
+    assert(type(numpy.float32(3)+a) == afnumpy.multiarray.ndarray)
 
 def test_broadcast_binary_arithmetic():
     a = afnumpy.random.rand(2,3)

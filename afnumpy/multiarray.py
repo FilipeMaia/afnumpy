@@ -86,6 +86,8 @@ def where(condition, x=pu.dummy, y=pu.dummy):
 
 
 class ndarray(object):
+    # Ensures that our functions are called before numpy ones
+    __array_priority__ = 20
     def __init__(self, shape, dtype=float, buffer=None, offset=0, strides=None, order=None, af_array=None):
         self._base = None
         if(offset != 0):
