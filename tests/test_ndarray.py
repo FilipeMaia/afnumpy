@@ -261,6 +261,7 @@ def test_comparisons():
     iassert(a1 != a2, b1 != b2)
     iassert(a1 != 0.5, b1 != 0.5)
     iassert(0.5 != a1, 0.5 != b1)
+    iassert(None != a1, None != b1)
 
 def test_ndarray_all():    
     b = numpy.random.randint(0,2,3).astype('bool')
@@ -703,6 +704,10 @@ def test_ndarray_imag():
     y.imag[:] = 0
     x.imag[:] = 0
     fassert(y, x)
+    x = np.sqrt([1.0, 0.0])
+    y = af.array(x)
+    fassert(y.imag, x.imag)
+
 
 def test_ndarray_strides():
     a = afnumpy.random.random((4,3))
