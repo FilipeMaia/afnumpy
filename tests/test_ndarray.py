@@ -94,8 +94,14 @@ def test_array():
     a = afnumpy.array(b)
     iassert(a, b)
 
+    # Check using arrayfire arrays
+    a = afnumpy.arrayfire.randu(10,5)
+    b = afnumpy.array(a, copy=False)
+    c = numpy.array(a)
+    assert(a.device_ptr() == b.d_array.device_ptr())
+    iassert(b,c.T)
 
-# For some strange reason this fails in Travis
+
 def test_binary_arithmetic():
     a = afnumpy.random.rand(3)
     b = numpy.array(a)

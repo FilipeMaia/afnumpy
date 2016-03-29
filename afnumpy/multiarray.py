@@ -28,19 +28,34 @@ def array(object, dtype=None, copy=True, order=None, subok=False, ndmin=0):
 
     # If it's not a numpy or afnumpy array first create a numpy array from it
     if(not isinstance(object, ndarray) and
-       not isinstance(object, numpy.ndarray)):
+       not isinstance(object, numpy.ndarray) and
+       not isinstance(object, arrayfire.array.Array)):
         object = numpy.array(object, dtype=dtype, copy=copy, order=order, subok=subok, ndmin=ndmin)
 
-    shape = object.shape
+    if isinstance(object, arrayfire.array.Array):
+        shape = pu.c2f(object.dims())
+    else:
+        shape = object.shape
     while(ndmin > len(shape)):
         shape = (1,)+shape
     if(dtype is None):
-        dtype = object.dtype
+        if isinstance(object, arrayfire.array.Array):
+            dtype = pu.typemap(object.dtype())
+        else:
+            dtype = object.dtype
     if(isinstance(object, ndarray)):
         if(copy):
             s = arrayfire.cast(object.d_array.copy(), pu.typemap(dtype))
         else:
             s = arrayfire.cast(object.d_array, pu.typemap(dtype))
+        a = ndarray(shape, dtype=dtype, af_array=s)
+        a._eval()
+        return a
+    elif(isinstance(object, arrayfire.array.Array)):
+        if(copy):
+            s = arrayfire.cast(object.copy(), pu.typemap(dtype))
+        else:
+            s = arrayfire.cast(object, pu.typemap(dtype))
         a = ndarray(shape, dtype=dtype, af_array=s)
         a._eval()
         return a
