@@ -740,3 +740,10 @@ def test_ndarray_nonzero():
     b = numpy.random.random((3,3,3)) > 0.5
     a = afnumpy.array(b)    
     iassert(a.nonzero(), b.nonzero())
+
+def test_ndarray_constructor():
+    a = afnumpy.arrayfire.randu(3,2)
+    with pytest.raises(ValueError):
+        b = afnumpy.ndarray(a.dims(), dtype='f', af_array = a)
+    # This one should be fine
+    b = afnumpy.ndarray(a.dims()[::-1], dtype='f', af_array = a)

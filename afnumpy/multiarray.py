@@ -109,6 +109,8 @@ class ndarray(object):
         if(s_a.size <= 4):
             if(af_array is not None):
                 self.d_array = af_array
+                if(not numpy.array_equal(s_a, af_array.dims())):
+                    raise ValueError('shape argument not consistent with the dimensions of the af_array given')
             else:
                 out_arr = ctypes.c_void_p(0)
                 if(buffer is not None):
