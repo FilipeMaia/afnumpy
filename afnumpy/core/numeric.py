@@ -34,7 +34,7 @@ def roll(a, shift, axis=None):
         s = arrayfire.shift(a.d_array, 0, 0, 0, shift)
     else:
         raise NotImplementedError
-    return afnumpy.ndarray(shape, dtype=a.dtype, af_array=s)
+    return afnumpy.ndarray(a.shape, dtype=a.dtype, af_array=s).reshape(shape)
 
 def rollaxis(a, axis, start=0):
     n = a.ndim
