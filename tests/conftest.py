@@ -8,4 +8,4 @@ backends = arrayfire.library.get_available_backends()
 # This will set the different backends before each test is executed
 @pytest.fixture(scope="function", params=backends, autouse=True)
 def set_backend(request):
-    arrayfire.library.set_backend(request.param, unsafe=True)
+    arrayfire.library.set_backend(request.param)
