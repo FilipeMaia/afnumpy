@@ -126,16 +126,12 @@ class ndarray(object):
                 self.d_array = af_array
                 # Remove leading and trailing dimensions of size 1
                 af_dims = list(af_array.dims())
-                while len(af_dims) and af_dims[0] == 1:
-                    af_dims.pop(0)
                 while len(af_dims) and af_dims[-1] == 1:
                     af_dims.pop()
                 if s_a.shape == ():
                     arg_dims = [1]
                 else:
                     arg_dims = list(s_a)
-                while len(arg_dims) and arg_dims[0] == 1:
-                    arg_dims.pop(0)
                 while len(arg_dims) and arg_dims[-1] == 1:
                     arg_dims.pop()
                 if af_dims != arg_dims:
