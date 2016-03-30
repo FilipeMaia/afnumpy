@@ -32,10 +32,7 @@ except AttributeError:
 dummy = object()
 
 def af_shape(af_array):
-    shape = ()
-    for i in range(0,af_array.numdims()):
-        shape = (af_array.dims()[i],)+shape
-    return shape
+    return tuple(af_array.dims()[::-1])
 
 def raw(x):
     if(isinstance(x,afnumpy.ndarray)):
