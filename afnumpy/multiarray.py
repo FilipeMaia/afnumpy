@@ -159,7 +159,7 @@ class ndarray(object):
                 self.d_array.arr = out_arr
         else:
             raise NotImplementedError('Only up to 4 dimensions are supported')
-        self.h_array = numpy.ndarray(shape=shape,dtype=dtype,offset=offset,strides=strides,order=order)
+        self.h_array = numpy.empty(shape=shape,dtype=dtype,order=order)
 
         # Check if array size matches the af_array size
         # This is necessary as certain operations that cause reduction in

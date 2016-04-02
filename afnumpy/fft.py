@@ -61,18 +61,18 @@ def __fftn__(a, s, axes, direction='forward'):
 
 def fftshift(x, axes=None):
     tmp = afnumpy.asarray(x)
-    ndim = len(tmp.shape)
+    ndim = len(x.shape)
     if axes is None:
         axes = list(range(ndim))
     elif isinstance(axes, numbers.Integral):
-        axes = (axes,)
-    y = tmp
+        axes = [axes]
+    shift = [0]*ndim
     for k in axes:
-        n = tmp.shape[k]
-        p2 = (n+1)//2
-        mylist = afnumpy.concatenate((afnumpy.arange(p2, n), afnumpy.arange(p2)))
-        y = afnumpy.take(y, mylist, k)
-    return y
+        n = x.shape[k]
+        shift[k] = n//2
+    s = arrayfire.data.shift(x.d_array, *pu.c2f(shift))
+    return ndarray(pu.af_shape(s), dtype=pu.typemap(s.dtype()), af_array=s)
+
 
 def ifftshift(x, axes=None):
     tmp = afnumpy.asarray(x)
@@ -80,11 +80,10 @@ def ifftshift(x, axes=None):
     if axes is None:
         axes = list(range(ndim))
     elif isinstance(axes, numbers.Integral):
-        axes = (axes,)
-    y = tmp
+        axes = [axes]
+    shift = [0]*ndim
     for k in axes:
         n = tmp.shape[k]
-        p2 = n-(n+1)//2
-        mylist = afnumpy.concatenate((afnumpy.arange(p2, n), afnumpy.arange(p2)))
-        y = afnumpy.take(y, mylist, k)
-    return y
+        shift[k] = (n+1)//2
+    s = arrayfire.data.shift(tmp.d_array, *pu.c2f(shift))
+    return ndarray(pu.af_shape(s), dtype=pu.typemap(s.dtype()), af_array=s)

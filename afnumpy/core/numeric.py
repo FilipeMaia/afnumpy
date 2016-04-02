@@ -89,6 +89,10 @@ def abs(x, out=None):
     return a
 
 def asarray(a, dtype=None, order=None):
+    if(isinstance(a, afnumpy.ndarray) and
+       (dtype is None or dtype == a.dtype)):
+        # special case for performance
+        return a
     return afnumpy.array(a, dtype, copy=False, order=order)
 
 def ascontiguousarray(a, dtype=None):
