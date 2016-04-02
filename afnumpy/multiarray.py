@@ -103,7 +103,7 @@ def where(condition, x=pu.dummy, y=pu.dummy):
 class ndarray(object):
     # Ensures that our functions are called before numpy ones
     __array_priority__ = 20
-    def __init__(self, shape, dtype=float, buffer=None, offset=0, strides=None, order=None, af_array=None):
+    def __init__(self, shape, dtype=float, buffer=None, offset=0, strides=None, order=None, af_array=None, buffer_type='python'):
         self._base = None
         if(offset != 0):
             raise NotImplementedError('offset must be 0')
@@ -139,15 +139,27 @@ class ndarray(object):
             else:
                 out_arr = ctypes.c_void_p(0)
                 if(buffer is not None):
-                    arrayfire.backend.get().af_create_array(ctypes.pointer(out_arr), ctypes.c_void_p(buffer.ctypes.data),
-                                                            s_a.size, ctypes.c_void_p(s_a.ctypes.data), pu.typemap(dtype).value)
+                    if buffer_type == 'python':
+                        # normal python buffer. We copy the data to arrayfire
+                        ptr = numpy.frombuffer(buffer, dtype='int8').ctypes.data
+                        arrayfire.backend.get().af_create_array(ctypes.pointer(out_arr), ctypes.c_void_p(ptr),
+                                                                s_a.size, ctypes.c_void_p(s_a.ctypes.data), pu.typemap(dtype).value)
+                    elif buffer_type == afnumpy.arrayfire.get_active_backend():
+                        # in this case buffer is a device memory address. We create the array without copying
+                        ptr = buffer
+                        arrayfire.backend.get().af_device_array(ctypes.pointer(out_arr), ctypes.c_void_p(ptr),
+                                                                s_a.size, ctypes.c_void_p(s_a.ctypes.data), pu.typemap(dtype).value)
+                        # Do not release the memory on destruction
+                        arrayfire.backend.get().af_retain_array(ctypes.pointer(out_arr),out_arr)
+                    else:
+                        raise ValueError("buffer_type must match afnumpy.arrayfire.get_active_backend() or be 'python'")
                 else:
                     arrayfire.backend.get().af_create_handle(ctypes.pointer(out_arr), s_a.size, ctypes.c_void_p(s_a.ctypes.data), pu.typemap(dtype).value)
                 self.d_array = arrayfire.Array()
                 self.d_array.arr = out_arr
         else:
             raise NotImplementedError('Only up to 4 dimensions are supported')
-        self.h_array = numpy.ndarray(shape,dtype,buffer,offset,strides,order)
+        self.h_array = numpy.ndarray(shape=shape,dtype=dtype,offset=offset,strides=strides,order=order)
 
         # Check if array size matches the af_array size
         # This is necessary as certain operations that cause reduction in

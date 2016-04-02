@@ -753,3 +753,26 @@ def test_ndarray_constructor():
         b = afnumpy.ndarray(a.dims(), dtype='f', af_array = a)
     # This one should be fine
     b = afnumpy.ndarray(a.dims()[::-1], dtype='f', af_array = a)
+
+    c = afnumpy.ndarray(a.dims()[::-1], dtype='f', buffer=a.raw_ptr(),
+                        buffer_type=afnumpy.arrayfire.get_active_backend())
+
+    d = afnumpy.ndarray(a.dims()[::-1], dtype='f', buffer=a.raw_ptr(),
+                        buffer_type=afnumpy.arrayfire.get_active_backend())
+    # Make sure they share the same underlying data
+    d[0,0] = 3
+    assert d[0,0] == c[0,0]
+
+
+    if afnumpy.arrayfire.get_active_backend() == 'cpu':
+        c = numpy.ones((3,2))
+        d = afnumpy.ndarray(c.shape, dtype=c.dtype, buffer=c.ctypes.data,
+                            buffer_type=afnumpy.arrayfire.get_active_backend())
+        # Make sure they share the same underlying data
+        d[0,0] = -1
+        assert d[0,0] == c[0,0]
+
+        with pytest.raises(ValueError):
+            # Check for wrong backend
+            b = afnumpy.ndarray(c.shape, dtype=c.dtype, buffer=c.ctypes.data,
+                                buffer_type='cuda')
