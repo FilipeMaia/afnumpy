@@ -49,6 +49,7 @@ install:
   - pip install numpy
   - pip install ipython
   - pip install pytest-cov
+  - pip install pytest-benchmark
   - cd ${HOME}/build/FilipeMaia/afnumpy
   - python setup.py install
 
@@ -58,3 +59,4 @@ after_success:
 script:
   - cd ${HOME}/build/FilipeMaia/afnumpy
   - coverage run --source afnumpy -m py.test  -v --color=yes --showlocals --durations=10
+  - python -m pytest --benchmark-only --benchmark-compare --benchmark-autosave  --benchmark-group-by=fullname
