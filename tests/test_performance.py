@@ -21,4 +21,15 @@ def test_ifftshift(benchmark):
 def test_array_nocopy(benchmark):
     a = afnumpy.ones((2048,2048),dtype=numpy.complex64)
     benchmark(afnumpy.array, a, copy=False)
+
+def test_array_copy(benchmark):
+    a = afnumpy.ones((2048,2048),dtype=numpy.complex64)
+    benchmark(afnumpy.array, a, copy=True)
+
+def test_add(benchmark):
+    a = afnumpy.ones((2048,2048),dtype=numpy.complex64)
+    b = afnumpy.ones((2048,2048),dtype=numpy.complex64)
+    benchmark(afnumpy.add, a, b)
+
+
         
