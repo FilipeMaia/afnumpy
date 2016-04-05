@@ -7,6 +7,13 @@ from asserts import *
 import afnumpy as af
 import numpy as np
 
+def test_af_cast():
+    a = afnumpy.arrayfire.randu(2,3)
+    # Check that device_ptr does not cause a copy
+    assert a.device_ptr() == a.device_ptr()
+    # Check that cast does not cause a copy
+    assert arrayfire.cast(a, a.dtype()).device_ptr() == a.device_ptr()
+
 def test_cast():
     a = afnumpy.random.rand(2,3)
     # Check that device_ptr does not cause a copy
