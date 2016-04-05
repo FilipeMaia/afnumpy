@@ -608,19 +608,16 @@ class ndarray(object):
         return arrayfire.min(s, axis)
 
     def astype(self, dtype, order='K', casting='unsafe', subok=True, copy=True):
-        if(self.d_array is not None):
-            if(order != 'K'):
-                raise NotImplementedError('only order=K implemented')
-            if(casting != 'unsafe'):
-                raise NotImplementedError('only casting=unsafe implemented')
-            if(copy == False and order == 'K' and dtype == self.dtype):
-                return self
-            s = arrayfire.cast(self.d_array, pu.typemap(dtype))
-            a = ndarray(self.shape, dtype=dtype, af_array=s)
-            a._eval()
-            return a
-        else:
-            return array(self.h_array.astype(dtype, order, casting, subok, copy), dtype=dtype)
+        if(order != 'K'):
+            raise NotImplementedError('only order=K implemented')
+        if(casting != 'unsafe'):
+            raise NotImplementedError('only casting=unsafe implemented')
+        if(copy == False and order == 'K' and dtype == self.dtype):
+            return self
+        s = arrayfire.cast(self.d_array, pu.typemap(dtype))
+        a = ndarray(self.shape, dtype=dtype, af_array=s)
+        a._eval()
+        return a
 
 
     def round(self, decimals=0, out=None):
@@ -682,11 +679,8 @@ class ndarray(object):
     def conj(self):
         if not numpy.issubdtype(self.dtype, numpy.complex):
             return afnumpy.copy(self)
-        if(self.d_array is not None):
-            s = arrayfire.conjg(self.d_array)
-            return ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
-        else:
-            return self.h_array.conj()
+        s = arrayfire.conjg(self.d_array)
+        return ndarray(self.shape, dtype=pu.typemap(s.dtype()), af_array=s)
 
     # Convert to float
     def __float__(self):
