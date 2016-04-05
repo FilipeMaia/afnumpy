@@ -28,6 +28,7 @@ addons:
       - g++-4.8
       - cmake
       - gdb
+      - apport
 
 before_install:
   - pip install codecov
@@ -60,12 +61,11 @@ after_success:
 before_script:
  # Set the core file limit to unlimited so a core file is generated upon crash
  - ulimit -c unlimited -S
+ - ulimit -c
 
 script:
   - cd ${HOME}/build/FilipeMaia/afnumpy
   - coverage run --source afnumpy -m py.test --benchmark-skip  -v --color=yes --showlocals --durations=10
   - python -m pytest -v --benchmark-only --benchmark-compare --benchmark-autosave  --benchmark-group-by=fullname
+  - for i in $(find ./ -maxdepth 1 -name 'core*' -print); do gdb python core* -ex "thread apply all bt" -ex "set pagination 0" -batch; done;
 
-after_failure:
-  - COREFILE=$(find . -maxdepth 1 -name "core*" | head -n 1) # find core file
-  - if [[ -f "$COREFILE" ]]; then gdb -c "$COREFILE" python -ex "thread apply all bt" -ex "set pagination 0" -batch; fi
