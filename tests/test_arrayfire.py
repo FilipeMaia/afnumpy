@@ -9,6 +9,7 @@ import numpy as np
 
 def test_cast():
     a = afnumpy.random.rand(2,3)
+    afnumpy.arrayfire.sync()
     # Check that device_ptr does not cause a copy
     assert a.d_array.device_ptr() == a.d_array.device_ptr()
     # Check that cast does not cause a copy
