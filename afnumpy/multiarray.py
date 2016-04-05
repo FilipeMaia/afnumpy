@@ -158,7 +158,6 @@ class ndarray(object):
                 arrayfire.backend.get().af_create_handle(ctypes.pointer(out_arr), s_a.size, ctypes.c_void_p(s_a.ctypes.data), pu.typemap(dtype).value)
             self.d_array = arrayfire.Array()
             self.d_array.arr = out_arr
-        self.h_array = numpy.empty(shape=shape,dtype=dtype,order=order)
 
         # Check if array size matches the af_array size
         # This is necessary as certain operations that cause reduction in
@@ -168,9 +167,10 @@ class ndarray(object):
 
 
     def __repr__(self):
+        h_array = numpy.empty(shape=self.shape, dtype=self.dtype)
         if self.size:
-            arrayfire.backend.get().af_get_data_ptr(ctypes.c_void_p(self.h_array.ctypes.data), self.d_array.arr)
-        return self.h_array.__repr__()
+            arrayfire.backend.get().af_get_data_ptr(ctypes.c_void_p(h_array.ctypes.data), self.d_array.arr)
+        return h_array.__repr__()
 
     def __str__(self):
         return self.__repr__()
@@ -528,12 +528,13 @@ class ndarray(object):
             pass
 
     def __array__(self, dtype=None):
+        h_array = numpy.empty(shape=self.shape,dtype=self.dtype)
         if self.size:
-            arrayfire.backend.get().af_get_data_ptr(ctypes.c_void_p(self.h_array.ctypes.data), self.d_array.arr)
+            arrayfire.backend.get().af_get_data_ptr(ctypes.c_void_p(h_array.ctypes.data), self.d_array.arr)
         if dtype is None:
-            return numpy.copy(self.h_array)
+            return h_array
         else:
-            return numpy.copy(self.h_array).astype(dtype)
+            return h_array.astype(dtype)
 
     def transpose(self, *axes):
         if(self.ndim == 1):
@@ -593,7 +594,6 @@ class ndarray(object):
                                                af_shape.size, ctypes.c_void_p(af_shape.ctypes.data))
             self.d_array = s
 
-        self.h_array.shape = newshape
         self._shape = tuple(newshape)
 
     def flatten(self):
