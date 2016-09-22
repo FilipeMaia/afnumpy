@@ -21,4 +21,27 @@ def test_vdot():
     b = numpy.random.random(3)+numpy.random.random(3)*1.0j
     a = afnumpy.array(b)
     fassert(afnumpy.vdot(a,a), numpy.vdot(b,b))
+    b = numpy.random.random((3,3))+numpy.random.random((3,3))*1.0j
+    a = afnumpy.array(b)
+    fassert(afnumpy.vdot(a,a), numpy.vdot(b,b))
+    b = numpy.random.random((3,3,3))+numpy.random.random((3,3,3))*1.0j
+    a = afnumpy.array(b)
+    fassert(afnumpy.vdot(a,a), numpy.vdot(b,b))
+
+def test_dot_1D():    
+    b = numpy.random.random(3)+numpy.random.random(3)*1.0j
+    a = afnumpy.array(b)
+    fassert(afnumpy.dot(a,a), numpy.dot(b,b))
+
+@xfail
+def test_dot_2D():    
+    b = numpy.random.random((3,3))+numpy.random.random((3,3))*1.0j
+    a = afnumpy.array(b)
+    fassert(afnumpy.dot(a,a), numpy.dot(b,b))
+
+@xfail
+def test_dot_3D():    
+    b = numpy.random.random((3,3,3))+numpy.random.random((3,3,3))*1.0j
+    a = afnumpy.array(b)
+    fassert(afnumpy.dot(a,a), numpy.dot(b,b))
 

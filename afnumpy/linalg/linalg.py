@@ -11,6 +11,7 @@ def vdot(a, b):
     s = arrayfire.dot(arrayfire.conjg(a.flat.d_array), b.flat.d_array)
     return afnumpy.ndarray((), dtype=a.dtype, af_array=s)[()]
 
+# TODO: Implement multidimensional dot
 def dot(a, b):
     s = arrayfire.dot((a.flat.d_array), b.flat.d_array)
     return afnumpy.ndarray((), dtype=a.dtype, af_array=s)[()]
