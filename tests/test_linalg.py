@@ -33,15 +33,25 @@ def test_dot_1D():
     a = afnumpy.array(b)
     fassert(afnumpy.dot(a,a), numpy.dot(b,b))
 
-@xfail
+    a = numpy.random.random(3)+numpy.random.random(3)*1.0j
+    b = numpy.random.random(3)
+    fassert(afnumpy.dot(afnumpy.array(a),afnumpy.array(b)), numpy.dot(a,b))
+
 def test_dot_2D():    
     b = numpy.random.random((3,3))+numpy.random.random((3,3))*1.0j
     a = afnumpy.array(b)
     fassert(afnumpy.dot(a,a), numpy.dot(b,b))
 
-@xfail
 def test_dot_3D():    
     b = numpy.random.random((3,3,3))+numpy.random.random((3,3,3))*1.0j
     a = afnumpy.array(b)
     fassert(afnumpy.dot(a,a), numpy.dot(b,b))
+
+    a = numpy.random.random((3,2,4))+numpy.random.random((3,2,4))*1.0j
+    b = numpy.random.random((3,4,1))
+    fassert(afnumpy.dot(afnumpy.array(a),afnumpy.array(b)), numpy.dot(a,b))
+
+    b = numpy.random.random((3,3,3))
+    a = numpy.random.random((3,3))
+    fassert(afnumpy.dot(afnumpy.array(a),afnumpy.array(b)), numpy.dot(a,b))
 
