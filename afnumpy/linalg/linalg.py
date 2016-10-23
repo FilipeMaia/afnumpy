@@ -5,6 +5,7 @@ from numpy.core import complexfloating, Inf, longdouble
 from afnumpy import asarray, sqrt, abs
 from afnumpy.lib import asfarray
 from .. import private_utils as pu
+from ..decorators import *
 
 def isComplexType(t):
     return issubclass(t, complexfloating)
@@ -13,14 +14,14 @@ def vdot(a, b):
     s = arrayfire.dot(arrayfire.conjg(a.flat.d_array), b.flat.d_array)
     return afnumpy.ndarray((), dtype=a.dtype, af_array=s)[()]
 
-# TODO: Implement multidimensional dot
+@outufunc
 def dot(a, b):
     # Arrayfire requires that the types match for dot and matmul
     res_dtype = numpy.result_type(a,b)
     a = a.astype(res_dtype, copy=False)
     b = b.astype(res_dtype, copy=False)
     if a.ndim == 1 and b.ndim == 1:
-        s = arrayfire.dot((a.flat.d_array), b.flat.d_array)
+        s = arrayfire.dot(a.d_array, b.d_array)
         return afnumpy.ndarray((), dtype=a.dtype, af_array=s)[()]
 
     a_shape = a.shape
@@ -33,7 +34,9 @@ def dot(a, b):
     if a.ndim == 2 and b.ndim == 2:
         # Notice the order of the arguments to matmul. It's not a bug!
         s = arrayfire.matmul(b.d_array, a.d_array)
-        return afnumpy.ndarray(pu.af_shape(s), dtype=pu.typemap(s.dtype()), af_array=s)
+        return afnumpy.ndarray(pu.af_shape(s), dtype=pu.typemap(s.dtype()), 
+                               af_array=s)
+
     # Multidimensional dot is done with loops    
 
     # Calculate the shape of the result array
@@ -42,9 +45,6 @@ def dot(a, b):
     b_shape = list(b_shape)
     b_shape.pop(-2)
     res_shape = a_shape + b_shape
-
-    # Initialize the output array
-    res = afnumpy.empty(res_shape, dtype=res_dtype)
 
     # Make sure the arrays are at least 3D
     if a.ndim < 3:
