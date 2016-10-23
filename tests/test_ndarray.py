@@ -267,7 +267,7 @@ def test_comparisons():
     iassert(a1 != a2, b1 != b2)
     iassert(a1 != 0.5, b1 != 0.5)
     iassert(0.5 != a1, 0.5 != b1)
-    iassert(None != a1, None != b1)
+    iassert(a1 is not None, b1 is not None)
 
 def test_ndarray_all():    
     b = numpy.random.randint(0,2,3).astype('bool')
