@@ -150,8 +150,8 @@ class ndarray(object):
                     ptr = buffer
                     arrayfire.backend.get().af_device_array(ctypes.pointer(out_arr), ctypes.c_void_p(ptr),
                                                             s_a.size, ctypes.c_void_p(s_a.ctypes.data), pu.typemap(dtype).value)
-                    # Do not release the memory on destruction
-                    arrayfire.backend.get().af_retain_array(ctypes.pointer(out_arr),out_arr)
+                    # Do not release the memory on destruction (Temp fix)
+                    # arrayfire.backend.get().af_retain_array(ctypes.pointer(out_arr),out_arr)
                 else:
                     raise ValueError("buffer_type must match afnumpy.arrayfire.get_active_backend() or be 'python'")
             else:
