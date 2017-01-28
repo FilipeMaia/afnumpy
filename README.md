@@ -8,4 +8,4 @@ Aims to be a GPU-ready drop-in replacement for numpy. Uses [ArrayFire](http://gi
 ### How to cite
 Please cite afnumpy as:
 
-Maia, F.R.N.C., afnumpy: A GPU-ready drop-in replacement for NumPy, https://doi.org/10.5281/zenodo.262201 (2016).
+Filipe R. N. C. Maia. (2017). afnumpy: A GPU-ready drop-in replacement for NumPy, http://doi.org/10.5281/zenodo.262201
