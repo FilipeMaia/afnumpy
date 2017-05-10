@@ -2,6 +2,8 @@ import afnumpy
 import numpy
 from asserts import *
 import sys
+import pytest
+xfail = pytest.mark.xfail
 
 def test_copy():
     b = numpy.random.random((2,3))
@@ -284,3 +286,17 @@ def test_conj():
     a = afnumpy.random.random((2,3))+afnumpy.random.random((2,3))*1.0j
     b = numpy.array(a)
     fassert(afnumpy.conj(a), numpy.conj(b))
+
+def test_percentile():
+    a = numpy.array([[10, 7, 4], [3, 2, 1]], dtype=numpy.float32)
+    b = afnumpy.array(a)
+    fassert(afnumpy.percentile(b, 50), numpy.percentile(a, 50))
+    fassert(afnumpy.percentile(b, 50, axis=1), numpy.percentile(a, 50, axis=1))
+    fassert(afnumpy.percentile(b, 50, axis=1, keepdims=True), numpy.percentile(a, 50, axis=1, keepdims=True))
+
+@xfail
+def test_percentile():
+    a = numpy.array([[10, 7, 4], [3, 2, 1]], dtype=numpy.float32)
+    b = afnumpy.array(a)
+    # Again problems with sorting not being supported on the slow axis
+    fassert(afnumpy.percentile(b, 50, axis=0), numpy.percentile(a, 50, axis=0))
