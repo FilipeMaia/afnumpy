@@ -737,10 +737,15 @@ class ndarray(object):
             print( "argsort 'kind' argument ignored" )
         if order is not None:
             raise ValueError('order argument is not supported')
+        if(axis is None):            
+            input = self.flatten()
+            axis = 0
+        else:
+            input = self
         if(axis < 0):
             axis = self.ndim+axis
-        val, idx = arrayfire.sort_index(self.d_array, pu.c2f(self.shape, axis))
-        return ndarray(self.shape, dtype=pu.typemap(idx.dtype()), af_array=idx)
+        val, idx = arrayfire.sort_index(input.d_array, pu.c2f(input.shape, axis))
+        return ndarray(input.shape, dtype=pu.typemap(idx.dtype()), af_array=idx)
 
     @property
     def base(self):

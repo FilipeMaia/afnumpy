@@ -222,6 +222,7 @@ def test_argsort():
     y = af.array(x)
     iassert(af.argsort(y), np.argsort(x))
     iassert(af.argsort(y, axis=1), np.argsort(x, axis=1))
+    iassert(af.argsort(y, axis=None), np.argsort(x, axis=None))
     # Arrayfire at the moment can only sort along the last dimension
     # iassert(af.argsort(y, axis=0), np.argsort(x, axis=0))
     
