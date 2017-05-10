@@ -228,6 +228,13 @@ def test_argsort():
     # Arrayfire at the moment can only sort along the last dimension
     # iassert(af.argsort(y, axis=0), np.argsort(x, axis=0))
 
+@xfail
+def test_argsort_xfail():
+    x = np.array([[0, 3], [2, 2]], dtype=float)    
+    y = af.array(x)
+    # Arrayfire at the moment can only sort along the last dimension
+    iassert(af.argsort(y, axis=0), np.argsort(x, axis=0))
+
 
 def test_sort():
     # Sort does not support 64bit int yet
