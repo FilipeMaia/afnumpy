@@ -3,6 +3,8 @@ import afnumpy as af
 import numpy
 import numpy as np
 from asserts import *
+import pytest
+xfail = pytest.mark.xfail
 
 def test_floor():
     b = numpy.random.random((2,3))
@@ -225,6 +227,42 @@ def test_argsort():
     iassert(af.argsort(y, axis=None), np.argsort(x, axis=None))
     # Arrayfire at the moment can only sort along the last dimension
     # iassert(af.argsort(y, axis=0), np.argsort(x, axis=0))
+
+
+def test_sort():
+    # Sort does not support 64bit int yet
+    x = np.array([3, 1, 2], dtype=np.int32)
+    y = af.array(x)
+    iassert(af.sort(y), np.sort(x))
+    x.sort()
+    y.sort()
+    iassert(y,x)
+    x = np.array([[0, 3], [2, 2]], dtype=float)    
+    y = af.array(x)
+    iassert(af.sort(y), np.sort(x))
+    iassert(af.sort(y, axis=1), np.sort(x, axis=1))
+    iassert(af.sort(y, axis=None), np.sort(x, axis=None))
+
+    x.sort()
+    y.sort()
+    iassert(y,x)
+
+    x = np.array([[0, 3], [2, 2]], dtype=float)    
+    y = af.array(x)
+    x.sort(axis=1)
+    y.sort(axis=1)
+    iassert(y,x)
+    
+    x = np.array([[0, 3], [2, 2]], dtype=float)    
+    y = af.array(x)
+    iassert(af.sort(y,axis=None),np.sort(x,axis=None))
+
+@xfail
+def test_sort_xfail():
+    x = np.array([[0, 3], [2, 2]], dtype=float)    
+    y = af.array(x)
+    # Arrayfire at the moment can only sort along the last dimension
+    iassert(af.argsort(y, axis=0), np.argsort(x, axis=0))
     
 def test_isnan():
     b = 1.0*numpy.random.randint(0,2,(2,3))

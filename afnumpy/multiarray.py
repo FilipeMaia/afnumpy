@@ -807,3 +807,18 @@ class ndarray(object):
             s //= mult
         idx = tuple(idx)
         return idx
+
+    def sort(self, axis=-1, kind='quicksort', order=None):
+        if kind != 'quicksort':
+            print( "sort 'kind' argument ignored" )
+        if order is not None:
+            raise ValueError('order argument is not supported')
+        if(axis is None):            
+            input = self.flatten()
+            axis = 0
+        else:
+            input = self
+        if(axis < 0):
+            axis = self.ndim+axis
+        s = arrayfire.sort(input.d_array, pu.c2f(input.shape, axis))
+        self.d_array = s

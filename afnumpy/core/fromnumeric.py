@@ -187,3 +187,21 @@ def ravel(a, order='C'):
 
     """
     return afnumpy.asarray(a).ravel(order)
+
+def sort(a, axis=-1, kind='quicksort', order=None):
+    try:
+        if kind != 'quicksort':
+            print( "sort 'kind' argument ignored" )
+        if order is not None:
+            raise ValueError('order argument is not supported')
+        if(axis is None):            
+            input = a.flatten()
+            axis = 0
+        else:
+            input = a
+        if(axis < 0):
+            axis = a.ndim+axis
+        s = arrayfire.sort(input.d_array, pu.c2f(input.shape, axis))
+        return afnumpy.ndarray(input.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+    except AttributeError:
+        return numpy.argsort(a, axis, kind, order)
