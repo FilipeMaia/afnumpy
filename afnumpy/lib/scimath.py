@@ -125,6 +125,14 @@ def log(x):
     else:
         return numpy.log(x)
 
+@outufunc
+def log10(x):
+    if isinstance(x, afnumpy.ndarray):
+        s = arrayfire.log10(x.d_array)
+        return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+    else:
+        return numpy.log10(x)
+
 def real(x):
     return afnumpy.asanyarray(x).real
 

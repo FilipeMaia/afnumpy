@@ -172,6 +172,11 @@ def test_log():
     b = numpy.array(a)
     fassert(afnumpy.log(a), numpy.log(b))
 
+def test_log10():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.log10(a), numpy.log10(b))
+
 def test_real():
     x = numpy.sqrt([1+0j, 0+1j])
     y = afnumpy.array(x)
