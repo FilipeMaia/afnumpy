@@ -776,3 +776,17 @@ def test_ndarray_constructor():
             # Check for wrong backend
             b = afnumpy.ndarray(c.shape, dtype=c.dtype, buffer=c.ctypes.data,
                                 buffer_type='cuda')
+
+def test_flatten():
+    b = numpy.random.random((3,3,3))
+    a = afnumpy.array(b)        
+    iassert(a.flatten(), b.flatten())
+    iassert(a.flatten(order='C'), b.flatten(order='C'))
+    iassert(a.flatten(order='K'), b.flatten(order='K'))
+    iassert(a.flatten(order='A'), b.flatten(order='A'))
+    # test if it's a copy
+    d = b.flatten()
+    c = a.flatten()
+    b[0] += 1
+    a[0] += 1
+    iassert(c.flatten(), d.flatten())

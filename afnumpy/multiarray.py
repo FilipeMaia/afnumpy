@@ -596,8 +596,10 @@ class ndarray(object):
 
         self._shape = tuple(newshape)
 
-    def flatten(self):
-        return afnumpy.reshape(self, self.size)
+    def flatten(self, order='C'):
+        if(order != None and order != 'K' and order != 'C' and order != 'A'):
+            raise NotImplementedError('order %s not supported' % (order))
+        return afnumpy.reshape(self, self.size).copy()
 
     @reductufunc
     def max(self, s, axis):
