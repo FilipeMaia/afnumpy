@@ -144,8 +144,8 @@ def test_dtypes():
     fassert(afnumpy.complex64(a), numpy.complex64(b))
     assert(afnumpy.float(a.sum()), numpy.float(b.sum()))
     fassert(afnumpy.complex64(b), numpy.complex64(a))
-    assert(type(afnumpy.complex64(b)), afnumpy.multiarray.ndarray)
-    assert(type(afnumpy.complex64([1,2,3])), afnumpy.multiarray.ndarray)
+    assert(type(afnumpy.complex64(b)), afnumpy.ndarray)
+    assert(type(afnumpy.complex64([1,2,3])), afnumpy.ndarray)
     assert(type(afnumpy.bool8(True)), numpy.bool_)
     
 def test_transpose():

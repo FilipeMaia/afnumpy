@@ -1,6 +1,6 @@
 import arrayfire
 import numpy
-from .multiarray import ndarray, zeros, where, fromstring, empty
+from .multiarray import ndarray
 from . import random
 from .core import *
 from .lib import *

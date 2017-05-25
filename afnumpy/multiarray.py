@@ -9,47 +9,7 @@ from . import indexing
 from .decorators import *
 import collections
 
-def fromstring(string, dtype=float, count=-1, sep=''):
-    return array(numpy.fromstring(string, dtype, count, sep))
 
-def empty(shape, dtype=float, order='C'):
-    return ndarray(shape, dtype=dtype, order=order)
-
-def zeros(shape, dtype=float, order='C'):
-    b = numpy.zeros(shape, dtype, order)
-    return ndarray(b.shape, b.dtype, buffer=b,order=order)
-
-def where(condition, x=pu.dummy, y=pu.dummy):
-    a = condition
-    s = arrayfire.where(a.d_array)
-    # numpy uses int64 while arrayfire uses uint32
-    s = ndarray(pu.af_shape(s), dtype=numpy.uint32, af_array=s).astype(numpy.int64)
-    # Looks like where goes through the JIT??
-    s.eval()
-    if(x is pu.dummy and y is pu.dummy):
-        idx = []
-        mult = 1
-        for i in a.shape[::-1]:
-            mult = i
-            idx = [s % mult] + idx
-            s //= mult
-        idx = tuple(idx)
-        return idx
-    elif(x is not pu.dummy and y is not pu.dummy):
-        if(x.dtype != y.dtype):
-            raise TypeError('x and y must have same dtype')
-        if(x.shape != y.shape):
-            raise ValueError('x and y must have same shape')
-        ret = array(y)
-        if(len(ret.shape) > 1):
-            ret = ret.flatten()
-            ret[s] = x.flatten()[s]
-            ret = ret.reshape(x.shape)
-        else:
-            ret[s] = x[s]
-        return ret;
-    else:
-        raise ValueError('either both or neither of x and y should be given')
 
 
 class ndarray(object):
@@ -310,7 +270,7 @@ class ndarray(object):
         return a
 
     def __pos__(self):
-        return array(self)
+        return afnumpy.array(self)
 
     def __invert__(self):
         raise NotImplementedError
@@ -511,7 +471,7 @@ class ndarray(object):
         return ndarray(pu.af_shape(s), dtype=self.dtype, af_array=s)
 
     def reshape(self, shape, order = 'C'):
-        a = array(self, copy=False)
+        a = afnumpy.array(self, copy=False)
         a.__reshape__(shape, order)
         return a
 
@@ -745,7 +705,7 @@ class ndarray(object):
             return 0
 
     def copy(self, order='C'):
-        return array(self, copy=True, order=order)
+        return afnumpy.array(self, copy=True, order=order)
 
     def nonzero(self):
         s = arrayfire.where(self.d_array)
