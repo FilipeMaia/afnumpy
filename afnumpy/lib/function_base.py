@@ -1,6 +1,6 @@
-from IPython.core.debugger import Tracer
 import afnumpy
 import numpy
+import collections
 
 def copy(a, order='K'):
     return afnumpy.array(a, order=order, copy=True)
@@ -91,3 +91,30 @@ def angle(z, deg=0):
         zimag = 0
         zreal = z
     return afnumpy.arctan2(zimag, zreal) * fact
+
+def percentile(a, q, axis=None, out=None,
+               overwrite_input=False, interpolation='linear', keepdims=False):
+    if interpolation is not 'linear':
+        raise ValueError('Only linear interpolation is supported')
+    if out is not None:
+        raise ValueError('"out" parameter is not supported')
+    if isinstance(axis, collections.Sequence):
+        raise ValueError('axis sequences not supported')
+        
+    if axis is None:
+        input = a.flatten()
+        axis = 0
+    else: 
+        input = a
+    s = afnumpy.sort(input,axis=axis)
+    low_idx = numpy.floor(q*(s.shape[axis]-1)/100.0)
+    high_idx = numpy.ceil(q*(s.shape[axis]-1)/100.0)
+    u = (q*(s.shape[axis]-1)/100.0) - low_idx
+    low = afnumpy.take(s, low_idx, axis=axis)
+    high = afnumpy.take(s, high_idx, axis=axis)
+    ret = u*high+(1-u)*low
+    if keepdims is True:
+        ret.reshape(ret.shape[:axis]+(1,)+ret.shape[axis:])
+    return ret
+    
+        

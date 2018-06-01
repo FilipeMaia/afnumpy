@@ -2,8 +2,9 @@ import afnumpy
 import numpy
 import afnumpy as af
 import numpy as np
-from IPython.core.debugger import Tracer
 from asserts import *
+import pytest
+xfail = pytest.mark.xfail
 
 def test_zeros():
     a = afnumpy.zeros(3)
@@ -58,6 +59,13 @@ def test_where():
     # Test where with input as indices
     iassert(afnumpy.where(a2), numpy.where(b2))
 
+    # And now multidimensional
+    b1 = numpy.random.random((3,3,3)) > 0.5
+    a1 = afnumpy.array(b1)
+
+    # Test where with input as indices
+    iassert(afnumpy.where(a1), numpy.where(b1))
+
 
 def test_array():
     a = afnumpy.array([3])
@@ -81,6 +89,17 @@ def test_array():
     b = numpy.array(a)
     iassert(a, b)
 
+    # Check for non contiguous input
+    b = numpy.array([[1.,2.,3.],[4.,5.,6.]]).T
+    a = afnumpy.array(b)
+    iassert(a, b)
+
+    # Check using arrayfire arrays
+    a = afnumpy.arrayfire.randu(10,5)
+    b = afnumpy.array(a, copy=False)
+    c = numpy.array(a)
+    assert(a.device_ptr() == b.d_array.device_ptr())
+    iassert(b,c.T)
 
 
 def test_binary_arithmetic():
@@ -127,6 +146,7 @@ def test_binary_arithmetic():
 
     fassert(a/3.0, b/3.0)
     fassert(3.0/a, 3.0/b)
+    fassert(3/a, 3/b)
 
     fassert(a**3.0, b**3.0)
     fassert(3.0**a, 3.0**b)
@@ -134,6 +154,7 @@ def test_binary_arithmetic():
     fassert(a%3.0, b%3.0)
     fassert(3.0%a, 3.0%b)
 
+    assert(type(numpy.float32(3)+a) == afnumpy.ndarray)
 
 def test_broadcast_binary_arithmetic():
     a = afnumpy.random.rand(2,3)
@@ -210,6 +231,10 @@ def test_unary_operators():
     b = numpy.array(a)
     fassert(-a, -b)
     fassert(+a, +b)
+    b = numpy.random.randint(0,2,3).astype('bool')
+    a = afnumpy.array(b)
+    fassert(-a, -b)
+    fassert(+a, +b)
     # fassert(~a, ~b)
 
 def test_comparisons():
@@ -242,6 +267,7 @@ def test_comparisons():
     iassert(a1 != a2, b1 != b2)
     iassert(a1 != 0.5, b1 != 0.5)
     iassert(0.5 != a1, 0.5 != b1)
+    iassert(a1 is not None, b1 is not None)
 
 def test_ndarray_all():    
     b = numpy.random.randint(0,2,3).astype('bool')
@@ -295,7 +321,6 @@ def test_ndarray_abs():
     a = afnumpy.array(b)
     fassert(abs(a), abs(b))
 
-        
 def test_getitem():
     b = numpy.random.random((3))
     a = afnumpy.array(b)
@@ -335,6 +360,12 @@ def test_getitem():
     iassert(a[:,2], b[:,2])
     iassert(a[1,:], b[1,:])
     iassert(a[:,::-1], b[:,::-1])
+    
+    # Boolean indexing
+    d = numpy.random.random((2)) > 0.5
+    c = afnumpy.array(d)
+    iassert(a[c,:], b[d,:])
+
 
     b = numpy.random.random((2,3,1))
     a = afnumpy.array(b)
@@ -355,10 +386,43 @@ def test_getitem():
     c = afnumpy.array(d)
     iassert(a[c], b[d])
 
+    d = numpy.random.random((2,3)) > 0.5
+    c = afnumpy.array(d)
+    iassert(a[c,:], b[d,:])
+
     # Zero dimensional
     b = numpy.ones(())
     a = afnumpy.array(b)
     iassert(a[()],b[()])
+
+    # Slices that extend outside the array
+    b = numpy.ones((3))
+    a = afnumpy.array(b)
+    iassert(a[1:4],b[1:4])
+    iassert(a[3::-1],b[3::-1])
+
+    # Partial boolean indexing
+    b = numpy.ones((3,3))
+    a = afnumpy.array(b)
+    d = numpy.ones((3)) > 0
+    c = afnumpy.array(d)
+    iassert(a[c],b[d])
+
+    # Partial array indexing
+    b = numpy.ones((3,3))
+    a = afnumpy.array(b)
+    d = numpy.array([0,1])
+    c = afnumpy.array(d)
+    iassert(a[c],b[d])
+
+
+def test_getitem_multi_array():
+    # Multidimensional array indexing
+    b = numpy.random.random((2,2))
+    a = afnumpy.array(b)
+    d = numpy.array([0,1])
+    c = afnumpy.array(d)
+    iassert(a[c,c], b[d,d])
 
 def test_newaxis():
     b = numpy.random.random((3))
@@ -460,6 +524,27 @@ def test_setitem():
     b1[b1 < 0.3] = 1
     iassert(a1, b1)
 
+def test_setitem_multi_array():
+    # Multidimensional array indexing
+    b = numpy.random.random((2,2))
+    a = afnumpy.array(b)
+    d = numpy.array([0,1])
+    c = afnumpy.array(d)
+    # This will fail because while multiple arrays
+    # as indices in numpy treat the values given by
+    # the arrays as the coordinates of the hyperslabs
+    # to keep arrayfire does things differently.
+    # In arrayfire each entry of each array gets combined
+    # with all entries of all other arrays to define the coordinate
+    # In numpy each entry only gets combined with the corresponding
+    # entry in the other arrays.
+    # For example if one has [0,1],[0,1] as the two arrays for numpy
+    # this would mean that the coordinates retrieved would be [0,0], 
+    # [1,1] while for arrayfire it would be [0,0], [0,1], [1,0], [1,1].
+    a[c,c] = c 
+    b[d,d] = d
+    iassert(a, b)
+
 def test_views():
     b = numpy.random.random((3,3))
     a = afnumpy.array(b)
@@ -541,10 +626,6 @@ def test_ndarray_shape():
     b.shape = (3,2)
     fassert(a,b)
 
-def test_ndarray_strides():
-    b = numpy.random.random((2,3))
-    a = afnumpy.array(b)
-    iassert(a.strides, b.strides)
 
 def test_ndarray_round():
     b = numpy.random.random((2,3))
@@ -629,3 +710,83 @@ def test_ndarray_imag():
     y.imag[:] = 0
     x.imag[:] = 0
     fassert(y, x)
+    x = np.sqrt([1.0, 0.0])
+    y = af.array(x)
+    fassert(y.imag, x.imag)
+
+
+def test_ndarray_strides():
+    a = afnumpy.random.random((4,3))
+    b = numpy.array(a)
+    iassert(a.strides, b.strides)
+    iassert(a[:,:].strides, b[:,:].strides)
+    iassert(a[1:,:].strides, b[1:,:].strides)
+    iassert(a[:,1:].strides, b[:,1:].strides)
+    # The following cases fails for arrayfire < 3.3 as the stride
+    # hack requires at least 2 elements per dimension
+    iassert(a[3:,:].strides, b[3:,:].strides)
+    iassert(a[2:,2:].strides, b[2:,2:].strides)
+    iassert(a[3,:2].strides, b[3,:2].strides)
+
+@xfail
+def test_ndarray_strides_xfail():
+    # The following case fails as arrayfire always drops
+    # leading dimensions of size 1 and so the stride
+    # information is missing
+    a = afnumpy.random.random((4,3))
+    b = numpy.array(a)
+    iassert(a[3:,:2].strides, b[3:,:2].strides)
+
+def test_ndarray_copy():
+    b = numpy.random.random((3,3))
+    a = afnumpy.array(b)
+    iassert(a.copy(), b.copy())
+
+def test_ndarray_nonzero():
+    b = numpy.random.random((3,3,3)) > 0.5
+    a = afnumpy.array(b)    
+    iassert(a.nonzero(), b.nonzero())
+
+def test_ndarray_constructor():
+    a = afnumpy.arrayfire.randu(3,2)
+    with pytest.raises(ValueError):
+        b = afnumpy.ndarray(a.dims(), dtype='f', af_array = a)
+    # This one should be fine
+    b = afnumpy.ndarray(a.dims()[::-1], dtype='f', af_array = a)
+
+    c = afnumpy.ndarray(a.dims()[::-1], dtype='f', buffer=a.raw_ptr(),
+                        buffer_type=afnumpy.arrayfire.get_active_backend())
+
+    d = afnumpy.ndarray(a.dims()[::-1], dtype='f', buffer=a.raw_ptr(),
+                        buffer_type=afnumpy.arrayfire.get_active_backend())
+    # Make sure they share the same underlying data
+    d[0,0] = 3
+    assert d[0,0] == c[0,0]
+
+
+    if afnumpy.arrayfire.get_active_backend() == 'cpu':
+        c = numpy.ones((3,2))
+        d = afnumpy.ndarray(c.shape, dtype=c.dtype, buffer=c.ctypes.data,
+                            buffer_type=afnumpy.arrayfire.get_active_backend())
+        # Make sure they share the same underlying data
+        d[0,0] = -1
+        assert d[0,0] == c[0,0]
+
+        with pytest.raises(ValueError):
+            # Check for wrong backend
+            b = afnumpy.ndarray(c.shape, dtype=c.dtype, buffer=c.ctypes.data,
+                                buffer_type='cuda')
+
+def test_flatten():
+    b = numpy.random.random((3,3,3))
+    a = afnumpy.array(b)        
+    iassert(a.flatten(), b.flatten())
+    iassert(a.flatten(order='C'), b.flatten(order='C'))
+    iassert(a.flatten(order='K'), b.flatten(order='K'))
+    iassert(a.flatten(order='A'), b.flatten(order='A'))
+    # test if it's a copy
+    d = b.flatten()
+    c = a.flatten()
+    b[0] += 1
+    a[0] += 1
+    iassert(c.flatten(), d.flatten())

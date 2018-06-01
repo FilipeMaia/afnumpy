@@ -1,12 +1,11 @@
 import arrayfire
 import numpy
-from .. import private_utils as pu
 import afnumpy
+from .. import private_utils as pu
 from numpy import newaxis
 import numbers
 from numpy import broadcast
-from IPython.core.debugger import Tracer
-
+from ..decorators import *
 
 def concatenate(arrays, axis=0):
     if(len(arrays) < 1):
@@ -35,7 +34,7 @@ def roll(a, shift, axis=None):
         s = arrayfire.shift(a.d_array, 0, 0, 0, shift)
     else:
         raise NotImplementedError
-    return afnumpy.ndarray(shape, dtype=a.dtype, af_array=s)        
+    return afnumpy.ndarray(a.shape, dtype=a.dtype, af_array=s).reshape(shape)
 
 def rollaxis(a, axis, start=0):
     n = a.ndim
@@ -80,7 +79,7 @@ def ceil(x, out=None):
     if out is not None:
         out[:] = a[:]
     return a
-            
+
 def abs(x, out=None):
     if not isinstance(x, afnumpy.ndarray):
         return numpy.abs(x, out)
@@ -90,6 +89,10 @@ def abs(x, out=None):
     return a
 
 def asarray(a, dtype=None, order=None):
+    if(isinstance(a, afnumpy.ndarray) and
+       (dtype is None or dtype == a.dtype)):
+        # special case for performance
+        return a
     return afnumpy.array(a, dtype, copy=False, order=order)
 
 def ascontiguousarray(a, dtype=None):
@@ -177,3 +180,18 @@ def cross(a, b, axisa=-1, axisb=-1, axisc=-1, axis=None):
     else:
         # This works because we are moving the last axis
         return rollaxis(cp, -1, axisc)
+
+@outufunc
+def isnan(x):
+    if not isinstance(x, afnumpy.ndarray):
+        return numpy.isnan(x)
+    s = arrayfire.isnan(x.d_array)
+    return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+
+@outufunc
+def isinf(x):
+    if not isinstance(x, afnumpy.ndarray):
+        return numpy.isinf(x)
+    s = arrayfire.isinf(x.d_array)
+    return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+

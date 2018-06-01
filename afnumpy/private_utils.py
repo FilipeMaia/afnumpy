@@ -3,7 +3,7 @@ import numbers
 import afnumpy
 import arrayfire
 
-dim_t = numpy.int64
+dim_t = numpy.dtype('int64')
 
 try:
     TypeToString = { arrayfire.f64.value: 'f64',
@@ -32,10 +32,7 @@ except AttributeError:
 dummy = object()
 
 def af_shape(af_array):
-    shape = ()
-    for i in range(0,af_array.numdims()):
-        shape = (af_array.dims()[i],)+shape
-    return shape
+    return tuple(af_array.dims()[::-1])
 
 def raw(x):
     if(isinstance(x,afnumpy.ndarray)):
@@ -56,15 +53,15 @@ def c2f(shape, dim = None):
 
 def typemap(dtype):
     try:
-        InvTypeMap = {arrayfire.f64.value: numpy.float64,
-                      arrayfire.f32.value: numpy.float32,
-                      arrayfire.c64.value: numpy.complex128,
-                      arrayfire.c32.value: numpy.complex64,
-                      arrayfire.s32.value: numpy.int32,
-                      arrayfire.s64.value: numpy.int64,
-                      arrayfire.u32.value: numpy.uint32,
-                      arrayfire.u64.value: numpy.uint64,
-                      arrayfire.b8.value: numpy.bool,
+        InvTypeMap = {arrayfire.f64.value: numpy.dtype('float64'),
+                      arrayfire.f32.value: numpy.dtype('float32'),
+                      arrayfire.c64.value: numpy.dtype('complex128'),
+                      arrayfire.c32.value: numpy.dtype('complex64'),
+                      arrayfire.s32.value: numpy.dtype('int32'),
+                      arrayfire.s64.value: numpy.dtype('int64'),
+                      arrayfire.u32.value: numpy.dtype('uint32'),
+                      arrayfire.u64.value: numpy.dtype('uint64'),
+                      arrayfire.b8.value: numpy.dtype('bool'),
                   }
         TypeMap = {numpy.dtype('float32'): arrayfire.f32.value,
                    numpy.dtype('float64'): arrayfire.f64.value,
@@ -79,15 +76,15 @@ def typemap(dtype):
                    numpy.dtype('complex64'): arrayfire.c32.value,
                }
     except AttributeError:
-        InvTypeMap = {arrayfire.Dtype.f64: numpy.float64,
-                      arrayfire.Dtype.f32: numpy.float32,
-                      arrayfire.Dtype.c64: numpy.complex128,
-                      arrayfire.Dtype.c32: numpy.complex64,
-                      arrayfire.Dtype.s32: numpy.int32,
-                      arrayfire.Dtype.s64: numpy.int64,
-                      arrayfire.Dtype.u32: numpy.uint32,
-                      arrayfire.Dtype.u64: numpy.uint64,
-                      arrayfire.Dtype.b8: numpy.bool,
+        InvTypeMap = {arrayfire.Dtype.f64: numpy.dtype('float64'),
+                      arrayfire.Dtype.f32: numpy.dtype('float32'),
+                      arrayfire.Dtype.c64: numpy.dtype('complex128'),
+                      arrayfire.Dtype.c32: numpy.dtype('complex64'),
+                      arrayfire.Dtype.s32: numpy.dtype('int32'),
+                      arrayfire.Dtype.s64: numpy.dtype('int64'),
+                      arrayfire.Dtype.u32: numpy.dtype('uint32'),
+                      arrayfire.Dtype.u64: numpy.dtype('uint64'),
+                      arrayfire.Dtype.b8: numpy.dtype('bool'),
                   }
         TypeMap = {numpy.dtype('float32'): arrayfire.Dtype.f32,
                    numpy.dtype('float64'): arrayfire.Dtype.f64,
@@ -110,3 +107,7 @@ def typemap(dtype):
 
         
 
+def isintegertype(obj):
+    if isinstance(obj, numbers.Number):
+        return numpy.issubdtype(type(obj), numpy.integer)
+    return numpy.issubdtype(obj.dtype, numpy.integer)

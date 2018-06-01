@@ -3,7 +3,8 @@ import afnumpy as af
 import numpy
 import numpy as np
 from asserts import *
-from IPython.core.debugger import Tracer
+import pytest
+xfail = pytest.mark.xfail
 
 def test_floor():
     b = numpy.random.random((2,3))
@@ -131,12 +132,10 @@ def test_mean():
     fassert(afnumpy.mean(a,axis=1), numpy.mean(b,axis=1))
     fassert(afnumpy.mean(a,axis=(0,1)), numpy.mean(b,axis=(0,1)))
 
-
 def test_sqrt():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
     fassert(afnumpy.sqrt(a), numpy.sqrt(b))
-
 
 def test_dtypes():
     a = afnumpy.random.random((2,3))
@@ -144,7 +143,11 @@ def test_dtypes():
     fassert(afnumpy.int32(a), numpy.int32(b))
     fassert(afnumpy.complex64(a), numpy.complex64(b))
     assert(afnumpy.float(a.sum()), numpy.float(b.sum()))
-
+    fassert(afnumpy.complex64(b), numpy.complex64(a))
+    assert(type(afnumpy.complex64(b)), afnumpy.ndarray)
+    assert(type(afnumpy.complex64([1,2,3])), afnumpy.ndarray)
+    assert(type(afnumpy.bool8(True)), numpy.bool_)
+    
 def test_transpose():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
@@ -179,14 +182,13 @@ def test_squeeze():
     y = afnumpy.array(x)
     iassert(afnumpy.squeeze(y), numpy.squeeze(x))
     iassert(afnumpy.squeeze(y, axis=(2,)), numpy.squeeze(x, axis=(2,)))
-    
+
 def test_all():
     iassert(afnumpy.all([[True, False], [True, True]]),
             numpy.all([[True, False], [True, True]]))
     x = numpy.array([[True, False], [True, True]])
     y = afnumpy.array(x)
     iassert(y.all(axis=0),x.all(axis=0))
-
 
 def test_any():
     iassert(afnumpy.any([[True, False], [True, True]]),
@@ -222,6 +224,61 @@ def test_argsort():
     y = af.array(x)
     iassert(af.argsort(y), np.argsort(x))
     iassert(af.argsort(y, axis=1), np.argsort(x, axis=1))
+    iassert(af.argsort(y, axis=None), np.argsort(x, axis=None))
     # Arrayfire at the moment can only sort along the last dimension
     # iassert(af.argsort(y, axis=0), np.argsort(x, axis=0))
+
+@xfail
+def test_argsort_xfail():
+    x = np.array([[0, 3], [2, 2]], dtype=float)    
+    y = af.array(x)
+    # Arrayfire at the moment can only sort along the last dimension
+    iassert(af.argsort(y, axis=0), np.argsort(x, axis=0))
+
+
+def test_sort():
+    # Sort does not support 64bit int yet
+    x = np.array([3, 1, 2], dtype=np.int32)
+    y = af.array(x)
+    iassert(af.sort(y), np.sort(x))
+    x.sort()
+    y.sort()
+    iassert(y,x)
+    x = np.array([[0, 3], [2, 2]], dtype=float)    
+    y = af.array(x)
+    iassert(af.sort(y), np.sort(x))
+    iassert(af.sort(y, axis=1), np.sort(x, axis=1))
+    iassert(af.sort(y, axis=None), np.sort(x, axis=None))
+
+    x.sort()
+    y.sort()
+    iassert(y,x)
+
+    x = np.array([[0, 3], [2, 2]], dtype=float)    
+    y = af.array(x)
+    x.sort(axis=1)
+    y.sort(axis=1)
+    iassert(y,x)
     
+    x = np.array([[0, 3], [2, 2]], dtype=float)    
+    y = af.array(x)
+    iassert(af.sort(y,axis=None),np.sort(x,axis=None))
+
+@xfail
+def test_sort_xfail():
+    x = np.array([[0, 3], [2, 2]], dtype=float)    
+    y = af.array(x)
+    # Arrayfire at the moment can only sort along the last dimension
+    iassert(af.argsort(y, axis=0), np.argsort(x, axis=0))
+    
+def test_isnan():
+    b = 1.0*numpy.random.randint(0,2,(2,3))
+    b[b == 0] = numpy.nan
+    a = afnumpy.array(b)
+    fassert(afnumpy.isnan(a), numpy.isnan(b))
+
+def test_isinf():
+    b = 1.0*numpy.random.randint(0,2,(2,3))
+    b[b == 0] = numpy.inf
+    a = afnumpy.array(b)
+    fassert(afnumpy.isnan(a), numpy.isnan(b))

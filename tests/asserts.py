@@ -12,7 +12,10 @@ def massert(af_a, np_a):
         assert isinstance(np_a, numpy.ndarray)
         # I will not strictly enforce float32 vs float64
         # I will not strictly enforce uint32 vs int64
-        assert af_a.dtype == np_a.dtype or (af_a.dtype == numpy.float32 and np_a.dtype == numpy.float64) or (af_a.dtype == numpy.uint32 and np_a.dtype == numpy.int64)
+        assert (af_a.dtype == np_a.dtype or (af_a.dtype == numpy.float32 and np_a.dtype == numpy.float64) or 
+                (af_a.dtype == numpy.uint32 and np_a.dtype == numpy.int64) or 
+                (af_a.dtype == numpy.int64 and np_a.dtype == numpy.uint32) or
+                (af_a.dtype == numpy.int32 and np_a.dtype == numpy.int64))
         assert (af_a.shape == np_a.shape)
     elif isinstance(af_a, numbers.Number):
         assert isinstance(af_a, numbers.Number)

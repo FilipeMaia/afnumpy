@@ -1,8 +1,8 @@
 import numpy
 import afnumpy
 import arrayfire
-from afnumpy import private_utils as pu
-from afnumpy.decorators import *
+from .. import private_utils as pu
+from ..decorators import *
 
 @outufunc
 def arccos(x):
@@ -125,6 +125,19 @@ def log(x):
     else:
         return numpy.log(x)
 
+@outufunc
+def log10(x):
+    if isinstance(x, afnumpy.ndarray):
+        s = arrayfire.log10(x.d_array)
+        return afnumpy.ndarray(x.shape, dtype=pu.typemap(s.dtype()), af_array=s)
+    else:
+        return numpy.log10(x)
+
+def real(x):
+    return afnumpy.asanyarray(x).real
+
+def imag(x):
+    return afnumpy.asanyarray(x).imag
 
 @outufunc
 def multiply(x1, x2):
@@ -142,8 +155,23 @@ def add(x1, x2):
 def divide(x1, x2):
     return x1/x2
 
-        
-        
+@outufunc
+def floor_divide(x1, x2):
+    return x1//x2
+
+@outufunc
+def true_divide(x1, x2):
+    return x1/x2
+
+@outufunc
+def conjugate(x):
+    if isinstance(x, afnumpy.ndarray):
+        return x.conj()
+    else:
+        return numpy.conjugate(x)
+
+conj = conjugate
+
 inf = numpy.inf
 Inf = numpy.Inf
 Infinity = numpy.Infinity

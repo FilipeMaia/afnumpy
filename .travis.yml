@@ -1,0 +1,71 @@
+language: python
+
+python:
+  - "2.7"
+  - "3.4"
+
+notifications:
+  email: false
+
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.cache/pip
+    - $HOME/arrayfire
+    - $HOME/arrayfire-python
+    - $HOME/local
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+      - kubuntu-backports
+    packages:
+      - libatlas-base-dev
+      - libfftw3-dev
+      - gcc-4.9
+      - g++-4.9
+      - cmake
+      - gdb
+      - apport
+
+before_install:
+  - pip install codecov
+  - cd $HOME
+  - if [ ! -d "$HOME/arrayfire/.git" ]; then git clone  https://github.com/arrayfire/arrayfire; else echo 'Using arrayfire from cached directory'; fi
+  - mkdir -p arrayfire/build && cd arrayfire/build
+  - git pull
+  - cmake -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.9 -DBUILD_CPU=ON -DBUILD_CUDA=OFF -DBUILD_GRAPHICS=OFF -DBUILD_OPENCL=OFF -DBUILD_TEST=OFF -DBUILD_EXAMPLES=OFF -DBUILD_UNIFIED=ON -DBUILD_CPU_ASYNC=ON -DCMAKE_INSTALL_PREFIX=${HOME}/local ..
+  - make -j 2
+  - make install
+  - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HOME}/local/lib
+# Install arrayfire-python
+  - cd $HOME
+  - if [ ! -d "$HOME/arrayfire-python/.git" ]; then git clone  https://github.com/arrayfire/arrayfire-python.git; else echo 'Using arrayfire-python from cached directory'; fi
+  - cd arrayfire-python
+  - git pull
+  - python setup.py install  
+  
+install:
+  - pip install numpy
+  - pip install ipython
+  - pip install pytest-cov
+  - pip install pytest-benchmark
+  - cd ${HOME}/build/FilipeMaia/afnumpy
+  - python setup.py install
+
+after_success:
+  - codecov
+
+before_script:
+ # Set the core file limit to unlimited so a core file is generated upon crash
+ - ulimit -c unlimited -S
+ - ulimit -c
+
+script:
+  - cd ${HOME}/build/FilipeMaia/afnumpy
+  - coverage run --source afnumpy -m py.test --benchmark-skip  -v --color=yes --showlocals --durations=10
+  - python -m pytest -v --benchmark-only --benchmark-compare --benchmark-autosave  --benchmark-group-by=fullname
+  - for i in $(find ./ -maxdepth 1 -name 'core*' -print); do gdb python core* -ex "thread apply all bt" -ex "set pagination 0" -batch; done;
+

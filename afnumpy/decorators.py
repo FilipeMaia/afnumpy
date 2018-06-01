@@ -1,6 +1,5 @@
-from IPython.core.debugger import Tracer
 import afnumpy
-import private_utils as pu
+from . import private_utils as pu
 
 def outufunc(func):
     # This could use some optimization
@@ -25,7 +24,7 @@ def iufunc(func):
                                  " shape %s doesn't match the broadcast"
                                  " shape %s" % (args[0].shape, bcast_args[0].shape))
             args = bcast_args
-            
+
         ret = func(*args, **kws)
         if len(ret.shape) == 0:
             return ret[()]
@@ -35,7 +34,7 @@ def iufunc(func):
 def ufunc(func):
     def wrapper(*args, **kws):
         if all(isinstance(A, afnumpy.ndarray) for A in args):
-            args = afnumpy.broadcast_arrays(*args)            
+            args = afnumpy.broadcast_arrays(*args)
         ret = func(*args, **kws)
         if len(ret.shape) == 0:
             return ret[()]
@@ -43,7 +42,7 @@ def ufunc(func):
     return wrapper
 
 def reductufunc(func):
-    def wrapper(a, axis=None, dtype=None, keepdims=False):        
+    def wrapper(a, axis=None, dtype=None, keepdims=False):
         if not isinstance(axis, tuple):
             axis = (axis,)
         if axis[0] is None:
@@ -54,7 +53,7 @@ def reductufunc(func):
                 shape = (1,)*a.ndim
             else:
                 shape = ()
-            ret = afnumpy.ndarray(tuple(shape), dtype=pu.typemap(s.dtype()), 
+            ret = afnumpy.ndarray(tuple(shape), dtype=pu.typemap(s.dtype()),
                                   af_array=s)
         else:
             shape = list(a.shape)
@@ -68,8 +67,8 @@ def reductufunc(func):
                     shape[ax] = 1
                 else:
                     shape.pop(ax)
-            ret = afnumpy.ndarray(tuple(shape), dtype=pu.typemap(s.dtype()), 
-                                  af_array=s)
+            ret = afnumpy.ndarray(pu.af_shape(s), dtype=pu.typemap(s.dtype()),
+                                  af_array=s).reshape(tuple(shape))
         if(dtype is not None):
             ret = ret.astype(dtype)
         if(len(shape) == 0):

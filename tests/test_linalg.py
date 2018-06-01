@@ -1,7 +1,8 @@
 import afnumpy
 import numpy
 from asserts import *
-
+import pytest
+xfail = pytest.mark.xfail
 
 def test_norm():
     a = afnumpy.random.random((3))
@@ -20,4 +21,43 @@ def test_vdot():
     b = numpy.random.random(3)+numpy.random.random(3)*1.0j
     a = afnumpy.array(b)
     fassert(afnumpy.vdot(a,a), numpy.vdot(b,b))
+    b = numpy.random.random((3,3))+numpy.random.random((3,3))*1.0j
+    a = afnumpy.array(b)
+    fassert(afnumpy.vdot(a,a), numpy.vdot(b,b))
+    b = numpy.random.random((3,3,3))+numpy.random.random((3,3,3))*1.0j
+    a = afnumpy.array(b)
+    fassert(afnumpy.vdot(a,a), numpy.vdot(b,b))
+
+def test_dot_1D():    
+    b = numpy.random.random(3)+numpy.random.random(3)*1.0j
+    a = afnumpy.array(b)
+    fassert(afnumpy.dot(a,a), numpy.dot(b,b))
+
+    a = numpy.random.random(3)+numpy.random.random(3)*1.0j
+    b = numpy.random.random(3)
+    fassert(afnumpy.dot(afnumpy.array(a),afnumpy.array(b)), numpy.dot(a,b))
+
+def test_dot_2D():    
+    b = numpy.random.random((3,3))+numpy.random.random((3,3))*1.0j
+    a = afnumpy.array(b)
+    fassert(afnumpy.dot(a,a), numpy.dot(b,b))
+
+    a = numpy.random.random((3,3))+numpy.random.random((3,3))*1.0j
+    b = numpy.random.random((3,3))
+    fassert(afnumpy.dot(afnumpy.array(a),afnumpy.array(b)), numpy.dot(a,b))
+    out = afnumpy.array(a)
+    fassert(afnumpy.dot(afnumpy.array(a),afnumpy.array(b),out=out), numpy.dot(a,b))
+
+def test_dot_3D():    
+    b = numpy.random.random((3,3,3))+numpy.random.random((3,3,3))*1.0j
+    a = afnumpy.array(b)
+    fassert(afnumpy.dot(a,a), numpy.dot(b,b))
+
+    a = numpy.random.random((3,2,4))+numpy.random.random((3,2,4))*1.0j
+    b = numpy.random.random((3,4,1))
+    fassert(afnumpy.dot(afnumpy.array(a),afnumpy.array(b)), numpy.dot(a,b))
+
+    b = numpy.random.random((3,3,3))
+    a = numpy.random.random((3,3))
+    fassert(afnumpy.dot(afnumpy.array(a),afnumpy.array(b)), numpy.dot(a,b))
 

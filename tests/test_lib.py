@@ -1,7 +1,9 @@
 import afnumpy
 import numpy
-from IPython.core.debugger import Tracer
 from asserts import *
+import sys
+import pytest
+xfail = pytest.mark.xfail
 
 def test_copy():
     b = numpy.random.random((2,3))
@@ -11,7 +13,6 @@ def test_copy():
     a[:] = 0
     b[:] = 0
     iassert(c,d)
-
 
 def test_meshgrid():
     nx, ny = (3, 2)
@@ -109,7 +110,6 @@ def test_arctanh():
     fassert(afnumpy.arctanh(a, out=c), numpy.arctanh(b, out=d))
     fassert(c, d)
 
-
 def test_cos():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -174,6 +174,27 @@ def test_log():
     b = numpy.array(a)
     fassert(afnumpy.log(a), numpy.log(b))
 
+def test_log10():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.log10(a), numpy.log10(b))
+
+def test_real():
+    x = numpy.sqrt([1+0j, 0+1j])
+    y = afnumpy.array(x)
+    fassert(afnumpy.real(y), numpy.real(x))
+    y.real[:] = 0
+    x.real[:] = 0
+    fassert(y, x)
+
+def test_imag():
+    x = numpy.sqrt([1+0j, 0+1j])
+    y = afnumpy.array(x)
+    fassert(afnumpy.imag(y), numpy.imag(x))
+    y.real[:] = 0
+    x.real[:] = 0
+    fassert(y, x)
+
 def test_multiply():
     a = afnumpy.random.random((2,3))
     b = numpy.array(a)
@@ -186,7 +207,96 @@ def test_multiply():
     fassert(afnumpy.multiply(a,a, out=ao), numpy.multiply(b,b, out = bo))
     fassert(ao, bo)
 
+def test_subtract():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.subtract(a,a), numpy.subtract(b,b))
+    a = afnumpy.array(2)
+    ao = afnumpy.array(0)
+    b = numpy.array(a)
+    bo = numpy.array(0)
+    fassert(afnumpy.subtract(a,a), numpy.subtract(b,b))
+    fassert(afnumpy.subtract(a,a, out=ao), numpy.subtract(b,b, out = bo))
+    fassert(ao, bo)
+
+def test_add():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.add(a,a), numpy.add(b,b))
+    a = afnumpy.array(2)
+    ao = afnumpy.array(0)
+    b = numpy.array(a)
+    bo = numpy.array(0)
+    fassert(afnumpy.add(a,a), numpy.add(b,b))
+    fassert(afnumpy.add(a,a, out=ao), numpy.add(b,b, out = bo))
+    fassert(ao, bo)
+
+def test_divide():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.divide(a,a), numpy.divide(b,b))
+    a = afnumpy.array(2)
+    b = numpy.array(a)
+    if sys.version_info >= (3, 0):
+        ao = afnumpy.array(0.)
+        bo = numpy.array(0.)
+    else:
+        ao = afnumpy.array(0)
+        bo = numpy.array(0)
+    fassert(afnumpy.divide(a,a), numpy.divide(b,b))
+    fassert(afnumpy.divide(a,a, out=ao), numpy.divide(b,b, out = bo))
+    fassert(ao, bo)
+
+
+def test_true_divide():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.true_divide(a,a), numpy.true_divide(b,b))
+    a = afnumpy.array(2)
+    b = numpy.array(a)
+    ao = afnumpy.array(0.)
+    bo = numpy.array(0.)
+    fassert(afnumpy.true_divide(a,a), numpy.true_divide(b,b))
+    fassert(afnumpy.true_divide(a,a, out=ao), numpy.true_divide(b,b, out = bo))
+    fassert(ao, bo)
+
+def test_floor_divide():
+    a = afnumpy.random.random((2,3))
+    b = numpy.array(a)
+    fassert(afnumpy.floor_divide(a,a), numpy.floor_divide(b,b))
+    a = afnumpy.array(2)
+    b = numpy.array(a)
+    ao = afnumpy.array(0)
+    bo = numpy.array(0)
+    fassert(afnumpy.floor_divide(a,a), numpy.floor_divide(b,b))
+    fassert(afnumpy.floor_divide(a,a, out=ao), numpy.floor_divide(b,b, out = bo))
+    fassert(ao, bo)
+
 def test_angle():
     a = afnumpy.random.random((2,3))+afnumpy.random.random((2,3))*1.0j
     b = numpy.array(a)
     fassert(afnumpy.angle(a), numpy.angle(b))
+
+def test_conjugate():
+    a = afnumpy.random.random((2,3))+afnumpy.random.random((2,3))*1.0j
+    b = numpy.array(a)
+    fassert(afnumpy.conjugate(a), numpy.conjugate(b))
+
+def test_conj():
+    a = afnumpy.random.random((2,3))+afnumpy.random.random((2,3))*1.0j
+    b = numpy.array(a)
+    fassert(afnumpy.conj(a), numpy.conj(b))
+
+def test_percentile():
+    a = numpy.array([[10, 7, 4], [3, 2, 1]], dtype=numpy.float32)
+    b = afnumpy.array(a)
+    fassert(afnumpy.percentile(b, 50), numpy.percentile(a, 50))
+    fassert(afnumpy.percentile(b, 50, axis=1), numpy.percentile(a, 50, axis=1))
+    fassert(afnumpy.percentile(b, 50, axis=1, keepdims=True), numpy.percentile(a, 50, axis=1, keepdims=True))
+
+@xfail
+def test_percentile():
+    a = numpy.array([[10, 7, 4], [3, 2, 1]], dtype=numpy.float32)
+    b = afnumpy.array(a)
+    # Again problems with sorting not being supported on the slow axis
+    fassert(afnumpy.percentile(b, 50, axis=0), numpy.percentile(a, 50, axis=0))
