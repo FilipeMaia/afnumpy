@@ -87,6 +87,12 @@ class ndarray(object):
     def __str__(self):
         return self.__repr__()
 
+    def __format__(self, f):
+        h_array = numpy.empty(shape=self.shape, dtype=self.dtype)
+        if self.size:
+            arrayfire.backend.get().af_get_data_ptr(ctypes.c_void_p(h_array.ctypes.data), self.d_array.arr)
+        return h_array.__format__(f)
+        
     @ufunc
     def __add__(self, other):
         s = self.d_array + pu.raw(other)
@@ -194,7 +200,7 @@ class ndarray(object):
         return a
 
     def __pow__(self, other):
-        if(isinstance(other, numbers.Number) and numpy.issubdtype(type(other), numpy.float) and
+        if(isinstance(other, numbers.Number) and numpy.issubdtype(type(other), numpy.float64) and
            numpy.issubdtype(self.dtype, numpy.integer)):
             # AF does not automatically upconvert A**0.5 to float for integer arrays
             s = arrayfire.pow(self.astype(type(other)).d_array, pu.raw(other))
@@ -205,7 +211,7 @@ class ndarray(object):
         return a
 
     def __rpow__(self, other):
-        if(isinstance(other, numbers.Number) and numpy.issubdtype(type(other), numpy.float) and
+        if(isinstance(other, numbers.Number) and numpy.issubdtype(type(other), numpy.float64) and
            numpy.issubdtype(self.dtype, numpy.integer)):
             # AF does not automatically upconvert A**0.5 to float for integer arrays
             s = arrayfire.pow(pu.raw(other), self.astype(type(other)).d_array)
@@ -488,7 +494,7 @@ class ndarray(object):
             newshape[i] = 1
             if -1 in newshape:
                 raise ValueError('Only one -1 allowed in shape')
-            newshape[i] = self.size/numpy.prod(newshape)
+            newshape[i] = self.size//numpy.prod(newshape)
         if self.size != numpy.prod(newshape):
             raise ValueError('total size of new array must be unchanged')
         if len(newshape) != 0:
