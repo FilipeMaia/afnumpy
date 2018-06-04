@@ -488,7 +488,7 @@ class ndarray(object):
             newshape[i] = 1
             if -1 in newshape:
                 raise ValueError('Only one -1 allowed in shape')
-            newshape[i] = self.size/numpy.prod(newshape)
+            newshape[i] = self.size//numpy.prod(newshape)
         if self.size != numpy.prod(newshape):
             raise ValueError('total size of new array must be unchanged')
         if len(newshape) != 0:
