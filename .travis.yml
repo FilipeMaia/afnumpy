@@ -33,10 +33,12 @@ addons:
 before_install:
   - pip install codecov
   - cd $HOME
-  - if [ ! -d "$HOME/arrayfire/.git" ]; then git clone https://github.com/arrayfire/arrayfire; else echo 'Using arrayfire from cached directory'; fi
-  - git pull
-  - git log
+  - if [ ! -d "$HOME/arrayfire/.git" ]; then git clone --recursive https://github.com/arrayfire/arrayfire; else echo 'Using arrayfire from cached directory'; fi
   - mkdir -p arrayfire/build && cd arrayfire/build
+  - git pull
+  - git submodule init
+  - git submodule update
+  - git log
   - cmake -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.9 -DAF_BUILD_CPU=ON -DAF_BUILD_CUDA=OFF -DAF_WITH_GRAPHICS=OFF -DAF_BUILD_OPENCL=OFF -DBUILD_TESTING=OFF -DAF_BUILD_EXAMPLES=OFF -DAF_BUILD_UNIFIED=ON -DCMAKE_INSTALL_PREFIX=${HOME}/local ..
   - make -j 2
   - make install
