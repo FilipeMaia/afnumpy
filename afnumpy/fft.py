@@ -69,7 +69,7 @@ def fftshift(x, axes=None):
     shift = [0]*ndim
     for k in axes:
         n = x.shape[k]
-        shift[k] = n//2
+        shift[k] = int(n//2)
     s = arrayfire.data.shift(x.d_array, *pu.c2f(shift))
     return ndarray(pu.af_shape(s), dtype=pu.typemap(s.dtype()), af_array=s)
 
