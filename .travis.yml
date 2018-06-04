@@ -33,9 +33,7 @@ addons:
 before_install:
   - pip install codecov
   - cd $HOME
-  - if [ ! -d "$HOME/arrayfire/.git" ]; then git clone
-  https://github.com/arrayfire/arrayfire; else echo 'Using arrayfire from
-  cached directory'; fi
+  - if [ ! -d "$HOME/arrayfire/.git" ]; then git clone https://github.com/arrayfire/arrayfire; else echo 'Using arrayfire from cached directory'; fi
   - git pull
   - git log
   - mkdir -p arrayfire/build && cd arrayfire/build
