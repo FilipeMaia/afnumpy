@@ -2,8 +2,8 @@
 import sys
 import time
 import h5py
-import matplotlib.pyplot as plt
-from matplotlib.colors import LogNorm
+#import matplotlib.pyplot as plt
+#from matplotlib.colors import LogNorm
 
 from scipy.ndimage import gaussian_filter
 
@@ -117,14 +117,14 @@ def update_plot(iteration, image, phase, error, support, intensities):
     plt.draw()
 
 
-print np.angle(data_fourier).min(), np.angle(data_fourier).max()
+print(np.angle(data_fourier).min(), np.angle(data_fourier).max())
     
 fourier = fft.fftn(image)
-update_plot(0, image[200:-200,200:-200], np.angle(fourier), get_error(fourier, intensities), support[200:-200,200:-200], intensities)
+#update_plot(0, image[200:-200,200:-200], np.angle(fourier), get_error(fourier, intensities), support[200:-200,200:-200], intensities)
     
-print "Sleep for 20 seconds"
+print("Sleep for 20 seconds")
 time.sleep(int(sys.argv[2]))
-print "Starting now"
+print("Starting now")
 
 # Time the reconstruction
 t0 = time.time()
@@ -141,11 +141,11 @@ for i in range(nr_iterations):
     # Check convergence
     error.append(get_error(fourier, intensities))
     #error = 0
-    print "Iteration: %d, error: %f" %(i, error[-1])
+    print("Iteration: %d, error: %f" %(i, error[-1]))
 
     # Update plot
-    if (not i%10):
-        update_plot(i, image[200:-200,200:-200], np.angle(fourier), error, support[200:-200,200:-200], intensities)
+    #if (not i%10):
+    #    update_plot(i, image[200:-200,200:-200], np.angle(fourier), error, support[200:-200,200:-200], intensities)
     
     # Apply data constraint
     #fourier = data_constraint(fourier, intensities)
@@ -161,9 +161,9 @@ for i in range(nr_iterations):
 
 # Timing
 t1 = time.time() - t0
-print "%d Iterations took %2.f seconds (%.2f iterations per second) using %s" %(nr_iterations, t1, float(nr_iterations)/t1, use)
+print("%d Iterations took %2.f seconds (%.2f iterations per second) using %s" %(nr_iterations, t1, float(nr_iterations)/t1, use))
 
-update_plot(i, image[200:-200, 200:-200], np.angle(fourier), error, support[200:-200,200:-200], intensities)
+#update_plot(i, image[200:-200, 200:-200], np.angle(fourier), error, support[200:-200,200:-200], intensities)
 
 plt.ioff()
 plt.show()
