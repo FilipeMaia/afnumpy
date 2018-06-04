@@ -55,7 +55,7 @@ def broadcast_arrays(*args, **kwargs):
 
     for (x, sh) in zip(args, shapes):
         x_sh = x.shape + (1,)*(len(sh)-x.ndim)
-        reps = numpy.array(sh)/numpy.array(x_sh)
+        reps = numpy.array(sh)//numpy.array(x_sh)
         if(numpy.prod(reps) > 1):
             broadcasted.append(afnumpy.tile(x, reps))
         else:

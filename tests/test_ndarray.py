@@ -233,7 +233,7 @@ def test_unary_operators():
     fassert(+a, +b)
     b = numpy.random.randint(0,2,3).astype('bool')
     a = afnumpy.array(b)
-    fassert(-a, -b)
+    fassert(-a, ~b)
     fassert(+a, +b)
     # fassert(~a, ~b)
 
