@@ -395,13 +395,6 @@ def test_getitem():
     a = afnumpy.array(b)
     iassert(a[()],b[()])
 
-    # Slices that extend outside the array
-    b = numpy.ones((3))
-    a = afnumpy.array(b)
-    iassert(a[1:4],b[1:4])
-    # This no longer works with current version of arrayfire, accessing a d_array with slice(None,-1,-1) does not give the expected output
-    #iassert(a[3::-1],b[3::-1]) 
-
     # Partial boolean indexing
     b = numpy.ones((3,3))
     a = afnumpy.array(b)
@@ -416,6 +409,14 @@ def test_getitem():
     c = afnumpy.array(d)
     iassert(a[c],b[d])
 
+@xfail
+def test_getitem_xfail():
+    # Slices that extend outside the array
+    b = numpy.ones((3))
+    a = afnumpy.array(b)
+    iassert(a[1:4],b[1:4])
+    # This case no longer works with current version of arrayfire, accessing a d_array with slice(None,-1,-1) does not give the expected output
+    iassert(a[3::-1],b[3::-1]) 
 
 def test_getitem_multi_array():
     # Multidimensional array indexing
