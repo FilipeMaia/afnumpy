@@ -36,7 +36,7 @@ before_install:
   - if [ ! -d "$HOME/arrayfire/.git" ]; then git clone  https://github.com/arrayfire/arrayfire; else echo 'Using arrayfire from cached directory'; fi
   - mkdir -p arrayfire/build && cd arrayfire/build
   - git pull
-  - cmake -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.9 -DAF_BUILD_CPU=ON -DAF_BUILD_CUDA=OFF -DAF_WITH_GRAPHICS=OFF -DAF_BUILD_OPENCL=OFF -DBUILD_TESTING=OFF -DAF_BUILD_EXAMPLES=OFF -DAF_BUILD_UNIFIED=ON -DBUILD_CPU_ASYNC=ON -DCMAKE_INSTALL_PREFIX=${HOME}/local ..
+  - cmake -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.9 -DAF_BUILD_CPU=ON -DAF_BUILD_CUDA=OFF -DAF_WITH_GRAPHICS=OFF -DAF_BUILD_OPENCL=OFF -DBUILD_TESTING=OFF -DAF_BUILD_EXAMPLES=OFF -DAF_BUILD_UNIFIED=ON -DCMAKE_INSTALL_PREFIX=${HOME}/local ..
   - make -j 2
   - make install
   - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HOME}/local/lib
