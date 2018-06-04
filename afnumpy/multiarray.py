@@ -194,7 +194,7 @@ class ndarray(object):
         return a
 
     def __pow__(self, other):
-        if(isinstance(other, numbers.Number) and numpy.issubdtype(type(other), numpy.float) and
+        if(isinstance(other, numbers.Number) and numpy.issubdtype(type(other), numpy.float64) and
            numpy.issubdtype(self.dtype, numpy.integer)):
             # AF does not automatically upconvert A**0.5 to float for integer arrays
             s = arrayfire.pow(self.astype(type(other)).d_array, pu.raw(other))
@@ -205,7 +205,7 @@ class ndarray(object):
         return a
 
     def __rpow__(self, other):
-        if(isinstance(other, numbers.Number) and numpy.issubdtype(type(other), numpy.float) and
+        if(isinstance(other, numbers.Number) and numpy.issubdtype(type(other), numpy.float64) and
            numpy.issubdtype(self.dtype, numpy.integer)):
             # AF does not automatically upconvert A**0.5 to float for integer arrays
             s = arrayfire.pow(pu.raw(other), self.astype(type(other)).d_array)
