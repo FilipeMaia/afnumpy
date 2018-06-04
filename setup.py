@@ -4,7 +4,7 @@
 setup.py file for afnumpy
 """
 
-from distutils.core import setup
+from setuptools import setup
 from afnumpy import __version__
 
 
