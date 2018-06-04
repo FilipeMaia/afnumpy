@@ -87,6 +87,12 @@ class ndarray(object):
     def __str__(self):
         return self.__repr__()
 
+    def __format__(self, f):
+        h_array = numpy.empty(shape=self.shape, dtype=self.dtype)
+        if self.size:
+            arrayfire.backend.get().af_get_data_ptr(ctypes.c_void_p(h_array.ctypes.data), self.d_array.arr)
+        return h_array.__format__(f)
+        
     @ufunc
     def __add__(self, other):
         s = self.d_array + pu.raw(other)
