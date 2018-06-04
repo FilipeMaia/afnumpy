@@ -25,7 +25,7 @@ def meshgrid(*xi, **kwargs):
     output = [afnumpy.asanyarray(x).reshape(s0[:i] + (-1,) + s0[i + 1::])
               for i, x in enumerate(xi)]
 
-    shape = [x.size for x in output]
+    shape = [int(x.size) for x in output]
 
     if indexing == 'xy' and ndim > 1:
         # switch first and second axis
