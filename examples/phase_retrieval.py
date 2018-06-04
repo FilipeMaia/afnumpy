@@ -13,6 +13,16 @@ parser.add_argument('-p', '--plotting', action='store_true')
 parser.add_argument('-d', '--debug', action='store_true')
 args = parser.parse_args()
 
+# Generate test dataset
+import numpy as np
+shape = (512,512)
+center = (int((shape[0])/2), int((shape[1])/2))
+radius = 50
+solution = np.zeros(shape)
+solution[center[0]-radius:center[0]+radius-1,center[1]-radius:center[1]+radius-1] = 1.
+solution += rotate(solution, -45, reshape=False)
+solution = gaussian_filter(solution, radius//10)
+
 # Switch between numpy/afnumpy
 if args.use_afnumpy:
     import afnumpy as np
@@ -23,14 +33,9 @@ elif args.use_numpy:
     import numpy.fft as fft
     use = 'numpy/CPU'
 
-# Generate test dataset
-shape = (512,512)
-center = (int((shape[0])/2), int((shape[1])/2))
-radius = 50
-solution = np.zeros(shape)
-solution[center[0]-radius:center[0]+radius-1,center[1]-radius:center[1]+radius-1] = 1.
-solution += rotate(solution, -45, reshape=False)
-solution = gaussian_filter(solution, radius//10)
+radius = np.array(radius)
+shape = (np.array(shape[0]), np.array(shape[1]))
+solution = np.array(solution)
 fourier = np.fft.fftshift(np.fft.fft2(solution))
 intensities = np.abs(fourier)**2
 
@@ -78,12 +83,12 @@ for i in range(nr_iterations):
 
 # Timing
 t1 = time.time() - t0
-success = np.sum(((np.abs(image) - solution)**2)*support) / np.prod(shape) < 1e-2
+success = np.sum(((np.abs(image) - solution)**2)*support) / (shape[0] * shape[1]) < 1e-2
 print("Success: %d, %d Iterations took %2.f seconds (%.2f iterations per second) using %s" %(success, nr_iterations, t1, float(nr_iterations)/t1, use))
 
-# Check for plotting
+#Check for plotting
 if not args.plotting:
-    sys.exit(0)
+   sys.exit(0)
 
 # Plotting the result
 try:
