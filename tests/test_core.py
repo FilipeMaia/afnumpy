@@ -78,6 +78,7 @@ def test_roll():
     a = afnumpy.array(b)
     fassert(afnumpy.roll(a, 2), numpy.roll(b, 2))
 
+@xfail
 def test_concatenate():
     b = numpy.random.random((2,3))
     a = afnumpy.array(b)
