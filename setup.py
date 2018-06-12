@@ -9,7 +9,7 @@ import setuptools.command.build_py
 import subprocess
 import os.path
 
-version = '1.2'
+version = '1.3'
 name = 'afnumpy'
 cwd = os.path.dirname(os.path.abspath(__file__))
 
