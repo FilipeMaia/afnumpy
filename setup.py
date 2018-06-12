@@ -22,7 +22,7 @@ def _get_version_hash():
         print("Couldn't run git to get a version number for setup.py")
         return
     ver = p.communicate()[0]
-    return ver.strip()
+    return ver.strip().decode("utf-8")
 
 git_hash = _get_version_hash()
 
@@ -43,8 +43,8 @@ class Version(setuptools.command.build_py.build_py):
         print('-- Building version ' + version)
         version_path = os.path.join(cwd, name, 'version.py')
         with open(version_path, 'w') as f:
-            f.write("__version__ = '{}'\n".format(version))
-            f.write("__githash__ = '{}'\n".format(git_hash))
+            f.write("__version__ = '%s'\n" % (version))
+            f.write("__githash__ = '%s'\n" % (git_hash))
 
 setup (name = name,
        version = version,
