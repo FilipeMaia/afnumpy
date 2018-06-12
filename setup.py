@@ -85,6 +85,5 @@ setup (name = name,
        license='BSD',
        cmdclass={"build_py": Version},
        tests_require=['pytest','pytest-cov','pytest-benchmark','arrayfire','numpy>=1.9.0'],
-       
-       
+       setup_requires=["pytest-runner"],             
 )
