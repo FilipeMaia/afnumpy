@@ -83,6 +83,8 @@ setup (name = name,
         #'Programming Language :: Python :: 3.4',
        ],
        license='BSD',
-       cmdclass={"version": Version},
+       cmdclass={"build_py": Version},
+       tests_require=['pytest','pytest-cov','pytest-benchmark','arrayfire','numpy>=1.9.0'],
+       
        
 )
