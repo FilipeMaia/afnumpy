@@ -282,3 +282,10 @@ def test_isinf():
     b[b == 0] = numpy.inf
     a = afnumpy.array(b)
     fassert(afnumpy.isnan(a), numpy.isnan(b))
+
+def test_concatenate():
+    b = np.array([[1, 2], [3, 4]])
+    d = np.array([[5, 6]])
+    a = afnumpy.array(b)
+    c = afnumpy.array(d)
+    fassert(afnumpy.concatenate((a,c)), numpy.concatenate((b,d)))

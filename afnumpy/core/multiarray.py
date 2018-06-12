@@ -94,3 +94,48 @@ def where(condition, x=pu.dummy, y=pu.dummy):
         return ret;
     else:
         raise ValueError('either both or neither of x and y should be given')
+
+def concatenate(arrays, axis=0):
+    arrays = tuple(arrays)
+    if len(arrays) == 0:
+        raise ValueError('need at least one array to concatenate')
+    base = arrays[0]
+    if len(arrays) == 1:
+        return base.copy()
+    # arrayfire accepts at most 4 arrays to concatenate at once so we'll have
+    # to chunk the arrays
+    # The first case is special as we don't want to create unnecessary copies
+    i = 0
+    a = arrays[i].d_array
+    if i+1 < len(arrays):
+        b = arrays[i+1].d_array
+    else:
+        b = None
+    if i+2 < len(arrays):
+        c = arrays[i+2].d_array
+    else:
+        c = None
+    if i+3 < len(arrays):
+        d = arrays[i+3].d_array
+    else:
+        d = None            
+    ret = arrayfire.join(pu.c2f(arrays[0].shape, axis), a, b, c, d)
+
+    for i in range(4,len(arrays),4):
+        a = ret.d_array
+        if i < len(arrays):
+            b = arrays[i].d_array
+        else:
+            b = None
+        if i+1 < len(arrays):
+            c = arrays[i+1].d_array
+        else:
+            c = None
+        if i+2 < len(arrays):
+            d = arrays[i+2].d_array
+        else:
+            d = None
+            
+        ret = arrayfire.join(pu.c2f(arrays[0].shape, axis), a, b, c, d)
+    
+    return ret
