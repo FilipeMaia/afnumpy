@@ -57,7 +57,7 @@ setup (name = name,
        long_description= long_description,
        long_description_content_type='text/markdown',
        packages = ["afnumpy", "afnumpy/core", "afnumpy/lib", "afnumpy/linalg"],
-       install_requires=['arrayfire', 'numpy'],
+       install_requires=['arrayfire', 'numpy>=1.9.0'],
        classifiers=[
         # How mature is this project? Common values are
         #   3 - Alpha
