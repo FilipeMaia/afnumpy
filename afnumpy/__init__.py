@@ -78,4 +78,4 @@ force_eval = True
 # Also properly handle negative indices
 safe_indexing = True
 
-from .version import __version__
+from .version import __version__, __githash__
