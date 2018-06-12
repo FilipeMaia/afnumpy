@@ -78,5 +78,4 @@ force_eval = True
 # Also properly handle negative indices
 safe_indexing = True
 
-# The version number of afnumpy
-__version__ = "1.0"
+from .version import __version__
