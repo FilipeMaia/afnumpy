@@ -300,3 +300,11 @@ def test_percentile():
     b = afnumpy.array(a)
     # Again problems with sorting not being supported on the slow axis
     fassert(afnumpy.percentile(b, 50, axis=0), numpy.percentile(a, 50, axis=0))
+
+def test_pad():
+    a = [1, 2, 3, 4, 5]
+    b = afnumpy.array(a)
+    iassert(afnumpy.pad(b, (2,3), 'constant', constant_values=(4, 6)),
+            numpy.pad(a, (2,3), 'constant', constant_values=(4, 6)))
+    iassert(afnumpy.pad(b, (2,3), 'edge'),
+            numpy.pad(a, (2,3), 'edge'))

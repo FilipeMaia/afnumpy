@@ -282,3 +282,6 @@ def test_isinf():
     b[b == 0] = numpy.inf
     a = afnumpy.array(b)
     fassert(afnumpy.isnan(a), numpy.isnan(b))
+
+def test_repeat():
+    iassert(afnumpy.repeat(3, 4), numpy.repeat(3, 4))

@@ -742,3 +742,7 @@ class ndarray(object):
             axis = self.ndim+axis
         s = arrayfire.sort(input.d_array, pu.c2f(input.shape, axis))
         self.d_array = s
+
+    def repeat(self, repeats, axis=None):
+        # Cop out, as repeat is usually not that performance sensitive
+        return afnumpy.array(numpy.array(self).repeat(repeats,axis))
