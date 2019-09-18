@@ -159,7 +159,6 @@ class csr_matrix(spmatrix):
             d_array = arrayfire.sparse.create_sparse_from_dense(arg1)
 
     def __mul__(self, other):
-        print('here')
         other = afnp.asarray(other).astype(self.dtype)
         s = arrayfire.matmul(self.d_array, other.d_array)
         a = afnp.ndarray(pu.af_shape(s), dtype=pu.typemap(s.dtype()), af_array=s)
