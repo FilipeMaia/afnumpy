@@ -291,3 +291,6 @@ def test_concatenate_xfail():
     a = afnumpy.array(b)
     c = afnumpy.array(d)
     fassert(afnumpy.concatenate((a,c)), numpy.concatenate((b,d)))
+
+def test_repeat():
+    iassert(afnumpy.repeat(3, 4), numpy.repeat(3, 4))
