@@ -56,7 +56,7 @@ setup (name = name,
        description = """A GPU-ready drop-in replacement for numpy""",
        long_description= long_description,
        long_description_content_type='text/markdown',
-       packages = ["afnumpy", "afnumpy/core", "afnumpy/lib", "afnumpy/linalg"],
+       packages = ["afnumpy", "afnumpy/core", "afnumpy/lib", "afnumpy/linalg", "afnumpy/sparse"],
        install_requires=['arrayfire', 'numpy>=1.9.0'],
        classifiers=[
         # How mature is this project? Common values are
