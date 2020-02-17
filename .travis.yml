@@ -1,4 +1,6 @@
 language: python
+os: linux
+dist: trusty
 
 python:
   - "2.7"
