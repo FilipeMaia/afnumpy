@@ -20,9 +20,9 @@ cache:
 
 addons:
   apt:
-    sources:
-      - ubuntu-toolchain-r-test
-      - kubuntu-backports
+#    sources:
+#      - ubuntu-toolchain-r-test
+#      - kubuntu-backports
     packages:
       - libatlas-base-dev
       - libfftw3-dev
@@ -31,6 +31,7 @@ addons:
       - cmake
       - gdb
       - apport
+      - libboost-all-dev
 
 before_install:
   - pip install codecov
