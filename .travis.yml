@@ -26,8 +26,8 @@ addons:
     packages:
       - libatlas-base-dev
       - libfftw3-dev
-      - gcc-4.9
-      - g++-4.9
+      - gcc
+      - g++
       - cmake
       - gdb
       - apport
