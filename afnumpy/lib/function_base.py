@@ -94,7 +94,7 @@ def angle(z, deg=0):
 
 def percentile(a, q, axis=None, out=None,
                overwrite_input=False, interpolation='linear', keepdims=False):
-    if interpolation is not 'linear':
+    if interpolation != 'linear':
         raise ValueError('Only linear interpolation is supported')
     if out is not None:
         raise ValueError('"out" parameter is not supported')

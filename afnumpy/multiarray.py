@@ -483,7 +483,7 @@ class ndarray(object):
 
     # In place reshape
     def __reshape__(self, newshape, order = 'C'):
-        if(order is not 'C'):
+        if(order != 'C'):
             raise NotImplementedError
         if isinstance(newshape,numbers.Number):
             newshape = (newshape,)

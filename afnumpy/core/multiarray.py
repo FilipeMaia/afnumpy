@@ -12,7 +12,7 @@ def array(object, dtype=None, copy=True, order=None, subok=False, ndmin=0):
     # We're going to ignore this for now
     # if(subok is not False):
     #     raise NotImplementedError
-    if(order is not None and order is not 'K' and order is not 'C'):
+    if(order is not None and order != 'K' and order != 'C'):
         raise NotImplementedError
 
     # If it's not a numpy or afnumpy array first create a numpy array from it
